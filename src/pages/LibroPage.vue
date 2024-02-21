@@ -17,6 +17,7 @@
           <q-td v-for="col in props.cols" :key="col.name" :props="props">
             {{ col.value }}
           </q-td>
+          
 
           <q-td auto-width>
             <q-btn
@@ -35,7 +36,7 @@
               color="negative"
               icon="delete"
               size="sm"
-        
+
             />
           </q-td>
         </q-tr>

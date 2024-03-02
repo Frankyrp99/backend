@@ -4,23 +4,25 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
+    children: [{ path: '', name: 'HomePage', component: () => import('pages/IndexPage.vue') }],
+
   },
   {
-    path: '/profe',
+    path: '/detalles',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('src/pages/ProfesorPage.vue') }],
+    children: [{ path: '', name:'detalles', component: () => import('src/pages/DetallesPage.vue') }],
   },
   {
-    path: '/arti',
+    path: '/show',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('src/pages/ArtiPage.vue') }],
+    children: [{ path: '', name:'show', component: () => import('src/pages/ShowPage.vue') }],
   },
   {
-    path: '/libro',
+    path: '/recursos',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('src/pages/LibroPage.vue') }],
+    children: [{ path: '', component: () => import('src/pages/FormRecursos.vue') }],
   },
+
   {
     path: '/login',
     component: () => import('layouts/LoginLayout.vue'),

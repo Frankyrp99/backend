@@ -2,17 +2,14 @@
   <q-header elevated class="bg-color">
     <q-toolbar class="q-pa-sm q-gutter-sm row justify-end">
       <q-btn-group flat dense class="row justify-end" >
-        <q-btn-dropdown color="bg-color" icon="add" text-color="black" >
+        <q-btn   icon="space_dashboard " class="text-black q-gutter-sm" to="/" />
+        <q-btn-dropdown color="bg-color" icon="add_circle_outline " text-color="black"  >
           <q-list>
-            <q-item clickable v-close-popup @click="onItemClick">
-              <q-item-section>
-                <q-item-label>Profesor</q-item-label>
-              </q-item-section>
-            </q-item>
 
-            <q-item clickable v-close-popup @click="onItemClick">
+
+            <q-item to="recursos" clickable v-close-popup @click="onItemClick">
               <q-item-section>
-                <q-item-label>Aval de Publicación</q-item-label>
+                <q-item-label >Aval de Publicación</q-item-label>
               </q-item-section>
             </q-item>
 
@@ -28,17 +25,17 @@
             </q-item>
           </q-list>
         </q-btn-dropdown>
-        <q-btn-dropdown color="bg-color" icon="person" text-color="black" align="between">
+        <q-btn-dropdown color="bg-color" icon="account_circle" text-color="black" align="between">
           <q-list>
             <q-item
-              icon="person"
+
               to="user"
               clickable
               v-close-popup
               @click="onItemClick"
             >
               <q-item-section>
-                <q-item-label>Usuario</q-item-label>
+                <q-item-label icon="account_circle">Usuario</q-item-label>
               </q-item-section>
             </q-item>
 

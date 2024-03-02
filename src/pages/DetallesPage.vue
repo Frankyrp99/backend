@@ -9,14 +9,7 @@
       pidap
     >
       <template v-slot:top-right>
-        <q-btn
-          icon="dehaze "
-          size="md"
-          flat
-          dense
-          @click="onItemClick"
-          to="detalles"
-        />
+        <q-btn icon="dehaze " size="md" flat dense @click="onItemClick" to="/"/>
         <q-input dense outlined v-model="search" placeholder="Buscar" />
       </template>
 
@@ -27,28 +20,11 @@
           </q-td>
 
           <q-td auto-width>
-            <q-btn
-              icon="visibility"
-              size="sm"
-              flat
-              dense
-              @click="showRow(props.row)"
-            />
-            <q-btn
-              icon="edit"
-              size="sm"
-              flat
-              dense
-              @click="editRow(props.row)"
-            />
-            <q-btn
-              icon="delete"
-              size="sm"
-              class="q-ml-sm"
-              flat
-              dense
-              @click="deleteRow(props.row)"
-            />
+            <q-btn icon="visibility" size="sm" flat dense @click="showRow(props.row)"/>
+            <q-btn icon="edit" size="sm" flat dense  @click="editRow(props.row)"/>
+            <q-btn icon="delete" size="sm" class="q-ml-sm" flat dense  @click="deleteRow(props.row)" />
+
+
           </q-td>
         </q-tr>
       </template>
@@ -92,16 +68,15 @@ import axios from 'axios';
 
 const search = ref('');
 const rows = ref([]);
-
 const columns = [
   {
     name: 'nombre',
     required: true,
     label: 'Nombre ',
     align: 'left',
-    field: 'nombre',
     filter: true,
     sortable: true,
+    field: 'nombre',
   },
   {
     name: 'apellidos',
@@ -112,6 +87,7 @@ const columns = [
     sortable: true,
   },
 
+
   {
     name: 'titulo_recurso',
     label: 'Titulo del Recurso',
@@ -119,17 +95,31 @@ const columns = [
     sortable: true,
     filter: true,
   },
+    {
+      name: 'lugar_pub',
+      label: 'Lugar de Publicacion',
+      field: 'lugar_pub',
+      sortable: true,
+      filter: true,
+    },
   {
-    name: 'fecha',
+    name: 'fecha_publicacion',
     label: 'Fecha de Publicacion',
     field: 'fecha',
     sortable: true,
     filter: true,
   },
   {
-    name: 'lugar_pub',
-    label: 'Lugar de Publicacion',
-    field: 'lugar_pub',
+    name: 'tomo',
+    label: 'Tomo',
+    field: 'tomo',
+    sortable: true,
+    filter: true,
+  },
+  {
+    name: 'folio',
+    label: 'Folio',
+    field: 'folio',
     sortable: true,
     filter: true,
   },
@@ -137,8 +127,8 @@ const columns = [
 onMounted(async () => {
   try {
     const response = await axios.get('http://127.0.0.1:8000/api/profesores/');
-    console.log('Formulario enviado con éxito:', response.data.results);
-    rows.value = response.data.results;
+      console.log('Formulario enviado con éxito:', response.data.results)
+    rows.value = response.data.results;;
   } catch (error) {
     console.error('Error al obtener los datos de los profesores:', error);
   }
@@ -171,19 +161,22 @@ const saveEdit = async () => {
     console.error('Error al actualizar el recurso:', error);
   }
 };
-//const showRow = (row) => {
-// this.$router.push({ name: 'detalles' });
-// console.log('Mostrando detalles del recurso:', row);
-//};
-// boton eliminar
-const deleteRow = async (row: { id: any }) => {
-  try {
+
+const deleteRow = async (row) => {
+ try {
     await axios.delete(`http://127.0.0.1:8000/api/profesores/${row.id}/`);
     console.log('Recurso eliminado con éxito');
-
-    rows.value = rows.value.filter((item) => item.id !== row.id);
-  } catch (error) {
+    // Eliminar la fila del frontend si es necesario
+    rows.value = rows.value.filter(item => item.id !== row.id);
+ } catch (error) {
     console.error('Error al eliminar el recurso:', error);
-  }
+ }
 };
+
+//const updateRow = (row) => {
+// Lógica para actualizar la fila
+//};
+
+//const showRow = (row) => {
+// Lógica para mostrar la fila
 </script>

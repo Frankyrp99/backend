@@ -22,6 +22,12 @@
       />
       <q-input
         filled
+        v-model="form.departamento"
+        label="Departamento de Trabajo"
+        :rules="departamentoRules"
+      />
+      <q-input
+        filled
         v-model="form.lugar_pub"
         label="Lugar de Publicación"
         :rules="lugarpubRules"
@@ -88,6 +94,7 @@ export default {
         nombre: '',
         apellidos: '',
         titulo_recurso: '',
+        departamento: '',
         lugar_pub: '',
         tomo: '',
         folio: '',
@@ -110,6 +117,9 @@ export default {
       nombreRules: [(v) => !!v || 'El Nombre es requerido'],
       apellidosRules: [(v) => !!v || 'Los Apellidos son requeridos'],
       titulo_recursoRules: [(v) => !!v || 'El Titulo es requerido'],
+      departamentoRules: [
+        (v) => !!v || 'El Departamentode Trabajo es requerido',
+      ],
       lugarpubRules: [(v) => !!v || 'El Lugar de la Publicación es requerido'],
       tipo_recursoRules: [(v) => !!v || 'El Tipo de Recurso es requerido'],
       tipoPubRules: [(v) => !!v || 'El Tipo de Publicación es requerido'],

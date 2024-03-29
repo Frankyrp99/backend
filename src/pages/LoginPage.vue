@@ -1,22 +1,23 @@
 <template>
-  <q-page class="flex flex-center " >
+  <q-page class="flex flex-center">
     <q-card class="my-card bg-color">
       <q-card-section>
         <div class="text-h6">Iniciar sesión</div>
       </q-card-section>
 
       <q-card-section>
-        <q-form
-          @submit="onSubmit"
-          @reset="onReset"
-          class="q-gutter-md"
-        >
+        <q-form @submit="onSubmit"  class="q-gutter-md">
           <q-input
             filled
-            v-model="username"
-            label="Nombre de usuario"
+            v-model="email"
+            label="Correo electrónico"
             lazy-rules
-            :rules="[val => val && val.length >  0 || 'Por favor ingrese su nombre de usuario']"
+            :rules="[
+              (val) =>
+                (val && val.length > 0) ||
+                'Por favor ingrese su correo electrónico',
+            ]"
+            :error-message="emailErrorMessage"
           />
 
           <q-input
@@ -25,39 +26,81 @@
             v-model="password"
             label="Contraseña"
             lazy-rules
-            :rules="[val => val && val.length >  0 || 'Por favor ingrese su contraseña']"
+            :rules="[
+              (val) =>
+                (val && val.length > 0) || 'Por favor ingrese su contraseña',
+            ]"
           />
 
           <div>
-            <q-btn flat rounded label="Iniciar sesión" type="submit" color="primary" />
-            <q-btn label="Restablecer" type="reset" color="secondary" flat rounded />
+            <q-btn
+              flat
+              rounded
+              label="Iniciar sesión"
+              type="submit"
+              color="primary"
+            />
+
           </div>
         </q-form>
       </q-card-section>
     </q-card>
+    <q-dialog v-model="showErrorDialog">
+      <q-card class="bg-color">
+        <q-card-section>
+          {{ errorMessage }}
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cerrar" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
 
-const username = ref('');
+const email = ref('');
 const password = ref('');
+const router = useRouter();
+const showErrorDialog = ref(false);
+const errorMessage = ref('');
 
-const onSubmit = () => {
-  // Lógica para manejar el inicio de sesión
-};
+const onSubmit = async () => {
+  if (!email.value || !password.value) {
+    errorMessage.value = 'Por favor, complete todos los campos.';
+    showErrorDialog.value = true;
+    return;
+  }
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/api/token/', {
+      email: email.value,
+      password: password.value,
+    });
+    console.log({response});
 
-const onReset = () => {
-  // Lógica para restablecer el formulario
-  username.value = '';
-  password.value = '';
+    const token = response.data.token;
+
+    // Almacenar el token en el almacenamiento local
+    localStorage.setItem('authToken', token);
+
+    router.push('/');
+  } catch (error) {
+    errorMessage.value = 'Correo electrónico o Contraseña incorrectos.';
+
+    showErrorDialog.value = true;
+    console.error('Error al iniciar sesión:', error);
+  }
 };
 </script>
 
 <style scoped>
 .my-card {
-  width:  100%;
-  max-width:  400px;
+  width: 100%;
+  max-width: 400px;
 }
 </style>

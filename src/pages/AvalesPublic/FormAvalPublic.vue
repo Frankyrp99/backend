@@ -1,36 +1,41 @@
 <template>
   <q-page>
     <div class="flex justify-center items-center" style="height: 130vh">
-      <q-form @submit="onSubmit" class="q-gutter-md" id="form">
-        <h4>Aval de Publicación</h4>
+      <q-form @submit="onSubmit" class="q-gutter-md flex flex-row flex-wrap justify-between bg-color" id="form">
+        <h4 id="form-title"> Nuevo Aval de Publicación</h4>
         <q-input
           filled
           v-model="form.nombre"
           label="Nombre"
+          class="form-item"
           :rules="nombreRules"
         />
         <q-input
           filled
           v-model="form.apellidos"
           label="Apellidos"
+          class="form-item"
           :rules="apellidosRules"
         />
         <q-input
           filled
           v-model="form.titulo_recurso"
           label="Título del Recurso"
+          class="form-item"
           :rules="titulo_recursoRules"
         />
         <q-input
           filled
           v-model="form.departamento"
           label="Departamento de Trabajo"
+          class="form-item"
           :rules="departamentoRules"
         />
         <q-input
           filled
           v-model="form.lugar_pub"
           label="Lugar de Publicación"
+          class="form-item"
           :rules="lugarpubRules"
         />
         <q-select
@@ -38,6 +43,7 @@
           v-model="form.tipo_recurso"
           :options="tiposRecurso"
           label="Tipo de Recurso"
+          class="form-item"
           :rules="tipo_recursoRules"
         />
         <q-select
@@ -45,6 +51,7 @@
           v-model="form.tipo_publicacion"
           :options="tiposPublicacion"
           label="Tipo de Publicación"
+          class="form-item"
           :rules="tipoPubRules"
         />
         <q-input
@@ -52,6 +59,7 @@
           filled
           v-model="form.issn"
           label="ISSN"
+          class="form-item"
           :rules="issnRules"
         />
         <q-input
@@ -59,6 +67,7 @@
           filled
           v-model="form.e_issn"
           label="E-ISSN"
+          class="form-item"
           :rules="eissnRules"
         />
         <q-input
@@ -69,21 +78,24 @@
           filled
           v-model="form.isbn"
           label="ISBN"
+          class="form-item"
           :rules="isbnRules"
         />
         <q-checkbox v-model="form.cdrom_dvd" label="CDROM/DVD" />
         <q-checkbox v-model="form.base_de_datos" label="Base de Datos" />
+       
         <q-input filled v-model="form.url" label="URL" />
         <q-input filled v-model="form.tomo" label="Tomo" :rules="tomoRules" />
         <q-input
           filled
           v-model="form.folio"
           label="Folio"
+          class="form-item"
           :rules="folioRules"
         />
         <div>
-          <q-btn flat rounded label="Guardar" type="submit" color="primary" />
-          <q-btn flat rounded label="Exportar a PDF" @click="exportToPDF" />
+          <q-btn flat rounded label="Guardar" type="submit" class="form-item" color="primary" />
+          <q-btn flat rounded label="Exportar a PDF" class="form-item" @click="exportToPDF" />
         </div>
       </q-form>
     </div>

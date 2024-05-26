@@ -1,1 +1,39 @@
 // app global css in SCSS form
+#form {
+  width: 40rem;
+  gap: 2rem;
+  background-color: #fff;
+
+  #form-title {
+    font-size: 28px;
+
+    font-weight: 600;
+    letter-spacing: -1px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-left: 30px;
+  }
+
+  .form-item {
+    min-width: 18rem;
+  }
+}
+
+@media screen and (max-width: 840px) {
+  #form {
+    flex-direction: column;
+    width: auto;
+  }
+}
+
+#toolbar-title {
+  font-size: 28px;
+
+  font-weight: 600;
+  letter-spacing: -1px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
+}

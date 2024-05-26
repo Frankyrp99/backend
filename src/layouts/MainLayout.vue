@@ -1,10 +1,21 @@
 <template>
   <q-layout view="hHh LpR lfr" class="bg-color">
-    <q-header elevated class="bg-color">
+    <q-header elevated>
       <q-toolbar class="bg-color">
-        <q-btn dense flat round icon="menu" class="text-black" @click="toggleLeftDrawer" />
-
-        <q-toolbar-title class="bg-color text-black"> Articulos Científicos </q-toolbar-title>
+        <q-btn
+          dense
+          flat
+          round
+          icon="menu"
+          class="text-black"
+          @click="toggleLeftDrawer"
+        />
+        <div class="flex items-center space-x-4">
+          <q-toolbar-title class="bg-color text-black" id="toolbar-title"
+            >SIGAV</q-toolbar-title
+          >
+          <q-img src="src/assets/logo.png" alt="Logo" width="40px" />
+        </div>
 
         <q-btn-group flat dense class="row justify-end">
           <q-btn-dropdown
@@ -90,6 +101,11 @@
           <q-item clickable v-close-popup>
             <q-item-section>
               <q-item-label> Articulos por Año</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item clickable v-close-popup>
+            <q-item-section>
+              <q-item-label> Articulos por Profesor</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>

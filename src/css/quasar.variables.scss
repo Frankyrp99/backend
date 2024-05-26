@@ -10,7 +10,7 @@
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 $primary: #1976D2;
 $secondary: #26A69A;
-$accent: #9C27B0;
+$accent: #fdfafe;
 $dark: #1D1D1D;
 $dark-page: #121212;
 $positive: #21BA45;
@@ -25,4 +25,14 @@ $color-start: #fff1eb;
 $color-end: #ace0f9;
 .bg-color {
     background-image: linear-gradient(to top, $color-start 0%, $color-end 100%);
+}
+.titulos{
+  font-size: 28px;
+
+  font-weight: 600;
+  letter-spacing: -1px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
 }

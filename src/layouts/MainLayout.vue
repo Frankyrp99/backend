@@ -40,12 +40,12 @@
     >
       <q-expansion-item label="Avales de Publicación">
         <q-list>
-          <q-item to="recursos" clickable v-close-popup>
+          <q-item to="/crear_aval_public" clickable v-close-popup>
             <q-item-section>
               <q-item-label> Crear Aval de Publicación</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item to="lista_avales" clickable v-close-popup>
+          <q-item to="/lista_avales" clickable v-close-popup>
             <q-item-section>
               <q-item-label> Listar Avales de Publicación</q-item-label>
             </q-item-section>

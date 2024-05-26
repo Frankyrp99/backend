@@ -14,7 +14,7 @@
           size="md"
           flat
           dense
-          @click="onItemClick"
+        
           to="lista_avales"
         />
         <q-input dense outlined v-model="search" placeholder="Buscar" />

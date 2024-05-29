@@ -3,48 +3,84 @@ import { RouteRecordRaw } from 'vue-router';
 const routes: RouteRecordRaw[] = [
   //avales de publicacion///////////////////////////////////////////////////////
   {
-    path: '/',
+    path: '/home',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', name: 'ListaAvales', component: () => import('src/pages/HomePage.vue') }],
-
+    children: [
+      {
+        path: '',
+        name: 'ListaAvales',
+        component: () => import('src/pages/HomePage.vue'),
+      },
+    ],
   },
   {
     path: '/lista_avales',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', name: 'ListaAvales', component: () => import('src/pages/AvalesPublic/ListaAvales.vue') }],
-
+    children: [
+      {
+        path: '',
+        name: 'ListaAvales',
+        component: () => import('src/pages/AvalesPublic/ListaAvales.vue'),
+      },
+    ],
   },
   {
     path: '/detalles',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', name:'detalles', component: () => import('src/pages/AvalesPublic/DetallesPage.vue') }],
+    children: [
+      {
+        path: '',
+        name: 'detalles',
+        component: () => import('src/pages/AvalesPublic/DetallesPage.vue'),
+      },
+    ],
   },
   {
-    path:'/show/:id',
+    path: '/show/:id',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', name:'show', component: () => import('src/pages/AvalesPublic/ShowPage.vue') }],
+    children: [
+      {
+        path: '',
+        name: 'show',
+        component: () => import('src/pages/AvalesPublic/ShowPage.vue'),
+      },
+    ],
   },
   {
     path: '/crear_aval_public',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('src/pages/AvalesPublic/FormAvalPublic.vue') }],
+    children: [
+      {
+        path: '',
+        component: () => import('src/pages/AvalesPublic/FormAvalPublic.vue'),
+      },
+    ],
   },
-//login////////////////////////////////////////////////////
+  //login////////////////////////////////////////////////////
   {
-    path: '/login',
+    path: '/',
     component: () => import('layouts/LoginLayout.vue'),
-    children: [{ path: '', component: () => import('src/pages/LoginPage.vue') }],
+    children: [
+      { path: '', component: () => import('src/pages/LoginPage.vue') },
+    ],
   },
   //userss//////////////////////////////////////////////////////
   {
     path: '/user',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('src/pages/users/UserPage.vue') }],
+    children: [
+      { path: '', component: () => import('src/pages/users/UserPage.vue') },
+    ],
   },
   {
     path: '/NuevoUsuario',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('src/pages/users/CreateUserPage.vue') }],
+    children: [
+      {
+        path: '',
+        component: () => import('src/pages/users/CreateUserPage.vue'),
+      },
+    ],
   },
 
   // Always leave this as last one,

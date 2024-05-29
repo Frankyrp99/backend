@@ -1,8 +1,14 @@
 <template>
   <q-page>
     <div class="flex justify-center items-center" style="height: 130vh">
-      <q-form @submit="onSubmit" class="q-gutter-md flex flex-row flex-wrap justify-between bg-color" id="form">
-        <h4 id="form-title"> Nuevo Aval de Publicación</h4>
+      <q-form
+        @submit="onSubmit"
+        class="q-gutter-md flex flex-row flex-wrap justify-between bg-color"
+        id="form"
+      >
+        <div class="text-center">
+          <h4 id="form-title">Nuevo Aval de Publicación</h4>
+        </div>
         <q-input
           filled
           v-model="form.nombre"
@@ -83,123 +89,192 @@
         />
         <q-checkbox v-model="form.cdrom_dvd" label="CDROM/DVD" />
         <q-checkbox v-model="form.base_de_datos" label="Base de Datos" />
-       
+
         <q-input filled v-model="form.url" label="URL" />
-        <q-input filled v-model="form.tomo" label="Tomo" :rules="tomoRules" />
+        <q-input
+          filled
+          v-model="form.tomo"
+          label="Tomo"
+          :rules="[
+            (val) => (val && val.trim().length > 0) || 'Tomo es requerido',
+            (val) => /^\d+$/.test(val) || 'Solo se permiten números',
+          ]"
+        />
         <q-input
           filled
           v-model="form.folio"
           label="Folio"
           class="form-item"
-          :rules="folioRules"
+          :rules="[
+            (val) => (val && val.trim().length > 0) || 'Folio es requerido',
+            (val) => /^\d+$/.test(val) || 'Solo se permiten números',
+          ]"
         />
+
         <div>
-          <q-btn flat rounded label="Guardar" type="submit" class="form-item" color="primary" />
-          <q-btn flat rounded label="Exportar a PDF" class="form-item" @click="exportToPDF" />
+          <q-btn
+            flat
+            rounded
+            label="Guardar"
+            type="submit"
+            class="form-item"
+            color="primary"
+          />
+          <q-btn
+            flat
+            rounded
+            label="Exportar a PDF"
+            class="form-item"
+            @click="exportToPDF"
+          />
         </div>
       </q-form>
     </div>
   </q-page>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, reactive, watch } from 'vue';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-export default {
-  data() {
-    return {
-      form: {
-        nombre: '',
-        apellidos: '',
-        titulo_recurso: '',
-        departamento: '',
-        lugar_pub: '',
-        tomo: '',
-        folio: '',
-        tipo_publicacion: '',
-        issn: '',
-        e_issn: '',
-        isbn: '',
-        cdrom_dvd: false,
-        base_de_datos: false,
-        url: '',
-        tipo_recurso: '',
-      },
-      tiposPublicacion: [
-        'revistaImpresa',
-        'revistaDigital',
-        'libroImpreso',
-        'libroDigital',
-      ],
-      tiposRecurso: ['articulo', 'libro', 'capitulo', 'epigrafe'],
-      nombreRules: [(v) => !!v || 'El Nombre es requerido'],
-      apellidosRules: [(v) => !!v || 'Los Apellidos son requeridos'],
-      titulo_recursoRules: [(v) => !!v || 'El Titulo es requerido'],
-      departamentoRules: [
-        (v) => !!v || 'El Departamentode Trabajo es requerido',
-      ],
-      lugarpubRules: [(v) => !!v || 'El Lugar de la Publicación es requerido'],
-      tipo_recursoRules: [(v) => !!v || 'El Tipo de Recurso es requerido'],
-      tipoPubRules: [(v) => !!v || 'El Tipo de Publicación es requerido'],
-      issnRules: [(v) => !!v || 'El ISSN es requerido'],
-      eissnRules: [(v) => !!v || 'El E-ISSN es requerido'],
-      isbnRules: [(v) => !!v || 'El ISBN es requerido'],
-      tomoRules: [(v) => !!v || 'El Tomo es requerido'],
-      folioRules: [(v) => !!v || 'El Folio es requerido'],
-    };
-  },
-  watch: {
-    'form.url': function (newVal) {
-      let modifiedUrl = newVal;
-      if (!newVal.startsWith('http://') && !newVal.startsWith('https://')) {
-        modifiedUrl = 'https://' + newVal;
-      }
-      if (modifiedUrl !== newVal) {
-        this.form.url = modifiedUrl;
-      }
-    },
-  },
-  methods: {
-    onSubmit() {
-      if (
-        !this.form.nombre ||
-        !this.form.apellidos ||
-        !this.form.titulo_recurso
-      ) {
-        this.errorMessage = 'Por favor, completa todos los campos requeridos.';
-        return;
-      }
 
-      axios
-        .post('http://127.0.0.1:8000/api/profesores/', this.form)
-        .then((response) => {
-          // Manejo exitoso
-          console.log('Formulario enviado con éxito:', response.data);
-          this.$router.push({ name: 'HomePage' });
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 400) {
-            this.errorMessage =
-              error.response.data.detail ||
-              'Hubo un error al enviar el formulario.';
-          } else {
-            this.errorMessage =
-              'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.';
-          }
-          console.error('Error al enviar el formulario:', error);
-          // Aquí puedes mostrar un mensaje de error al usuario
-        });
-    },
-    exportToPDF() {
-      const formElement = document.getElementById('form'); // Asegúrate de que tu formulario tenga un ID
-      html2canvas(formElement).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF();
-        pdf.addImage(imgData, 'PNG', 10, 10);
-        pdf.save(`${this.form.titulo_recurso}.pdf`);
-      });
-    },
+// Definición de tipos para el formulario
+interface Form {
+  nombre: string;
+  apellidos: string;
+  titulo_recurso: string;
+  departamento: string;
+  lugar_pub: string;
+  tomo: string;
+  folio: string;
+  tipo_publicacion: string;
+  issn: string;
+  e_issn: string;
+  isbn: string;
+  cdrom_dvd: boolean;
+  base_de_datos: boolean;
+  url: string;
+  tipo_recurso: string;
+}
+
+// Definición de tipos para reglas de validación
+type Rule = (value: string) => boolean | string;
+
+// Inicialización del estado reactivo
+const form = reactive<Form>({
+  nombre: '',
+  apellidos: '',
+  titulo_recurso: '',
+  departamento: '',
+  lugar_pub: '',
+  tomo: '',
+  folio: '',
+  tipo_publicacion: '',
+  issn: '',
+  e_issn: '',
+  isbn: '',
+  cdrom_dvd: false,
+  base_de_datos: false,
+  url: '',
+  tipo_recurso: '',
+});
+
+const tiposPublicacion: string[] = [
+  'revistaImpresa',
+  'revistaDigital',
+  'libroImpreso',
+  'libroDigital',
+];
+
+const tiposRecurso: string[] = ['articulo', 'libro', 'capitulo', 'epigrafe'];
+
+// Reglas de validación
+const nombreRules: Rule[] = [(v) => !!v || 'El Nombre es requerido'];
+const apellidosRules: Rule[] = [(v) => !!v || 'Los Apellidos son requeridos'];
+const titulo_recursoRules: Rule[] = [(v) => !!v || 'El Titulo es requerido'];
+const departamentoRules: Rule[] = [
+  (v) => !!v || 'El Departamentode Trabajo es requerido',
+];
+const lugarpubRules: Rule[] = [
+  (v) => !!v || 'El Lugar de la Publicación es requerido',
+];
+const tipo_recursoRules: Rule[] = [
+  (v) => !!v || 'El Tipo de Recurso es requerido',
+];
+const tipoPubRules: Rule[] = [
+  (v) => !!v || 'El Tipo de Publicación es requerido',
+];
+const issnRules: Rule[] = [(v) => !!v || 'El ISSN es requerido'];
+const eissnRules: Rule[] = [(v) => !!v || 'El E-ISSN es requerido'];
+const isbnRules: Rule[] = [(v) => !!v || 'El ISBN es requerido'];
+
+watch(
+  () => form.url,
+  (newVal) => {
+    let modifiedUrl = newVal;
+    if (!newVal.startsWith('http://') && !newVal.startsWith('https://')) {
+      modifiedUrl = 'https://' + newVal;
+    }
+    if (modifiedUrl !== newVal) {
+      form.url = modifiedUrl;
+    }
   },
-};
+  { immediate: true }
+);
+
+function onSubmit() {
+  if (!form.nombre || !form.apellidos || !form.titulo_recurso) {
+    errorMessage.value = 'Por favor, completa todos los campos requeridos.';
+    return;
+  }
+
+  axios
+    .post('http://127.0.0.1:8000/api/profesores/', form)
+    .then((response) => {
+      console.log('Formulario enviado con éxito:', response.data);
+      $router.push({ name: 'HomePage' });
+    })
+    .catch((error) => {
+      if (error.response && error.response.status === 400) {
+        errorMessage.value =
+          error.response.data.detail ||
+          'Hubo un error al enviar el formulario.';
+      } else {
+        errorMessage.value =
+          'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.';
+      }
+      console.error('Error al enviar el formulario:', error);
+    });
+}
+
+function exportToPDF() {
+  // Asegúrate de que 'form' esté definido y accesible aquí
+  const formElement = document.getElementById('form');
+  if (!formElement) {
+    console.error('No se encontró el elemento del formulario');
+    return;
+  }
+
+  html2canvas(formElement)
+    .then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF();
+      pdf.addImage(imgData, 'PNG', 10, 10);
+      // Asegúrate de que 'form.titulo_recurso' esté definido
+      if (form.titulo_recurso) {
+        pdf.save(`${form.titulo_recurso}.pdf`);
+      } else {
+        console.error(
+          "El campo 'titulo_recurso' no está definido en el formulario"
+        );
+      }
+    })
+    .catch((error) => {
+      console.error('Error al generar el PDF:', error);
+    });
+}
+
+// Declaración de variables reactivas adicionales si es necesario
+const errorMessage = ref('');
 </script>

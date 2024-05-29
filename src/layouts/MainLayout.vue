@@ -10,12 +10,11 @@
           class="text-black"
           @click="toggleLeftDrawer"
         />
-        <div class="flex items-center space-x-4">
-          <q-toolbar-title class="bg-color text-black" id="toolbar-title"
-            >SIGAV</q-toolbar-title
-          >
-          <q-img src="src/assets/logo.png" alt="Logo" width="40px" />
-        </div>
+        <q-avatar>
+          <img src="src/assets/logo.png" />
+        </q-avatar>
+
+        <q-toolbar-title class="text-black text-bold">SIGAV</q-toolbar-title>
 
         <q-btn-group flat dense class="row justify-end">
           <q-btn-dropdown
@@ -49,67 +48,7 @@
       elevated
       class="bg-color text-black"
     >
-      <q-expansion-item label="Avales de Publicación">
-        <q-list>
-          <q-item to="/crear_aval_public" clickable v-close-popup>
-            <q-item-section>
-              <q-item-label> Crear Aval de Publicación</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item to="/lista_avales" clickable v-close-popup>
-            <q-item-section>
-              <q-item-label> Listar Avales de Publicación</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-expansion-item>
-      <q-expansion-item label="Avales de Tutorias">
-        <q-list>
-          <q-item clickable v-close-popup>
-            <q-item-section>
-              <q-item-label> Crear Aval de Tutoria</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item clickable v-close-popup>
-            <q-item-section>
-              <q-item-label> Listar Avales de Tutoria</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-expansion-item>
-      <q-expansion-item label="Avales de Bibliografía">
-        <q-list>
-          <q-item clickable v-close-popup>
-            <q-item-section>
-              <q-item-label> Crear Aval de Bibliografía</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item clickable v-close-popup>
-            <q-item-section>
-              <q-item-label> Listar Avales de Bibliografía</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-expansion-item>
-      <q-expansion-item label="Reportes">
-        <q-list>
-          <q-item clickable v-close-popup>
-            <q-item-section>
-              <q-item-label> Articulos por Departamento</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item clickable v-close-popup>
-            <q-item-section>
-              <q-item-label> Articulos por Año</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item clickable v-close-popup>
-            <q-item-section>
-              <q-item-label> Articulos por Profesor</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-expansion-item>
+      <drawer-component />
     </q-drawer>
 
     <q-page-container>
@@ -118,8 +57,8 @@
   </q-layout>
 </template>
 
-
 <script setup lang="ts">
+import DrawerComponent from 'src/components/DrawerComponent.vue';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -137,10 +76,8 @@ const fetchUserData = async () => {
         'Content-Type': 'application/json',
       },
     };
-    const response = await axios.get(
-      'http://127.0.0.1:8000/api/users/',
-      config
-    );
+    // Realiza la petición a /api/users sin especificar la URL completa
+    const response = await axios.get('/api/users', config);
     user.value.role = response.data.role;
   } catch (error) {
     console.error('Error al obtener los datos del usuario:', error);
@@ -149,11 +86,11 @@ const fetchUserData = async () => {
 
 const logout = () => {
   localStorage.removeItem('authToken');
-  router.push('/login');
+  router.push('/');
 };
 
 const toggleLeftDrawer = () => {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
+  leftDrawerOpen.value =!leftDrawerOpen.value;
 };
 
 onMounted(fetchUserData);

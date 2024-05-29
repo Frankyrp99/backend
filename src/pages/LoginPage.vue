@@ -88,7 +88,7 @@ const onSubmit = async () => {
     // Almacenar el token en el almacenamiento local
     localStorage.setItem('authToken', token);
 
-    router.push('/');
+    router.push('/home');
   } catch (error) {
     errorMessage.value = 'Correo electrónico o Contraseña incorrectos.';
 

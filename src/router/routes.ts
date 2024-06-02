@@ -8,19 +8,19 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
-        name: 'ListaAvales',
+        name: 'home',
         component: () => import('src/pages/HomePage.vue'),
       },
     ],
   },
   {
-    path: '/lista_avales',
+    path: '/lista_avales_public',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
         path: '',
-        name: 'ListaAvales',
-        component: () => import('src/pages/AvalesPublic/ListaAvales.vue'),
+        name: 'ListaAvalesPublic',
+        component: () => import('src/pages/AvalesPublic/ListaAvalesPublic.vue'),
       },
     ],
   },
@@ -53,6 +53,50 @@ const routes: RouteRecordRaw[] = [
       {
         path: '',
         component: () => import('src/pages/AvalesPublic/FormAvalPublic.vue'),
+      },
+    ],
+  },
+   //avales de tutorias///////////////////////////////////////////////////////
+   {
+    path: '/lista_avales_tuto',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'ListaAvalesTuto',
+        component: () => import('src/pages/AvalesTuto/ListaAvalesTuto.vue'),
+      },
+    ],
+  },
+  {
+    path: '/detallestuto',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'DetallesTuto',
+        component: () => import('src/pages/AvalesTuto/DetallesPageTuto.vue'),
+      },
+    ],
+  },
+  {
+    path: '/showtuto/:id',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'ShowTuto',
+        component: () => import('src/pages/AvalesTuto/ShowPageTuto.vue'),
+      },
+    ],
+  },
+  {
+    path: '/crear_aval_tuto',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('src/pages/AvalesTuto/FormAvalTuto.vue'),
       },
     ],
   },

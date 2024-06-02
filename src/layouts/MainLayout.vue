@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh LpR lfr" class="bg-color">
     <q-header elevated>
-      <q-toolbar class="bg-color">
+      <q-toolbar class="bg-color ">
         <q-btn
           dense
           flat
@@ -10,8 +10,8 @@
           class="text-black"
           @click="toggleLeftDrawer"
         />
-        <q-avatar>
-          <img src="src/assets/logo.png" />
+        <q-avatar size="50px">
+          <img src="src/assets/logotoolbar.png" />
         </q-avatar>
 
         <q-toolbar-title class="text-black text-bold">SIGAV</q-toolbar-title>
@@ -51,6 +51,15 @@
       <drawer-component />
     </q-drawer>
 
+    <div class="container">
+      <img
+        src="/src/assets/logo.png"
+        alt="Descripción de la imagen"
+        class="centered-image"
+        width="400"
+      />
+    </div>
+
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -76,8 +85,8 @@ const fetchUserData = async () => {
         'Content-Type': 'application/json',
       },
     };
-    // Realiza la petición a /api/users sin especificar la URL completa
-    const response = await axios.get('/api/users', config);
+
+    const response = await axios.get('http://127.0.0.1:8000/api/users', config);
     user.value.role = response.data.role;
   } catch (error) {
     console.error('Error al obtener los datos del usuario:', error);
@@ -95,3 +104,23 @@ const toggleLeftDrawer = () => {
 
 onMounted(fetchUserData);
 </script>
+
+<style scoped>
+.container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Asegura que la imagen esté detrás de otros contenidos */
+  opacity: 0.7; /* Ajusta la opacidad de la imagen */
+}
+
+.centered-image {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 1; /* Asegura que la imagen centrada sea completamente opaca */
+}
+</style>

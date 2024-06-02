@@ -94,6 +94,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { api } from 'src/boot/axios';
 
 const search = ref('');
 const rows = ref([]);
@@ -148,14 +149,13 @@ const columns = [
 ];
 onMounted(async () => {
   try {
-    const response = await axios.get('/api/profesores/');
-    console.log('Datos obtenidos con éxito:', response.data.results);
+    const response = await axios.get('http://127.0.0.1:8000/api/profesores/');
+    console.log('Formulario enviado con éxito:', response.data.results);
     rows.value = response.data.results;
   } catch (error) {
-    console.error('Error al obtener los datos:', error);
+    console.error('Error al obtener los datos de los profesores:', error);
   }
 });
-
 const editDialogOpen = ref(false);
 const editForm = ref({
   nombre: '',
@@ -167,16 +167,18 @@ const editForm = ref({
   folio: '',
 });
 const selectedRow = ref(null);
-
-const editRow = (row) => {
+//boton editar
+const editRow = (row: null) => {
   selectedRow.value = row;
-  editForm.value = {...row };
+  editForm.value = { ...row };
   editDialogOpen.value = true;
 };
-
 const saveEdit = async () => {
   try {
-    await axios.put(`/api/profesores/${selectedRow.value.id}/`, editForm.value);
+    await axios.put(
+      `http://127.0.0.1:8000/api/profesores/${selectedRow.value.id}/`,
+      editForm.value
+    );
     console.log('Recurso actualizado con éxito');
 
     editDialogOpen.value = false;
@@ -184,18 +186,18 @@ const saveEdit = async () => {
     console.error('Error al actualizar el recurso:', error);
   }
 };
-
-const showRow = (row) => {
+//boton mostrar
+const showRow = (row: null) => {
   console.log('Mostrando detalles del recurso:', row);
   router.push({ name: 'show', params: { id: row.id } });
 };
-
-const deleteRow = async (row) => {
+// boton eliminar
+const deleteRow = async (row: { id: null }) => {
   try {
-    await axios.delete(`/api/profesores/${row.id}/`);
+    await axios.delete(`http://127.0.0.1:8000/api/profesores/${row.id}/`);
     console.log('Recurso eliminado con éxito');
 
-    rows.value = rows.value.filter((item) => item.id!== row.id);
+    rows.value = rows.value.filter((item) => item.id !== row.id);
   } catch (error) {
     console.error('Error al eliminar el recurso:', error);
   }

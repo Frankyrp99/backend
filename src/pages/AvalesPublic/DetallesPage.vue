@@ -7,7 +7,7 @@
       row-key="name"
       :filter="search"
       pidap
-    
+
     >
       <template v-slot:top-right>
         <q-btn
@@ -16,7 +16,7 @@
           flat
           dense
 
-          to="lista_avales"
+          to="lista_avales_public"
         />
         <q-input dense outlined v-model="search" placeholder="Buscar" />
       </template>

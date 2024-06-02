@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-center items-center" style="height: 130vh">
-    <q-form @submit="onSubmit" class="q-gutter-md" id="form">
-      <h4>Nuevo Usuario</h4>
+    <q-form @submit="onSubmit" class="q-gutter-md bg-color" id="form">
+      <h4 class=" text-bold">Nuevo Usuario</h4>
       <q-input
         filled
         v-model="form.nombre"

@@ -4,6 +4,7 @@
       v-for="category in categories"
       :key="category.title"
       :label="category.title"
+      class="text-bold"
     >
       <q-list>
         <q-item
@@ -12,6 +13,7 @@
           :to="item.route"
           clickable
           v-close-popup
+          class="text-bold"
         >
           <q-item-section>
             <q-item-label>{{ item.label }}</q-item-label>
@@ -38,25 +40,25 @@ const categories: Category[] = [
     title: 'Avales de Publicación',
     items: [
       { label: 'Crear Aval de Publicación', route: '/crear_aval_public' },
-      { label: 'Listar Avales de Publicación', route: '/lista_avales' },
+      { label: 'Listar Avales de Publicación', route: '/lista_avales_public' },
     ],
   },
   {
     title: 'Avales de Tutorias',
     items: [
-      { label: 'Crear Aval de Tutoria', route: '/crear_aval_tutoria' },
-      { label: 'Listar Avales de Tutoria', route: '/lista_avales_tutoria' },
+      { label: 'Crear Aval de Tutoria', route: '/crear_aval_tuto' },
+      { label: 'Listar Avales de Tutorias', route: '/lista_avales_tuto' },
     ],
   },
   {
-    title: 'Avales de Bibliografía',
+    title: 'Avales de Bibliografias',
     items: [
       {
         label: 'Crear Aval de Bibliografía',
         route: '/crear_aval_bibliografia',
       },
       {
-        label: 'Listar Avales de Bibliografía',
+        label: 'Listar Avales de Bibliografias',
         route: '/lista_avales_bibliografia',
       },
     ],

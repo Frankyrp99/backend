@@ -2,14 +2,15 @@
   <q-page>
     <div class="container">
       <img
-        src="/src/assets/logo.jpg"
+        src="/src/assets/logo.png"
         alt="Descripción de la imagen"
         class="centered-image"
+        width="400"
       />
     </div>
   </q-page>
 </template>
- 
+
  <style scoped>
 .container {
   display: flex;
@@ -23,4 +24,3 @@
   height: auto; /* Mantiene la proporción de la imagen */
 }
 </style>
- 

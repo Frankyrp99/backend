@@ -6,7 +6,7 @@
       </q-card-section>
 
       <q-card-section>
-        <q-form @submit="onSubmit"  class="q-gutter-md">
+        <q-form @submit="onSubmit" class="q-gutter-md">
           <q-input
             filled
             v-model="email"
@@ -40,7 +40,6 @@
               type="submit"
               color="primary"
             />
-
           </div>
         </q-form>
       </q-card-section>
@@ -61,6 +60,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
@@ -70,8 +70,10 @@ const router = useRouter();
 const showErrorDialog = ref(false);
 const errorMessage = ref('');
 
+
+
 const onSubmit = async () => {
-  if (!email.value || !password.value) {
+  if (!email.value ||!password.value) {
     errorMessage.value = 'Por favor, complete todos los campos.';
     showErrorDialog.value = true;
     return;
@@ -88,14 +90,15 @@ const onSubmit = async () => {
     // Almacenar el token en el almacenamiento local
     localStorage.setItem('authToken', token);
 
+
     router.push('/home');
   } catch (error) {
     errorMessage.value = 'Correo electrónico o Contraseña incorrectos.';
-
     showErrorDialog.value = true;
     console.error('Error al iniciar sesión:', error);
   }
 };
+
 </script>
 
 <style scoped>

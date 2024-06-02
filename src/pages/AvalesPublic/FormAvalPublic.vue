@@ -110,6 +110,23 @@
             (val) => /^\d+$/.test(val) || 'Solo se permiten números',
           ]"
         />
+        <q-input filled readonly  v-model="form.fecha" label="Fecha" :rules="fechaRules">
+          <template v-slot:append>
+            <q-icon name="event" class="cursor-pointer">
+              <q-popup-proxy
+                cover
+                transition-show="scale"
+                transition-hide="scale"
+              >
+                <q-date v-model="form.fecha" mask="YYYY-MM-DD">
+                  <div class="row items-center justify-end">
+                    <q-btn v-close-popup label="Cerrar" color="primary" flat />
+                  </div>
+                </q-date>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
 
         <div>
           <q-btn
@@ -135,6 +152,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -156,6 +174,7 @@ interface Form {
   base_de_datos: boolean;
   url: string;
   tipo_recurso: string;
+  fecha: string;
 }
 
 // Definición de tipos para reglas de validación
@@ -178,6 +197,7 @@ const form = reactive<Form>({
   base_de_datos: false,
   url: '',
   tipo_recurso: '',
+  fecha: '',
 });
 
 const tiposPublicacion: string[] = [
@@ -189,6 +209,7 @@ const tiposPublicacion: string[] = [
 
 const tiposRecurso: string[] = ['articulo', 'libro', 'capitulo', 'epigrafe'];
 
+const router = useRouter();
 // Reglas de validación
 const nombreRules: Rule[] = [(v) => !!v || 'El Nombre es requerido'];
 const apellidosRules: Rule[] = [(v) => !!v || 'Los Apellidos son requeridos'];
@@ -196,6 +217,7 @@ const titulo_recursoRules: Rule[] = [(v) => !!v || 'El Titulo es requerido'];
 const departamentoRules: Rule[] = [
   (v) => !!v || 'El Departamentode Trabajo es requerido',
 ];
+const fechaRules: Rule[] = [(v) => !!v || 'La Fecha es requerida'];
 const lugarpubRules: Rule[] = [
   (v) => !!v || 'El Lugar de la Publicación es requerido',
 ];
@@ -229,13 +251,12 @@ function onSubmit() {
     return;
   }
 
-  axios
-    .post('http://127.0.0.1:8000/api/profesores/', form)
-    .then((response) => {
+  axios.post('http://127.0.0.1:8000/api/profesores/', form)
+   .then((response) => {
       console.log('Formulario enviado con éxito:', response.data);
-      $router.push({ name: 'HomePage' });
+      router.push({ name: 'ListaAvalesPublic' });
     })
-    .catch((error) => {
+   .catch((error) => {
       if (error.response && error.response.status === 400) {
         errorMessage.value =
           error.response.data.detail ||

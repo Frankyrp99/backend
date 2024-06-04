@@ -54,15 +54,15 @@
       </template>
     </q-table>
     <q-dialog v-model="editDialogOpen">
-      <q-card>
+      <q-card style="width: 400px">
         <q-card-section>
           <div class="text-h6">Editar Recurso</div>
         </q-card-section>
 
         <q-card-section>
-          <q-input v-model="editForm.nombre" label="Nombre" />
-          <q-input v-model="editForm.apellidos" label="Apellidos" />
-          <q-input
+          <q-input autogrow v-model="editForm.nombre" label="Nombre" />
+          <q-input autogrow v-model="editForm.apellidos" label="Apellidos" />
+          <q-input autogrow
             v-model="editForm.titulo_recurso"
             label="Titulo del Recurso"
           />
@@ -70,7 +70,7 @@
             v-model="editForm.departamento"
             label="Departamento de Trabajo"
           />
-          <q-input v-model="editForm.lugar_pub" label="Lugar de Publicacion" />
+          <q-input autogrow v-model="editForm.lugar_pub" label="Lugar de Publicacion" />
           <q-input v-model="editForm.tomo" label="Tomo" />
           <q-input v-model="editForm.folio" label="Folio" />
         </q-card-section>
@@ -94,7 +94,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import { api } from 'src/boot/axios';
+
 
 const search = ref('');
 const rows = ref([]);
@@ -114,6 +114,7 @@ const columns = [
     required: true,
     label: ' Apellidos',
     field: 'apellidos',
+    align: null,
     filter: true,
     sortable: true,
   },

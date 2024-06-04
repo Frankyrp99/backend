@@ -1,15 +1,17 @@
 <template>
   <q-page>
-    <div class="flex justify-center items-center" style="height: 130vh">
+    <div class="column justify-center items-center">
+      <div style="margin-top: 20px; margin-bottom: 20px">
+        <h4 class="text-bold">Nuevo Aval de Tutorias</h4>
+      </div>
       <q-form
         @submit="onSubmit"
-        class="q-gutter-md flex flex-row flex-wrap justify-between bg-color"
+        class="q-gutter-md flex flex-wrap justify-between bg-color"
         id="form"
       >
-        <div class="text-center">
-          <h4 id="form-title">Nuevo Aval de Tutorias</h4>
-        </div>
         <q-input
+          style="max-width: 300px"
+          autogrow
           filled
           v-model="form.nombre"
           label="Nombre"
@@ -17,6 +19,8 @@
           :rules="nombreRules"
         />
         <q-input
+          style="max-width: 300px"
+          autogrow
           filled
           v-model="form.apellidos"
           label="Apellidos"
@@ -24,6 +28,8 @@
           :rules="apellidosRules"
         />
         <q-input
+          style="max-width: 300px"
+          autogrow
           filled
           v-model="form.titulo_recurso"
           label="Título del Recurso"
@@ -37,7 +43,6 @@
           class="form-item"
           :rules="departamentoRules"
         />
-
         <q-input
           filled
           v-model="form.tomo"
@@ -58,7 +63,13 @@
           ]"
         />
 
-        <q-input filled readonly  v-model="form.fecha" label="Fecha" :rules="fechaRules">
+        <q-input
+          filled
+          readonly
+          v-model="form.fecha"
+          label="Fecha"
+          :rules="fechaRules"
+        >
           <template v-slot:append>
             <q-icon name="event" class="cursor-pointer">
               <q-popup-proxy
@@ -66,7 +77,7 @@
                 transition-show="scale"
                 transition-hide="scale"
               >
-                <q-date v-model="form.fecha" mask="YYYY-MM-DD" >
+                <q-date v-model="form.fecha" mask="YYYY-MM-DD">
                   <div class="row items-center justify-end">
                     <q-btn v-close-popup label="Cerrar" color="primary" flat />
                   </div>
@@ -75,35 +86,27 @@
             </q-icon>
           </template>
         </q-input>
-
-        <div>
-          <q-btn
-            flat
-            rounded
-            label="Guardar"
-            type="submit"
-            class="form-item"
-            color="primary"
-          />
-          <q-btn
-            flat
-            rounded
-            label="Exportar a PDF"
-            class="form-item"
-            @click="exportToPDF"
-          />
-        </div>
+        <div class="row justify-center items-center">
+        <q-btn
+          flat
+          rounded
+          label="Guardar"
+          type="submit"
+          class="form-item"
+          color="primary"
+          style="margin-top: 20px; margin-bottom: 20px"
+        />
+      </div>
       </q-form>
+   
     </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive,watch } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 // Definición de tipos para el formulario
 interface Form {
@@ -130,15 +133,52 @@ const form = reactive<Form>({
   fecha: '',
 });
 const router = useRouter();
+function capitalizeWords(text: string): string {
+  return text
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+watch(
+  () => form.nombre,
+  (newValue) => {
+    form.nombre = capitalizeWords(newValue);
+  },
+  { deep: true }
+);
+
+watch(
+  () => form.apellidos,
+  (newValue) => {
+    form.apellidos = capitalizeWords(newValue);
+  },
+  { deep: true }
+);
+
+
 
 // Reglas de validación
-const nombreRules: Rule[] = [(v) => !!v || 'El Nombre es requerido'];
-const apellidosRules: Rule[] = [(v) => !!v || 'Los Apellidos son requeridos'];
-const titulo_recursoRules: Rule[] = [(v) => !!v || 'El Titulo es requerido'];
+const nombreRules: Rule[] = [
+  (v) => !!v || 'El Nombre es requerido',
+  (v) => v.length <= 50 || 'El nombre excede el límite de 100 caracteres',
+];
+const apellidosRules: Rule[] = [
+  (v) => !!v || 'Los Apellidos son requeridos',
+  (v) => v.length <= 50 || 'Los apellidos exceden el límite de 100 caracteres',
+];
+const titulo_recursoRules: Rule[] = [
+  (v) => !!v || 'El Título del Recurso es requerido',
+  (v) =>
+    v.length <= 500 ||
+    'El título del recurso excede el límite de 500 caracteres',
+];
 const departamentoRules: Rule[] = [
-  (v) => !!v || 'El Departamentode Trabajo es requerido',
+  (v) => !!v || 'El Departamento de Trabajo es requerido',
+  (v) =>
+    v.length <= 200 || 'El departamento excede el límite de 200 caracteres',
 ];
 const fechaRules: Rule[] = [(v) => !!v || 'La Fecha es requerida'];
+
 
 function onSubmit() {
   if (!form.nombre || !form.apellidos || !form.titulo_recurso) {
@@ -162,33 +202,6 @@ function onSubmit() {
           'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.';
       }
       console.error('Error al enviar el formulario:', error);
-    });
-}
-
-function exportToPDF() {
-  // Asegúrate de que 'form' esté definido y accesible aquí
-  const formElement = document.getElementById('form');
-  if (!formElement) {
-    console.error('No se encontró el elemento del formulario');
-    return;
-  }
-
-  html2canvas(formElement)
-    .then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF();
-      pdf.addImage(imgData, 'PNG', 10, 10);
-      // Asegúrate de que 'form.titulo_recurso' esté definido
-      if (form.titulo_recurso) {
-        pdf.save(`${form.titulo_recurso}.pdf`);
-      } else {
-        console.error(
-          "El campo 'titulo_recurso' no está definido en el formulario"
-        );
-      }
-    })
-    .catch((error) => {
-      console.error('Error al generar el PDF:', error);
     });
 }
 

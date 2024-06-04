@@ -1,15 +1,18 @@
 <template>
   <q-page>
-    <div class="flex justify-center items-center" style="height: 130vh">
+    <div class="column justify-center items-center">
+      <div style="margin-top: 20px; margin-bottom: 20px">
+        <h4 class="text-bold">Nuevo Aval de Publicación</h4>
+      </div>
       <q-form
         @submit="onSubmit"
-        class="q-gutter-md flex flex-row flex-wrap justify-between bg-color"
+        class=" bg-color"
         id="form"
       >
-        <div class="text-center">
-          <h4 id="form-title">Nuevo Aval de Publicación</h4>
-        </div>
+      <div class="q-gutter-md flex flex-row flex-wrap justify-between">
         <q-input
+          style="max-width: 300px"
+          autogrow
           filled
           v-model="form.nombre"
           label="Nombre"
@@ -17,6 +20,8 @@
           :rules="nombreRules"
         />
         <q-input
+          style="max-width: 300px"
+          autogrow
           filled
           v-model="form.apellidos"
           label="Apellidos"
@@ -24,20 +29,71 @@
           :rules="apellidosRules"
         />
         <q-input
+          style="max-width: 300px"
+          autogrow
           filled
           v-model="form.titulo_recurso"
           label="Título del Recurso"
           class="form-item"
           :rules="titulo_recursoRules"
         />
+
         <q-input
           filled
           v-model="form.departamento"
-          label="Departamento de Trabajo"
+          label="Departamento"
           class="form-item"
+          @click="openFirstDialog"
           :rules="departamentoRules"
         />
+
+        <q-dialog v-model="firstDialog" persistent>
+          <q-card style="width: 300px">
+            <q-card-section class="text-bold">Selecciona la Facultad:</q-card-section>
+            <q-select
+              filled
+              v-model="selectedFaculty"
+              :options="faculty"
+              label="Facultades"
+              @input="selectFaculty"
+            />
+            <q-card-actions align="right">
+              <q-btn flat label="Cancel" @click="closeFirstDialog" />
+              <q-btn
+                flat
+                label="OK"
+                @click="() => selectFaculty(selectedFaculty)"
+              />
+            </q-card-actions>
+         
+          </q-card>
+        </q-dialog>
+
+        <!-- Diálogo para seleccionar departamento -->
+        <q-dialog v-model="secondDialog" persistent>
+          <q-card style="width: 300px">
+            <q-card-section class="text-bold">Selecciona un Departamento:</q-card-section>
+            <q-select
+              filled
+              v-model="selectedDepartment"
+              :options="selectedDepartmentOptions"
+              label="Departamentos"
+              @input="selectDepartment"
+            />
+            <q-card-actions align="right">
+              <q-btn flat label="Cancel" @click="closeSecondDialog" />
+              <q-btn
+                flat
+                label="OK"
+                @click="() => selectDepartment(selectedDepartment)"
+              />
+            </q-card-actions>
+           
+          </q-card>
+        </q-dialog>
         <q-input
+          style="max-width: 300px"
+          autogrow
           filled
           v-model="form.lugar_pub"
           label="Lugar de Publicación"
@@ -90,7 +146,13 @@
         <q-checkbox v-model="form.cdrom_dvd" label="CDROM/DVD" />
         <q-checkbox v-model="form.base_de_datos" label="Base de Datos" />
 
-        <q-input filled v-model="form.url" label="URL" />
+        <q-input
+          filled
+          type="url"
+          v-model="form.url"
+          label="URL"
+          :rules="urlRules"
+        />
         <q-input
           filled
           v-model="form.tomo"
@@ -110,7 +172,13 @@
             (val) => /^\d+$/.test(val) || 'Solo se permiten números',
           ]"
         />
-        <q-input filled readonly  v-model="form.fecha" label="Fecha" :rules="fechaRules">
+        <q-input
+          filled
+          readonly
+          v-model="form.fecha"
+          label="Fecha"
+          :rules="fechaRules"
+        >
           <template v-slot:append>
             <q-icon name="event" class="cursor-pointer">
               <q-popup-proxy
@@ -127,8 +195,8 @@
             </q-icon>
           </template>
         </q-input>
-
-        <div>
+      </div>
+        <div class="row justify-center items-center">
           <q-btn
             flat
             rounded
@@ -136,28 +204,20 @@
             type="submit"
             class="form-item"
             color="primary"
-          />
-          <q-btn
-            flat
-            rounded
-            label="Exportar a PDF"
-            class="form-item"
-            @click="exportToPDF"
+            style="margin-top: 20px; margin-bottom: 20px"
           />
         </div>
+      
       </q-form>
     </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
-// Definición de tipos para el formulario
 interface Form {
   nombre: string;
   apellidos: string;
@@ -176,7 +236,9 @@ interface Form {
   tipo_recurso: string;
   fecha: string;
 }
-
+interface DepartmentsByFaculty {
+  [key: string]: string[];
+}
 // Definición de tipos para reglas de validación
 type Rule = (value: string) => boolean | string;
 
@@ -210,17 +272,109 @@ const tiposPublicacion: string[] = [
 const tiposRecurso: string[] = ['articulo', 'libro', 'capitulo', 'epigrafe'];
 
 const router = useRouter();
+const errorMessage = ref('');
+const firstDialog = ref(false);
+const secondDialog = ref(false);
+const selectedFaculty = ref('');
+const selectedDepartment = ref('');
+const selectedDepartmentOptions = ref(['']);
+
+const faculty = [
+  '-Ciencias Sociales',
+  '-Ciencias Aplicadas',
+  '-Ciencias Agropecuarias',
+  '-Ciencias Económicas',
+  '-Electromecánica',
+  '-Construcciones',
+  '-Lengua y Comunicación',
+  '-Informática y Ciencias Exactas',
+  '-Ciencias Pedagógicas',
+  '-Cultura Física',
+  '-CUM',
+];
+
+const departmentsByFaculty: DepartmentsByFaculty = {
+  '-Ciencias Sociales': ['Derecho', 'Estudios Socioculturales', 'Psicología - Sociología'],
+  '-Ciencias Aplicadas': ['Alimentos', 'Educación Biología', 'Educación Geografía', 'Ingeniería Química', 'Ingeniería Industrial', 'Química', 'CEECE', 'CEGEA'],
+  '-Ciencias Agropecuarias': ['Agronomía', 'Educación Agropecuaria', 'Morfofisiología', 'Medicina Veterinaria', 'CEDEPA'],
+  '-Ciencias Económicas': ['Contabilidad', 'Economía', 'Educación Economía', 'Turismo', 'CEMTUR', 'CEDET'],
+  '-Electromecánica': ['Educación Electromecánica', 'Ingeniería Eléctrica', 'Ingeniería Mecánica', 'CEEFREP'],
+  '-Construcciones': ['Arquitectura', 'Educación Construcción', 'Ingeniería Civil', 'CECODEC'],
+  '-Lengua y Comunicación': ['Español', 'Lenguas Extranjeras', 'Periodismo y Comunicación Social', 'Centro de Idiomas'],
+  '-Informática y Ciencias Exactas': ['Educación Laboral e Informática', 'Ciencias de la Información', 'Ingeniería Informática', 'Física', 'Matemática'],
+  '-Ciencias Pedagógicas': ['Educación Artística', 'Educación Especial', 'Educación Pedagogía - Psicología', 'Formación Pedagógica General', 'Educación Preescolar', 'Educación Primaria'],
+  '-Cultura Física': ['Cultura Física', 'Ciencias Aplicadas al Deporte', 'Didáctica del Deporte', 'Educación Física y Recreación', 'CEAFIDE'],
+  '-CUM': ['Céspedes', 'Esmeralda', 'Florida', 'Guáimaro', 'Jimaguayú', 'Minas', 'Najasa', 'Nuevitas', 'Santa Cruz del Sur', 'Sibanicú', 'Sierra de Cubitas', 'Vertientes']
+};
+
+function openFirstDialog() {
+  firstDialog.value = true;
+}
+
+function closeFirstDialog() {
+  firstDialog.value = false;
+}
+
+function selectFaculty(faculty: string) {
+  closeFirstDialog();
+  selectedFaculty.value = faculty;
+  openSecondDialogWithDepartments(selectedFaculty.value);
+}
+
+function openSecondDialogWithDepartments(faculty: string) {
+  if (departmentsByFaculty[faculty]) {
+    // Corrección aquí
+    secondDialog.value = true;
+    selectedDepartment.value = '';
+    selectedDepartmentOptions.value = departmentsByFaculty[faculty]; // Y aquí
+  }
+}
+
+function closeSecondDialog() {
+  secondDialog.value = false;
+}
+
+function selectDepartment(department: string) {
+  closeSecondDialog();
+  form.departamento = department;
+}
+
+function capitalizeWords(text: string): string {
+  return text
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 // Reglas de validación
-const nombreRules: Rule[] = [(v) => !!v || 'El Nombre es requerido'];
-const apellidosRules: Rule[] = [(v) => !!v || 'Los Apellidos son requeridos'];
-const titulo_recursoRules: Rule[] = [(v) => !!v || 'El Titulo es requerido'];
+const nombreRules: Rule[] = [
+  (v) => !!v || 'El Nombre es requerido',
+  (v) => v.length <= 50 || 'El nombre excede el límite de 100 caracteres',
+];
+const apellidosRules: Rule[] = [
+  (v) => !!v || 'Los Apellidos son requeridos',
+  (v) => v.length <= 50 || 'Los apellidos exceden el límite de 100 caracteres',
+];
+const titulo_recursoRules: Rule[] = [
+  (v) => !!v || 'El Título del Recurso es requerido',
+  (v) =>
+    v.length <= 500 ||
+    'El título del recurso excede el límite de 500 caracteres',
+];
 const departamentoRules: Rule[] = [
-  (v) => !!v || 'El Departamentode Trabajo es requerido',
+  (v) => !!v || 'El Departamento de Trabajo es requerido',
+  (v) =>
+    v.length <= 200 || 'El departamento excede el límite de 200 caracteres',
 ];
-const fechaRules: Rule[] = [(v) => !!v || 'La Fecha es requerida'];
 const lugarpubRules: Rule[] = [
-  (v) => !!v || 'El Lugar de la Publicación es requerido',
+  (v) => !!v || 'El Lugar de Publicación es requerido',
+  (v) =>
+    v.length <= 100 ||
+    'El lugar de publicación excede el límite de 255 caracteres',
 ];
+
+const fechaRules: Rule[] = [(v) => !!v || 'La Fecha es requerida'];
+
 const tipo_recursoRules: Rule[] = [
   (v) => !!v || 'El Tipo de Recurso es requerido',
 ];
@@ -231,19 +385,35 @@ const issnRules: Rule[] = [(v) => !!v || 'El ISSN es requerido'];
 const eissnRules: Rule[] = [(v) => !!v || 'El E-ISSN es requerido'];
 const isbnRules: Rule[] = [(v) => !!v || 'El ISBN es requerido'];
 
+// Reglas de validación actualizadas para el campo de URL
+const urlRules: Rule[] = [
+  (val) => !!val || 'La URL es requerida',
+
+  (val) =>
+    /\.(com|cu|ru)$/i.test(val.toLowerCase()) ||
+    'La URL debe terminar con una extensión de dominio válida (.com,.cu,.ru)',
+];
+
 watch(
-  () => form.url,
-  (newVal) => {
-    let modifiedUrl = newVal;
-    if (!newVal.startsWith('http://') && !newVal.startsWith('https://')) {
-      modifiedUrl = 'https://' + newVal;
-    }
-    if (modifiedUrl !== newVal) {
-      form.url = modifiedUrl;
-    }
+  () => form.nombre,
+  (newValue) => {
+    form.nombre = capitalizeWords(newValue);
   },
-  { immediate: true }
+  { deep: true }
 );
+
+watch(
+  () => form.apellidos,
+  (newValue) => {
+    form.apellidos = capitalizeWords(newValue);
+  },
+  { deep: true }
+);
+watchEffect(() => {
+  if (form.url.trim() === '') {
+    form.url = 'http://';
+  }
+});
 
 function onSubmit() {
   if (!form.nombre || !form.apellidos || !form.titulo_recurso) {
@@ -251,12 +421,13 @@ function onSubmit() {
     return;
   }
 
-  axios.post('http://127.0.0.1:8000/api/profesores/', form)
-   .then((response) => {
+  axios
+    .post('http://127.0.0.1:8000/api/profesores/', form)
+    .then((response) => {
       console.log('Formulario enviado con éxito:', response.data);
       router.push({ name: 'ListaAvalesPublic' });
     })
-   .catch((error) => {
+    .catch((error) => {
       if (error.response && error.response.status === 400) {
         errorMessage.value =
           error.response.data.detail ||
@@ -268,34 +439,4 @@ function onSubmit() {
       console.error('Error al enviar el formulario:', error);
     });
 }
-
-function exportToPDF() {
-  // Asegúrate de que 'form' esté definido y accesible aquí
-  const formElement = document.getElementById('form');
-  if (!formElement) {
-    console.error('No se encontró el elemento del formulario');
-    return;
-  }
-
-  html2canvas(formElement)
-    .then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF();
-      pdf.addImage(imgData, 'PNG', 10, 10);
-      // Asegúrate de que 'form.titulo_recurso' esté definido
-      if (form.titulo_recurso) {
-        pdf.save(`${form.titulo_recurso}.pdf`);
-      } else {
-        console.error(
-          "El campo 'titulo_recurso' no está definido en el formulario"
-        );
-      }
-    })
-    .catch((error) => {
-      console.error('Error al generar el PDF:', error);
-    });
-}
-
-// Declaración de variables reactivas adicionales si es necesario
-const errorMessage = ref('');
 </script>

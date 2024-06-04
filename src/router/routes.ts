@@ -52,6 +52,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
+        name:'CrearAvalPublic',
         component: () => import('src/pages/AvalesPublic/FormAvalPublic.vue'),
       },
     ],

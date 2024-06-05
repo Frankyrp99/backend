@@ -1,13 +1,6 @@
 <template>
   <div>
-    <q-input
-          filled
-          v-model="form.departamento"
-          label="Departamento"
-          class="form-item"
-          @click="openFirstDialog"
-          :rules="departamentoRules"
-        />
+    
 
         <q-dialog v-model="firstDialog" persistent>
           <q-card style="width: 300px">
@@ -20,7 +13,7 @@
               @input="selectFaculty"
             />
             <q-card-actions align="right">
-              <q-btn flat label="Cancel" @click="closeFirstDialog" />
+              <q-btn flat label="Cancel" @click="handleCloseAndEmit" />
               <q-btn
                 flat
                 label="OK"
@@ -57,7 +50,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref,defineEmits } from 'vue';
+import { ref,defineEmits,defineProps } from 'vue';
+
+const props = defineProps({
+  modelValue: String,
+  departamentoRules: Array,
+  openFirstDialogAutomatically: Boolean, // Nuevo prop para controlar la apertura automática del primer diálogo
+});
 
 interface DepartmentsByFaculty {
   [key: string]: string[];
@@ -94,14 +93,24 @@ const departmentsByFaculty: DepartmentsByFaculty = {
   '-Cultura Física': ['Cultura Física', 'Ciencias Aplicadas al Deporte', 'Didáctica del Deporte', 'Educación Física y Recreación', 'CEAFIDE'],
   '-CUM': ['Céspedes', 'Esmeralda', 'Florida', 'Guáimaro', 'Jimaguayú', 'Minas', 'Najasa', 'Nuevitas', 'Santa Cruz del Sur', 'Sibanicú', 'Sierra de Cubitas', 'Vertientes']
 };
-const emit = defineEmits(['departmentSelected']);
+const emit = defineEmits(['update:modelValue', 'closeFirstDialog']);
+
 // Métodos
 const openFirstDialog = () => {
   firstDialog.value = true;
 };
+if (props.openFirstDialogAutomatically) {
+  openFirstDialog(); 
+}
 const closeFirstDialog = () => {
   firstDialog.value = false;
+  
 };
+const handleCloseAndEmit = () => {
+  firstDialog.value = false;
+  emit('closeFirstDialog');
+};
+
 const selectFaculty = (faculty: string) => {
   closeFirstDialog();
   selectedFaculty.value = faculty;
@@ -116,10 +125,12 @@ const openSecondDialogWithDepartments = (faculty: string) => {
 };
 const closeSecondDialog = () => {
   secondDialog.value = false;
+  emit('closeFirstDialog');
 };
 const selectDepartment = (department: string) => {
   closeSecondDialog();
-  emit('departmentSelected', department); // Notifica al componente padre sobre la selección
+  emit('update:modelValue', department); // Actualiza el valor del departamento
+  emit('closeFirstDialog'); // Indica que el primer diálogo debe cerrarse
 };
 
 // Propiedades computadas y otros hooks opcionales van aquí

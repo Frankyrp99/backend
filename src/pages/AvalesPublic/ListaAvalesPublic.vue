@@ -9,14 +9,7 @@
       pidap
     >
       <template v-slot:top-right>
-        <q-btn
-          icon="dehaze "
-          size="md"
-          flat
-          dense
-
-          to="detalles"
-        />
+        <q-btn icon="dehaze " size="md" flat dense to="detalles" />
         <q-input dense outlined v-model="search" placeholder="Buscar" />
       </template>
 
@@ -62,15 +55,30 @@
         <q-card-section>
           <q-input autogrow v-model="editForm.nombre" label="Nombre" />
           <q-input autogrow v-model="editForm.apellidos" label="Apellidos" />
-          <q-input autogrow
+          <q-input
+            autogrow
             v-model="editForm.titulo_recurso"
             label="Titulo del Recurso"
           />
           <q-input
+            filled
             v-model="editForm.departamento"
-            label="Departamento de Trabajo"
+            label="Departamento"
+            class="form-item"
+            @click="showSelectorDepartamento = true"
           />
-          <q-input autogrow v-model="editForm.lugar_pub" label="Lugar de Publicacion" />
+          <q-dialog v-model="showSelectorDepartamento" persistent>
+            <SelectorDepartamento
+              v-model="editForm.departamento"
+              :open-first-dialog-automatically="true"
+              @close-first-dialog="closeFirstDialogAndUpdateModel"
+            />
+          </q-dialog>
+          <q-input
+            autogrow
+            v-model="editForm.lugar_pub"
+            label="Lugar de Publicacion"
+          />
           <q-input v-model="editForm.tomo" label="Tomo" />
           <q-input v-model="editForm.folio" label="Folio" />
         </q-card-section>
@@ -94,11 +102,16 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-
+import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
 
 const search = ref('');
-const rows = ref([]);
+const rows = ref<RowType[]>([]);
+const selectedRow = ref<RowType | null>(null);
 const router = useRouter();
+const showSelectorDepartamento = ref(false);
+const closeFirstDialogAndUpdateModel = () => {
+  showSelectorDepartamento.value = false;
+};
 const columns = [
   {
     name: 'nombre',
@@ -148,6 +161,17 @@ const columns = [
     filter: true,
   },
 ];
+type RowType = {
+  id: number;
+  nombre: string;
+  apellidos: string;
+  titulo_recurso: string;
+  departamento: string;
+  lugar_pub: string;
+  tomo: string;
+  folio: string;
+};
+
 onMounted(async () => {
   try {
     const response = await axios.get('http://127.0.0.1:8000/api/profesores/');
@@ -167,7 +191,7 @@ const editForm = ref({
   tomo: '',
   folio: '',
 });
-const selectedRow = ref(null);
+
 //boton editar
 const editRow = (row: null) => {
   selectedRow.value = row;
@@ -180,6 +204,14 @@ const saveEdit = async () => {
       `http://127.0.0.1:8000/api/profesores/${selectedRow.value.id}/`,
       editForm.value
     );
+
+    const index = rows.value.findIndex(
+      (row) => row.id === selectedRow.value.id
+    );
+
+    if (index !== -1) {
+      Object.assign(rows.value[index], editForm.value);
+    }
     console.log('Recurso actualizado con éxito');
 
     editDialogOpen.value = false;

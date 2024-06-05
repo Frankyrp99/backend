@@ -43,53 +43,16 @@
           v-model="form.departamento"
           label="Departamento"
           class="form-item"
-          @click="openFirstDialog"
+          @click="showSelectorDepartamento = true"
           :rules="departamentoRules"
         />
-
-        <q-dialog v-model="firstDialog" persistent>
-          <q-card style="width: 300px">
-            <q-card-section class="text-bold">Selecciona la Facultad:</q-card-section>
-            <q-select
-              filled
-              v-model="selectedFaculty"
-              :options="faculty"
-              label="Facultades"
-              @input="selectFaculty"
-            />
-            <q-card-actions align="right">
-              <q-btn flat label="Cancel" @click="closeFirstDialog" />
-              <q-btn
-                flat
-                label="OK"
-                @click="() => selectFaculty(selectedFaculty)"
-              />
-            </q-card-actions>
-         
-          </q-card>
-        </q-dialog>
-
-        <!-- Diálogo para seleccionar departamento -->
-        <q-dialog v-model="secondDialog" persistent>
-          <q-card style="width: 300px">
-            <q-card-section class="text-bold">Selecciona un Departamento:</q-card-section>
-            <q-select
-              filled
-              v-model="selectedDepartment"
-              :options="selectedDepartmentOptions"
-              label="Departamentos"
-              @input="selectDepartment"
-            />
-            <q-card-actions align="right">
-              <q-btn flat label="Cancel" @click="closeSecondDialog" />
-              <q-btn
-                flat
-                label="OK"
-                @click="() => selectDepartment(selectedDepartment)"
-              />
-            </q-card-actions>
-           
-          </q-card>
+        <q-dialog v-model="showSelectorDepartamento" persistent>
+          <SelectorDepartamento
+            v-model="form.departamento"
+            :departamento-rules="departamentoRules"
+            :open-first-dialog-automatically="true"
+            @close-first-dialog="closeFirstDialogAndUpdateModel"
+          />
         </q-dialog>
         <q-input
           style="max-width: 300px"
@@ -217,6 +180,7 @@
 import { ref, reactive, watch, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
 
 interface Form {
   nombre: string;
@@ -236,9 +200,7 @@ interface Form {
   tipo_recurso: string;
   fecha: string;
 }
-interface DepartmentsByFaculty {
-  [key: string]: string[];
-}
+
 // Definición de tipos para reglas de validación
 type Rule = (value: string) => boolean | string;
 
@@ -273,71 +235,10 @@ const tiposRecurso: string[] = ['articulo', 'libro', 'capitulo', 'epigrafe'];
 
 const router = useRouter();
 const errorMessage = ref('');
-const firstDialog = ref(false);
-const secondDialog = ref(false);
-const selectedFaculty = ref('');
-const selectedDepartment = ref('');
-const selectedDepartmentOptions = ref(['']);
-
-const faculty = [
-  '-Ciencias Sociales',
-  '-Ciencias Aplicadas',
-  '-Ciencias Agropecuarias',
-  '-Ciencias Económicas',
-  '-Electromecánica',
-  '-Construcciones',
-  '-Lengua y Comunicación',
-  '-Informática y Ciencias Exactas',
-  '-Ciencias Pedagógicas',
-  '-Cultura Física',
-  '-CUM',
-];
-
-const departmentsByFaculty: DepartmentsByFaculty = {
-  '-Ciencias Sociales': ['Derecho', 'Estudios Socioculturales', 'Psicología - Sociología'],
-  '-Ciencias Aplicadas': ['Alimentos', 'Educación Biología', 'Educación Geografía', 'Ingeniería Química', 'Ingeniería Industrial', 'Química', 'CEECE', 'CEGEA'],
-  '-Ciencias Agropecuarias': ['Agronomía', 'Educación Agropecuaria', 'Morfofisiología', 'Medicina Veterinaria', 'CEDEPA'],
-  '-Ciencias Económicas': ['Contabilidad', 'Economía', 'Educación Economía', 'Turismo', 'CEMTUR', 'CEDET'],
-  '-Electromecánica': ['Educación Electromecánica', 'Ingeniería Eléctrica', 'Ingeniería Mecánica', 'CEEFREP'],
-  '-Construcciones': ['Arquitectura', 'Educación Construcción', 'Ingeniería Civil', 'CECODEC'],
-  '-Lengua y Comunicación': ['Español', 'Lenguas Extranjeras', 'Periodismo y Comunicación Social', 'Centro de Idiomas'],
-  '-Informática y Ciencias Exactas': ['Educación Laboral e Informática', 'Ciencias de la Información', 'Ingeniería Informática', 'Física', 'Matemática'],
-  '-Ciencias Pedagógicas': ['Educación Artística', 'Educación Especial', 'Educación Pedagogía - Psicología', 'Formación Pedagógica General', 'Educación Preescolar', 'Educación Primaria'],
-  '-Cultura Física': ['Cultura Física', 'Ciencias Aplicadas al Deporte', 'Didáctica del Deporte', 'Educación Física y Recreación', 'CEAFIDE'],
-  '-CUM': ['Céspedes', 'Esmeralda', 'Florida', 'Guáimaro', 'Jimaguayú', 'Minas', 'Najasa', 'Nuevitas', 'Santa Cruz del Sur', 'Sibanicú', 'Sierra de Cubitas', 'Vertientes']
+const showSelectorDepartamento = ref(false);
+const closeFirstDialogAndUpdateModel = () => {
+  showSelectorDepartamento.value = false;
 };
-
-function openFirstDialog() {
-  firstDialog.value = true;
-}
-
-function closeFirstDialog() {
-  firstDialog.value = false;
-}
-
-function selectFaculty(faculty: string) {
-  closeFirstDialog();
-  selectedFaculty.value = faculty;
-  openSecondDialogWithDepartments(selectedFaculty.value);
-}
-
-function openSecondDialogWithDepartments(faculty: string) {
-  if (departmentsByFaculty[faculty]) {
-    // Corrección aquí
-    secondDialog.value = true;
-    selectedDepartment.value = '';
-    selectedDepartmentOptions.value = departmentsByFaculty[faculty]; // Y aquí
-  }
-}
-
-function closeSecondDialog() {
-  secondDialog.value = false;
-}
-
-function selectDepartment(department: string) {
-  closeSecondDialog();
-  form.departamento = department;
-}
 
 function capitalizeWords(text: string): string {
   return text

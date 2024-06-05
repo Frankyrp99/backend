@@ -6,108 +6,124 @@
       </div>
       <q-form
         @submit="onSubmit"
-        class="q-gutter-md flex flex-wrap justify-between bg-color"
+        class=" bg-color"
         id="form"
       >
-        <q-input
-          style="max-width: 300px"
-          autogrow
-          filled
-          v-model="form.nombre"
-          label="Nombre"
-          class="form-item"
-          :rules="nombreRules"
-        />
-        <q-input
-          style="max-width: 300px"
-          autogrow
-          filled
-          v-model="form.apellidos"
-          label="Apellidos"
-          class="form-item"
-          :rules="apellidosRules"
-        />
-        <q-input
-          style="max-width: 300px"
-          autogrow
-          filled
-          v-model="form.titulo_recurso"
-          label="Título del Recurso"
-          class="form-item"
-          :rules="titulo_recursoRules"
-        />
-        <q-input
-          filled
-          v-model="form.departamento"
-          label="Departamento de Trabajo"
-          class="form-item"
-          :rules="departamentoRules"
-        />
-        <q-input
-          filled
-          v-model="form.tomo"
-          label="Tomo"
-          :rules="[
-            (val) => (val && val.trim().length > 0) || 'Tomo es requerido',
-            (val) => /^\d+$/.test(val) || 'Solo se permiten números',
-          ]"
-        />
-        <q-input
-          filled
-          v-model="form.folio"
-          label="Folio"
-          class="form-item"
-          :rules="[
-            (val) => (val && val.trim().length > 0) || 'Folio es requerido',
-            (val) => /^\d+$/.test(val) || 'Solo se permiten números',
-          ]"
-        />
+        <div class="q-gutter-md flex flex-row flex-wrap justify-between">
+          <q-input
+            style="max-width: 300px"
+            autogrow
+            filled
+            v-model="form.nombre"
+            label="Nombre"
+            class="form-item"
+            :rules="nombreRules"
+          />
+          <q-input
+            style="max-width: 300px"
+            autogrow
+            filled
+            v-model="form.apellidos"
+            label="Apellidos"
+            class="form-item"
+            :rules="apellidosRules"
+          />
+          <q-input
+            style="max-width: 300px"
+            autogrow
+            filled
+            v-model="form.titulo_recurso"
+            label="Título del Recurso"
+            class="form-item"
+            :rules="titulo_recursoRules"
+          />
+          <q-input
+            filled
+            v-model="form.departamento"
+            label="Departamento"
+            class="form-item"
+            @click="showSelectorDepartamento = true"
+            :rules="departamentoRules"
+          />
+          <q-dialog v-model="showSelectorDepartamento" persistent>
+            <SelectorDepartamento
+              v-model="form.departamento"
+              :departamento-rules="departamentoRules"
+              :open-first-dialog-automatically="true"
+              @close-first-dialog="closeFirstDialogAndUpdateModel"
+            />
+          </q-dialog>
 
-        <q-input
-          filled
-          readonly
-          v-model="form.fecha"
-          label="Fecha"
-          :rules="fechaRules"
-        >
-          <template v-slot:append>
-            <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy
-                cover
-                transition-show="scale"
-                transition-hide="scale"
-              >
-                <q-date v-model="form.fecha" mask="YYYY-MM-DD">
-                  <div class="row items-center justify-end">
-                    <q-btn v-close-popup label="Cerrar" color="primary" flat />
-                  </div>
-                </q-date>
-              </q-popup-proxy>
-            </q-icon>
-          </template>
-        </q-input>
+          <q-input
+            filled
+            v-model="form.tomo"
+            label="Tomo"
+            :rules="[
+              (val) => (val && val.trim().length > 0) || 'Tomo es requerido',
+              (val) => /^\d+$/.test(val) || 'Solo se permiten números',
+            ]"
+          />
+          <q-input
+            filled
+            v-model="form.folio"
+            label="Folio"
+            class="form-item"
+            :rules="[
+              (val) => (val && val.trim().length > 0) || 'Folio es requerido',
+              (val) => /^\d+$/.test(val) || 'Solo se permiten números',
+            ]"
+          />
+
+          <q-input
+            filled
+            readonly
+            v-model="form.fecha"
+            label="Fecha"
+            :rules="fechaRules"
+          >
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy
+                  cover
+                  transition-show="scale"
+                  transition-hide="scale"
+                >
+                  <q-date v-model="form.fecha" mask="YYYY-MM-DD">
+                    <div class="row items-center justify-end">
+                      <q-btn
+                        v-close-popup
+                        label="Cerrar"
+                        color="primary"
+                        flat
+                      />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+        </div>
         <div class="row justify-center items-center">
-        <q-btn
-          flat
-          rounded
-          label="Guardar"
-          type="submit"
-          class="form-item"
-          color="primary"
-          style="margin-top: 20px; margin-bottom: 20px"
-        />
-      </div>
+          <q-btn
+            flat
+            rounded
+            label="Guardar"
+            type="submit"
+            class="form-item"
+            color="primary"
+            style="margin-top: 20px; margin-bottom: 20px"
+          />
+        </div>
       </q-form>
-   
     </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive,watch } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-
+import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
 // Definición de tipos para el formulario
 interface Form {
   nombre: string;
@@ -133,12 +149,22 @@ const form = reactive<Form>({
   fecha: '',
 });
 const router = useRouter();
+
+//variables del selector del departamento
+const showSelectorDepartamento = ref(false);
+const closeFirstDialogAndUpdateModel = () => {
+  showSelectorDepartamento.value = false;
+};
+
+//metodos
 function capitalizeWords(text: string): string {
   return text
     .split(/\s+/)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
+
+//watchers
 watch(
   () => form.nombre,
   (newValue) => {
@@ -155,8 +181,6 @@ watch(
   { deep: true }
 );
 
-
-
 // Reglas de validación
 const nombreRules: Rule[] = [
   (v) => !!v || 'El Nombre es requerido',
@@ -172,14 +196,12 @@ const titulo_recursoRules: Rule[] = [
     v.length <= 500 ||
     'El título del recurso excede el límite de 500 caracteres',
 ];
-const departamentoRules: Rule[] = [
+const departamentoRules: Array<(value: string) => boolean | string> = [
   (v) => !!v || 'El Departamento de Trabajo es requerido',
-  (v) =>
-    v.length <= 200 || 'El departamento excede el límite de 200 caracteres',
 ];
 const fechaRules: Rule[] = [(v) => !!v || 'La Fecha es requerida'];
 
-
+//peticioens
 function onSubmit() {
   if (!form.nombre || !form.apellidos || !form.titulo_recurso) {
     errorMessage.value = 'Por favor, completa todos los campos requeridos.';

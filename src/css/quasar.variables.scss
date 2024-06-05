@@ -8,25 +8,107 @@
 // It's highly recommended to change the default colors
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
-$primary: #1976D2;
-$secondary: #26A69A;
+$primary: #1976d2;
+$secondary: #26a69a;
 $accent: #fdfafe;
-$dark: #1D1D1D;
+$dark: #1d1d1d;
 $dark-page: #121212;
-$positive: #21BA45;
-$negative: #C10015;
-$info: #31CCEC;
-$warning: #F2C037;
+$positive: #21ba45;
+$negative: #c10015;
+$info: #31ccec;
+$warning: #f2c037;
 @mixin linear-gradient($direction, $start-color, $end-color) {
-    background-image: linear-gradient($direction, $start-color, $end-color);
+  background-image: linear-gradient($direction, $start-color, $end-color);
 }
 
-$color-start: #fff1eb;
-$color-end: #ace0f9;
+$background-color-start: #fff1eb;
+$background-color-end: #ace0f9;
+
 .bg-color {
-    background-image: linear-gradient(to top, $color-start 0%, $color-end 100%);
+  background-image: linear-gradient(
+    to top,
+    $background-color-start 0%,
+    $background-color-end 100%
+  );
 }
-.titulos{
+.q-btn {
+  // Transición suave para los efectos hover
+  transition: transform 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(
+      -5px
+    ); // Mover la tarjeta hacia arriba ligeramente al pasar el mouse
+  }
+  border-radius: 10px; // Bordes redondeados
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Sombra para dar profundidad
+  padding: 10px; // Padding para separar el contenido de los bordes
+
+  // Asegurándonos de que el contenido de la tarjeta sea legible contra el fondo
+  color: #333; // Color del texto
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.8
+  );
+}
+// Estilo para la tarjeta
+.q-form {
+  // Aplicando el fondo con el mixin
+  @include linear-gradient(
+    to top,
+    $background-color-start 0%,
+    $background-color-end 100%
+  );
+
+  border-radius: 10px; // Bordes redondeados
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Sombra para dar profundidad
+  padding: 20px; // Padding para separar el contenido de los bordes
+
+  // Asegurándonos de que el contenido de la tarjeta sea legible contra el fondo
+  color: #333; // Color del texto
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.8
+  ); // Fondo semi-transparente para mejorar la legibilidad
+
+  // Alineación del contenido
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  // Ancho máximo y margen centrado
+  max-width: 400px;
+  margin: auto;
+
+
+
+}
+.q-card{  // Aplicando el fondo con el mixin
+  @include linear-gradient(
+    to top,
+    $background-color-start 0%,
+    $background-color-end 100%
+  );
+
+  border-radius: 10px; // Bordes redondeados
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Sombra para dar profundidad
+  padding: 20px; // Padding para separar el contenido de los bordes
+
+  // Asegurándonos de que el contenido de la tarjeta sea legible contra el fondo
+  color: #333; // Color del texto
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.8
+  ); // Fondo semi-transparente para mejorar la legibilidad
+}
+.titulos {
   font-size: 28px;
 
   font-weight: 600;

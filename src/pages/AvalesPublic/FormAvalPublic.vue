@@ -9,7 +9,7 @@
         class=" bg-color"
         id="form"
       >
-      <div class="q-gutter-md flex flex-row flex-wrap justify-between">
+      <div class="q-gutter-md flex flex-row flex-wrap justify-center">
         <q-input
           style="max-width: 300px"
           autogrow
@@ -170,7 +170,7 @@
             style="margin-top: 20px; margin-bottom: 20px"
           />
         </div>
-      
+
       </q-form>
     </div>
   </q-page>

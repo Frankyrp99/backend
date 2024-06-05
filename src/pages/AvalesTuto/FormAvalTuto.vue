@@ -4,12 +4,8 @@
       <div style="margin-top: 20px; margin-bottom: 20px">
         <h4 class="text-bold">Nuevo Aval de Tutorias</h4>
       </div>
-      <q-form
-        @submit="onSubmit"
-        class=" bg-color"
-        id="form"
-      >
-        <div class="q-gutter-md flex flex-row flex-wrap justify-between">
+      <q-form @submit="onSubmit" class="bg-color" id="form">
+        <div class="q-gutter-md row justify-center items-center ">
           <q-input
             style="max-width: 300px"
             autogrow

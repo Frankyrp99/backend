@@ -1,23 +1,15 @@
 <template>
   <div class="q-pa-lg">
     <q-table
-      title="Avales de Publicación"
+      title="Avales de Tutorias"
       :rows="rows"
       :columns="columns"
       row-key="name"
       :filter="search"
       pidap
-
     >
       <template v-slot:top-right>
-        <q-btn
-          icon="dehaze "
-          size="md"
-          flat
-          dense
-
-          to="/lista_avales_tuto"
-        />
+        <q-btn icon="dehaze " size="md" flat dense to="/lista_avales_tuto" />
         <q-input dense outlined v-model="search" placeholder="Buscar" />
       </template>
 
@@ -29,6 +21,7 @@
 
           <q-td auto-width>
             <q-btn
+              color="primary"
               icon="visibility"
               size="sm"
               flat
@@ -36,6 +29,7 @@
               @click="showRow(props.row)"
             />
             <q-btn
+              color="positive"
               icon="edit"
               size="sm"
               flat
@@ -43,6 +37,7 @@
               @click="editRow(props.row)"
             />
             <q-btn
+              color="negative"
               icon="delete"
               size="sm"
               class="q-ml-sm"
@@ -55,23 +50,38 @@
       </template>
     </q-table>
     <q-dialog v-model="editDialogOpen">
-      <q-card>
+      <q-card style="width: 400px">
         <q-card-section>
           <div class="text-h6">Editar Recurso</div>
         </q-card-section>
 
         <q-card-section>
-          <q-input v-model="editForm.nombre" label="Nombre" />
-          <q-input v-model="editForm.apellidos" label="Apellidos" />
+          <q-input autogrow v-model="editForm.nombre" label="Nombre" />
+          <q-input autogrow v-model="editForm.apellidos" label="Apellidos" />
           <q-input
+            autogrow
             v-model="editForm.titulo_recurso"
             label="Titulo del Recurso"
           />
           <q-input
+            filled
             v-model="editForm.departamento"
-            label="Departamento de Trabajo"
+            label="Departamento"
+            class="form-item"
+            @click="showSelectorDepartamento = true"
           />
-          <q-input v-model="editForm.lugar_pub" label="Lugar de Publicacion" />
+          <q-dialog v-model="showSelectorDepartamento" persistent>
+            <SelectorDepartamento
+              v-model="editForm.departamento"
+              :open-first-dialog-automatically="true"
+              @close-first-dialog="closeFirstDialogAndUpdateModel"
+            />
+          </q-dialog>
+          <q-input
+            autogrow
+            v-model="editForm.lugar_pub"
+            label="Lugar de Publicacion"
+          />
           <q-input v-model="editForm.tomo" label="Tomo" />
           <q-input v-model="editForm.folio" label="Folio" />
         </q-card-section>
@@ -92,22 +102,39 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive, watch, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
 
 const search = ref('');
-const rows = ref([]);
+const rows = ref<RowType[]>([]);
+const selectedRow = ref<RowType | null>(null);
 const router = useRouter();
+const showSelectorDepartamento = ref(false);
+const closeFirstDialogAndUpdateModel = () => {
+  showSelectorDepartamento.value = false;
+};
+type RowType = {
+  id: number;
+  nombre: string;
+  apellidos: string;
+  titulo_recurso: string;
+  departamento: string;
+  lugar_pub: string;
+  tomo: string;
+  folio: string;
+  fecha: string;
+};
 const columns = [
   {
     name: 'nombre',
     required: true,
     label: 'Nombre ',
     align: 'left',
+    field: 'nombre',
     filter: true,
     sortable: true,
-    field: 'nombre',
   },
   {
     name: 'apellidos',
@@ -132,10 +159,9 @@ const columns = [
     sortable: true,
     filter: true,
   },
-
   {
-    name: 'fecha_publicacion',
-    label: 'Fecha de Publicacion',
+    name: 'fecha',
+    label: 'Fecha de Publicación',
     field: 'fecha',
     sortable: true,
     filter: true,
@@ -155,6 +181,7 @@ const columns = [
     filter: true,
   },
 ];
+
 onMounted(async () => {
   try {
     const response = await axios.get('http://127.0.0.1:8000/api/avales_tuto/');
@@ -165,7 +192,18 @@ onMounted(async () => {
   }
 });
 const editDialogOpen = ref(false);
-const editForm = ref({
+interface Form {
+  nombre: string;
+  apellidos: string;
+  titulo_recurso: string;
+  departamento: string;
+  lugar_pub: string;
+  tomo: string;
+  folio: string;
+  fecha: string;
+}
+
+const editForm = reactive<Form>({
   nombre: '',
   apellidos: '',
   titulo_recurso: '',
@@ -173,20 +211,62 @@ const editForm = ref({
   lugar_pub: '',
   tomo: '',
   folio: '',
+  fecha: '',
 });
-const selectedRow = ref(null);
+const { nombre, apellidos } = toRefs(editForm);
+//metodos
+function capitalizeWords(text: string): string {
+  return text
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+//watchers
+watch(
+  nombre,
+  (newValue) => {
+    editForm.nombre = capitalizeWords(newValue);
+  },
+  { deep: true }
+);
+
+watch(
+  apellidos,
+  (newValue) => {
+    editForm.apellidos = capitalizeWords(newValue);
+  },
+  { deep: true }
+);
+
 //boton editar
-const editRow = (row: null) => {
+const editRow = (row: RowType) => {
   selectedRow.value = row;
-  editForm.value = { ...row };
+  editForm.nombre = row.nombre;
+  editForm.apellidos = row.apellidos;
+  editForm.titulo_recurso = row.titulo_recurso;
+  editForm.departamento = row.departamento;
+  editForm.lugar_pub = row.lugar_pub;
+  editForm.tomo = row.tomo;
+  editForm.folio = row.folio;
+  editForm.fecha = row.fecha;
   editDialogOpen.value = true;
 };
+
 const saveEdit = async () => {
   try {
     await axios.put(
       `http://127.0.0.1:8000/api/avales_tuto/${selectedRow.value.id}/`,
-      editForm.value
+      editForm
     );
+
+    const index = rows.value.findIndex(
+      (row) => row.id === selectedRow.value.id
+    );
+    if (index !== -1) {
+      Object.assign(rows.value[index], editForm);
+    }
+
     console.log('Recurso actualizado con éxito');
 
     editDialogOpen.value = false;
@@ -194,6 +274,7 @@ const saveEdit = async () => {
     console.error('Error al actualizar el recurso:', error);
   }
 };
+
 //boton mostrar
 const showRow = (row: null) => {
   console.log('Mostrando detalles del recurso:', row);

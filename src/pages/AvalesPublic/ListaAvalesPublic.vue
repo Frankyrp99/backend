@@ -21,6 +21,7 @@
 
           <q-td auto-width>
             <q-btn
+              color="primary"
               icon="visibility"
               size="sm"
               flat
@@ -28,6 +29,7 @@
               @click="showRow(props.row)"
             />
             <q-btn
+              color="positive"
               icon="edit"
               size="sm"
               flat
@@ -35,6 +37,7 @@
               @click="editRow(props.row)"
             />
             <q-btn
+              color="negative"
               icon="delete"
               size="sm"
               class="q-ml-sm"
@@ -99,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive, watch, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
@@ -111,6 +114,25 @@ const router = useRouter();
 const showSelectorDepartamento = ref(false);
 const closeFirstDialogAndUpdateModel = () => {
   showSelectorDepartamento.value = false;
+};
+type RowType = {
+  id: number;
+  nombre: string;
+  apellidos: string;
+  titulo_recurso: string;
+  departamento: string;
+  lugar_pub: string;
+  tomo: string;
+  folio: string;
+  tipo_publicacion: string;
+  issn: string;
+  e_issn: string;
+  isbn: string;
+  cdrom_dvd: boolean;
+  base_de_datos: boolean;
+  url: string;
+  tipo_recurso: string;
+  fecha: string;
 };
 const columns = [
   {
@@ -161,16 +183,6 @@ const columns = [
     filter: true,
   },
 ];
-type RowType = {
-  id: number;
-  nombre: string;
-  apellidos: string;
-  titulo_recurso: string;
-  departamento: string;
-  lugar_pub: string;
-  tomo: string;
-  folio: string;
-};
 
 onMounted(async () => {
   try {
@@ -182,7 +194,25 @@ onMounted(async () => {
   }
 });
 const editDialogOpen = ref(false);
-const editForm = ref({
+interface Form {
+  nombre: string;
+  apellidos: string;
+  titulo_recurso: string;
+  departamento: string;
+  lugar_pub: string;
+  tomo: string;
+  folio: string;
+  tipo_publicacion: string;
+  issn: string;
+  e_issn: string;
+  isbn: string;
+  cdrom_dvd: boolean;
+  base_de_datos: boolean;
+  url: string;
+  tipo_recurso: string;
+  fecha: string;
+}
+const editForm = reactive<Form>({
   nombre: '',
   apellidos: '',
   titulo_recurso: '',
@@ -190,28 +220,78 @@ const editForm = ref({
   lugar_pub: '',
   tomo: '',
   folio: '',
+  tipo_publicacion: '',
+  issn: '',
+  e_issn: '',
+  isbn: '',
+  cdrom_dvd: false,
+  base_de_datos: false,
+  url: '',
+  tipo_recurso: '',
+  fecha: '',
 });
+const { nombre, apellidos } = toRefs(editForm);
+//metodos
+function capitalizeWords(text: string): string {
+  return text
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+//watchers
+watch(
+  nombre,
+  (newValue) => {
+    editForm.nombre = capitalizeWords(newValue);
+  },
+  { deep: true }
+);
+
+watch(
+  apellidos,
+  (newValue) => {
+    editForm.apellidos = capitalizeWords(newValue);
+  },
+  { deep: true }
+);
 
 //boton editar
-const editRow = (row: null) => {
+const editRow = (row: RowType) => {
   selectedRow.value = row;
-  editForm.value = { ...row };
+  editForm.nombre = row.nombre;
+  editForm.apellidos = row.apellidos;
+  editForm.titulo_recurso = row.titulo_recurso;
+  editForm.departamento = row.departamento;
+  editForm.lugar_pub = row.lugar_pub;
+  editForm.tomo = row.tomo;
+  editForm.folio = row.folio;
+  editForm.tipo_publicacion = row.tipo_publicacion || '';
+  editForm.issn = row.issn || '';
+  editForm.e_issn = row.e_issn || '';
+  editForm.isbn = row.isbn || '';
+  editForm.cdrom_dvd = row.cdrom_dvd || false;
+  editForm.base_de_datos = row.base_de_datos || false;
+  editForm.url = row.url || '';
+  editForm.tipo_recurso = row.tipo_recurso || '';
+  editForm.fecha = row.fecha;
+
   editDialogOpen.value = true;
 };
+
 const saveEdit = async () => {
   try {
     await axios.put(
       `http://127.0.0.1:8000/api/profesores/${selectedRow.value.id}/`,
-      editForm.value
+      {...editForm}
     );
 
     const index = rows.value.findIndex(
       (row) => row.id === selectedRow.value.id
     );
-
     if (index !== -1) {
-      Object.assign(rows.value[index], editForm.value);
+      Object.assign(rows.value[index], editForm);
     }
+
     console.log('Recurso actualizado con éxito');
 
     editDialogOpen.value = false;

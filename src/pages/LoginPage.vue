@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center">
-    <q-card class="my-card bg-color">
+    <q-card >
       <q-card-section>
         <div class="text-h6">Iniciar sesión</div>
       </q-card-section>

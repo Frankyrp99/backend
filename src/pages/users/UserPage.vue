@@ -9,16 +9,24 @@
         <q-list>
           <q-item>
             <q-item-section>
-              <q-item-label>Nombre</q-item-label>
+              <q-item-label class="text-bold">Nombre</q-item-label>
             </q-item-section>
             <q-item-section side>
-              {{ user.name }}
+              {{ user.nombre }}
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>
+              <q-item-label class="text-bold">Apellidos</q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              {{ user.apellidos }}
             </q-item-section>
           </q-item>
 
           <q-item>
             <q-item-section>
-              <q-item-label>Correo electrónico</q-item-label>
+              <q-item-label class="text-bold">Correo electrónico</q-item-label>
             </q-item-section>
             <q-item-section side>
               {{ user.email }}
@@ -27,10 +35,10 @@
 
           <q-item>
             <q-item-section>
-              <q-item-label>Fecha de nacimiento</q-item-label>
+              <q-item-label class="text-bold">Rol</q-item-label>
             </q-item-section>
             <q-item-section side>
-              {{ user.birthdate }}
+              {{ user.role }}
             </q-item-section>
           </q-item>
 
@@ -42,15 +50,46 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios'; // Asegúrate de tener axios instalado
 
-const user = ref({
-  name: 'John Doe',
-  email: 'john.doe@example.com',
-  birthdate: '01/01/1980',
-  // ... otros datos del usuario
+interface UserData {
+  nombre: string;
+  apellidos: string;
+  email: string;
+  role: string;
+  // Agrega aquí otras propiedades que esperas que tenga user
+}
+
+const user = ref<UserData>({
+  nombre: '', // Valores predeterminados
+  apellidos: '',
+  email: '',
+  role: '',
+  // Inicializa aquí otras propiedades si es necesario
 });
+
+async function fetchUserData() {
+  try {
+    const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const response = await axios.get('http://127.0.0.1:8000/api/users', config);
+    user.value = response.data; // Asigna los datos del usuario a user.value
+  } catch (error) {
+    console.error('Error al obtener los datos del usuario:', error);
+  }
+}
+
+// Llama a fetchUserData cuando el componente se monta
+onMounted(fetchUserData);
 </script>
+
 
 <style scoped>
 .my-card {

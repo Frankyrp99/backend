@@ -1,12 +1,11 @@
 <template>
   <q-page class="flex flex-center">
-    <q-card >
-      <q-card-section>
-        <div class="text-h6">Iniciar sesión</div>
-      </q-card-section>
 
-      <q-card-section>
+
+
+
         <q-form @submit="onSubmit" class="q-gutter-md">
+          <div class="text-h6">Iniciar sesión</div>
           <q-input
             filled
             v-model="email"
@@ -17,7 +16,6 @@
                 (val && val.length > 0) ||
                 'Por favor ingrese su correo electrónico',
             ]"
-            :error-message="emailErrorMessage"
           />
 
           <q-input
@@ -41,9 +39,11 @@
               color="primary"
             />
           </div>
+          <div class="full-width text-center">
+            <q-spinner-circle v-if="isLoading" size="3em" color="primary" />
+          </div>
         </q-form>
-      </q-card-section>
-    </q-card>
+
     <q-dialog v-model="showErrorDialog">
       <q-card class="bg-color">
         <q-card-section>
@@ -60,45 +60,50 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { QSpinner } from 'quasar';
 
 const email = ref('');
 const password = ref('');
 const router = useRouter();
 const showErrorDialog = ref(false);
 const errorMessage = ref('');
-
-
+const isLoading = ref(false);
 
 const onSubmit = async () => {
-  if (!email.value ||!password.value) {
-    errorMessage.value = 'Por favor, complete todos los campos.';
-    showErrorDialog.value = true;
+  if (!email.value || !password.value) {
+    handleLoginError('Por favor, complete todos los campos.');
     return;
   }
+  isLoading.value = true;
   try {
     const response = await axios.post('http://127.0.0.1:8000/api/token/', {
       email: email.value,
       password: password.value,
     });
-    console.log({response});
 
     const token = response.data.token;
-
-    // Almacenar el token en el almacenamiento local
     localStorage.setItem('authToken', token);
-
-
-    router.push('/home');
+    navigateHome();
   } catch (error) {
-    errorMessage.value = 'Correo electrónico o Contraseña incorrectos.';
-    showErrorDialog.value = true;
+    handleLoginError('Correo electrónico o Contraseña incorrectos.');
     console.error('Error al iniciar sesión:', error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
+
+
+const handleLoginError = (message: string) => {
+  errorMessage.value = message;
+  showErrorDialog.value = true;
+};
+
+const navigateHome = () => {
+  router.push('/home');
+};
 </script>
 
 <style scoped>

@@ -16,6 +16,7 @@
 
         <q-toolbar-title class="text-black text-bold">SIGAV</q-toolbar-title>
 
+
         <q-btn-group flat dense class="row justify-end">
           <q-btn-dropdown
             color="bg-color"
@@ -24,20 +25,26 @@
             align="between"
           >
             <q-list>
+              <q-item v-if="user.isAdmin" to="Usuarios" clickable v-close-popup>
+                <q-item-section>
+                  <q-item-label icon="account_circle" class="text-bold">Administracion</q-item-label>
+                </q-item-section>
+              </q-item>
               <q-item to="user" clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label icon="account_circle">Usuario</q-item-label>
+                  <q-item-label icon="account_circle" class="text-bold">Usuario</q-item-label>
                 </q-item-section>
               </q-item>
 
               <q-item clickable v-close-popup @click="logout">
                 <q-item-section>
-                  <q-item-label>Logout</q-item-label>
+                  <q-item-label class="text-bold">Logout</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
           </q-btn-dropdown>
         </q-btn-group>
+
       </q-toolbar>
     </q-header>
 
@@ -72,7 +79,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
-const user = ref({ role: 'invitado' });
+const user = ref({ role: 'invitado', isAdmin: false, isViewerOnly: false  });
 const router = useRouter();
 const leftDrawerOpen = ref(false);
 
@@ -87,11 +94,22 @@ const fetchUserData = async () => {
     };
 
     const response = await axios.get('http://127.0.0.1:8000/api/users', config);
-    user.value.role = response.data.role;
+
+    // Verificar si la petición fue exitosa
+    if (response.status === 200) {
+      user.value.role = response.data.role;
+      user.value.isAdmin = response.data.role === 'admin';
+      user.value.isViewerOnly = response.data.role === 'invitado';
+      console.log('Datos del usuario obtenidos correctamente.');
+    } else {
+      console.error(`Error al obtener los datos del usuario: Estado ${response.status}`);
+    }
+
   } catch (error) {
     console.error('Error al obtener los datos del usuario:', error);
   }
 };
+
 
 const logout = () => {
   localStorage.removeItem('authToken');

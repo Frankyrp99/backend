@@ -10,6 +10,8 @@ const routes: RouteRecordRaw[] = [
         path: '',
         name: 'home',
         component: () => import('src/pages/HomePage.vue'),
+        meta: { requiresAuth: true },
+        meta: { requiresAuth: true },
       },
     ],
   },
@@ -21,6 +23,7 @@ const routes: RouteRecordRaw[] = [
         path: '',
         name: 'ListaAvalesPublic',
         component: () => import('src/pages/AvalesPublic/ListaAvalesPublic.vue'),
+        meta: { requiresAuth: true },
       },
     ],
   },
@@ -32,6 +35,7 @@ const routes: RouteRecordRaw[] = [
         path: '',
         name: 'detalles',
         component: () => import('src/pages/AvalesPublic/DetallesPage.vue'),
+        meta: { requiresAuth: true },
       },
     ],
   },
@@ -43,6 +47,7 @@ const routes: RouteRecordRaw[] = [
         path: '',
         name: 'show',
         component: () => import('src/pages/AvalesPublic/ShowPage.vue'),
+        meta: { requiresAuth: true },
       },
     ],
   },
@@ -52,13 +57,14 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
-        name:'CrearAvalPublic',
+        name: 'CrearAvalPublic',
         component: () => import('src/pages/AvalesPublic/FormAvalPublic.vue'),
+        meta: { requiresAuth: true },
       },
     ],
   },
-   //avales de tutorias///////////////////////////////////////////////////////
-   {
+  //avales de tutorias///////////////////////////////////////////////////////
+  {
     path: '/lista_avales_tuto',
     component: () => import('layouts/MainLayout.vue'),
     children: [
@@ -66,6 +72,7 @@ const routes: RouteRecordRaw[] = [
         path: '',
         name: 'ListaAvalesTuto',
         component: () => import('src/pages/AvalesTuto/ListaAvalesTuto.vue'),
+        meta: { requiresAuth: true },
       },
     ],
   },
@@ -77,6 +84,7 @@ const routes: RouteRecordRaw[] = [
         path: '',
         name: 'DetallesTuto',
         component: () => import('src/pages/AvalesTuto/DetallesPageTuto.vue'),
+        meta: { requiresAuth: true },
       },
     ],
   },
@@ -88,6 +96,7 @@ const routes: RouteRecordRaw[] = [
         path: '',
         name: 'ShowTuto',
         component: () => import('src/pages/AvalesTuto/ShowPageTuto.vue'),
+        meta: { requiresAuth: true },
       },
     ],
   },
@@ -98,6 +107,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '',
         component: () => import('src/pages/AvalesTuto/FormAvalTuto.vue'),
+        meta: { requiresAuth: true },
       },
     ],
   },
@@ -114,7 +124,11 @@ const routes: RouteRecordRaw[] = [
     path: '/user',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('src/pages/users/UserPage.vue') },
+      {
+        path: '',
+        component: () => import('src/pages/users/UserPage.vue'),
+        meta: { requiresAuth: true },
+      },
     ],
   },
   {
@@ -124,6 +138,18 @@ const routes: RouteRecordRaw[] = [
       {
         path: '',
         component: () => import('src/pages/users/CreateUserPage.vue'),
+        meta: { requiresAuth: true },
+      },
+    ],
+  },
+  {
+    path: '/Usuarios',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('src/pages/users/ListUsers.vue'),
+        meta: { requiresAuth: true },
       },
     ],
   },

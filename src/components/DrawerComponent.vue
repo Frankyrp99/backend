@@ -25,6 +25,8 @@
 </template>
 
 <script setup lang="ts">
+
+
 interface NavigationItem {
   label: string;
   route: string;
@@ -39,7 +41,7 @@ const categories: Category[] = [
   {
     title: 'Avales de Publicación',
     items: [
-      { label: 'Crear Aval de Publicación', route: '/crear_aval_public' },
+      { label: 'Crear Aval de Publicación', route: '/crear_aval_public'  },
       { label: 'Listar Avales de Publicación', route: '/lista_avales_public' },
     ],
   },
@@ -75,4 +77,5 @@ const categories: Category[] = [
     ],
   },
 ];
+
 </script>

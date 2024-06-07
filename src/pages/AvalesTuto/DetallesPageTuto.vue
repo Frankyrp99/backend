@@ -29,6 +29,7 @@
               @click="showRow(props.row)"
             />
             <q-btn
+              v-if="user.isViewerOnly || user.isAdmin"
               color="positive"
               icon="edit"
               size="sm"
@@ -37,6 +38,7 @@
               @click="editRow(props.row)"
             />
             <q-btn
+              v-if="user.isViewerOnly || user.isAdmin"
               color="negative"
               icon="delete"
               size="sm"
@@ -107,6 +109,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
 
+const user = ref({ role: 'invitado', isAdmin: false, isViewerOnly: false });
 const search = ref('');
 const rows = ref<RowType[]>([]);
 const selectedRow = ref<RowType | null>(null);
@@ -182,6 +185,33 @@ const columns = [
   },
 ];
 
+const fetchUserData = async () => {
+  try {
+    const authToken = localStorage.getItem('authToken');
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const response = await axios.get('http://127.0.0.1:8000/api/users', config);
+
+    // Verificar si la petición fue exitosa
+    if (response.status === 200) {
+      user.value.role = response.data.role;
+      user.value.isAdmin = response.data.role === 'admin';
+      user.value.isViewerOnly = response.data.role === 'especialista';
+      console.log('Datos del usuario obtenidos correctamente.');
+    } else {
+      console.error(
+        `Error al obtener los datos del usuario: Estado ${response.status}`
+      );
+    }
+  } catch (error) {
+    console.error('Error al obtener los datos del usuario:', error);
+  }
+};
 onMounted(async () => {
   try {
     const response = await axios.get('http://127.0.0.1:8000/api/avales_tuto/');
@@ -190,6 +220,7 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error al obtener los datos de los profesores:', error);
   }
+  fetchUserData();
 });
 const editDialogOpen = ref(false);
 interface Form {

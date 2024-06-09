@@ -57,11 +57,11 @@ const categories: Category[] = [
     items: [
       {
         label: 'Crear Aval de Bibliografía',
-        route: '/crear_aval_bibliografia',
+        route: '/crear_aval_biblio',
       },
       {
         label: 'Listar Avales de Bibliografias',
-        route: '/lista_avales_bibliografia',
+        route: '/lista_avales_biblio',
       },
     ],
   },
@@ -70,7 +70,7 @@ const categories: Category[] = [
     items: [
       {
         label: 'Artículos por Departamento',
-        route: '/reportes_por_departamento',
+        route: '/Report_depart',
       },
       { label: 'Artículos por Año', route: '/reportes_por_anio' },
       { label: 'Artículos por Profesor', route: '/reportes_por_profesor' },

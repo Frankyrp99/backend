@@ -1,56 +1,55 @@
 <template>
   <div>
-    
+    <q-dialog v-model="firstDialog" persistent>
+      <q-card style="width: 300px">
+        <q-card-section class="text-bold"
+          >Selecciona la Facultad:</q-card-section
+        >
+        <q-select
+          filled
+          v-model="selectedFaculty"
+          :options="faculty"
+          label="Facultades"
+          @input="selectFaculty"
+        />
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" @click="handleCloseAndEmit" />
+          <q-btn
+            flat
+            label="OK"
+            @click="() => selectFaculty(selectedFaculty)"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 
-        <q-dialog v-model="firstDialog" persistent>
-          <q-card style="width: 300px">
-            <q-card-section class="text-bold">Selecciona la Facultad:</q-card-section>
-            <q-select
-              filled
-              v-model="selectedFaculty"
-              :options="faculty"
-              label="Facultades"
-              @input="selectFaculty"
-            />
-            <q-card-actions align="right">
-              <q-btn flat label="Cancel" @click="handleCloseAndEmit" />
-              <q-btn
-                flat
-                label="OK"
-                @click="() => selectFaculty(selectedFaculty)"
-              />
-            </q-card-actions>
-         
-          </q-card>
-        </q-dialog>
-
-        <!-- Diálogo para seleccionar departamento -->
-        <q-dialog v-model="secondDialog" persistent>
-          <q-card style="width: 300px">
-            <q-card-section class="text-bold">Selecciona un Departamento:</q-card-section>
-            <q-select
-              filled
-              v-model="selectedDepartment"
-              :options="selectedDepartmentOptions"
-              label="Departamentos"
-              @input="selectDepartment"
-            />
-            <q-card-actions align="right">
-              <q-btn flat label="Cancel" @click="closeSecondDialog" />
-              <q-btn
-                flat
-                label="OK"
-                @click="() => selectDepartment(selectedDepartment)"
-              />
-            </q-card-actions>
-           
-          </q-card>
-        </q-dialog>
+    <q-dialog v-model="secondDialog" persistent>
+      <q-card style="width: 300px">
+        <q-card-section class="text-bold"
+          >Selecciona un Departamento:</q-card-section
+        >
+        <q-select
+          filled
+          v-model="selectedDepartment"
+          :options="selectedDepartmentOptions"
+          label="Departamentos"
+          @input="selectDepartment"
+        />
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" @click="closeSecondDialog" />
+          <q-btn
+            flat
+            label="OK"
+            @click="() => selectDepartment(selectedDepartment)"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref,defineEmits,defineProps } from 'vue';
+import { ref, defineEmits, defineProps } from 'vue';
 
 const props = defineProps({
   modelValue: String,
@@ -81,17 +80,90 @@ const faculty = [
   '-CUM',
 ];
 const departmentsByFaculty: DepartmentsByFaculty = {
-  '-Ciencias Sociales': ['Derecho', 'Estudios Socioculturales', 'Psicología - Sociología'],
-  '-Ciencias Aplicadas': ['Alimentos', 'Educación Biología', 'Educación Geografía', 'Ingeniería Química', 'Ingeniería Industrial', 'Química', 'CEECE', 'CEGEA'],
-  '-Ciencias Agropecuarias': ['Agronomía', 'Educación Agropecuaria', 'Morfofisiología', 'Medicina Veterinaria', 'CEDEPA'],
-  '-Ciencias Económicas': ['Contabilidad', 'Economía', 'Educación Economía', 'Turismo', 'CEMTUR', 'CEDET'],
-  '-Electromecánica': ['Educación Electromecánica', 'Ingeniería Eléctrica', 'Ingeniería Mecánica', 'CEEFREP'],
-  '-Construcciones': ['Arquitectura', 'Educación Construcción', 'Ingeniería Civil', 'CECODEC'],
-  '-Lengua y Comunicación': ['Español', 'Lenguas Extranjeras', 'Periodismo y Comunicación Social', 'Centro de Idiomas'],
-  '-Informática y Ciencias Exactas': ['Educación Laboral e Informática', 'Ciencias de la Información', 'Ingeniería Informática', 'Física', 'Matemática'],
-  '-Ciencias Pedagógicas': ['Educación Artística', 'Educación Especial', 'Educación Pedagogía - Psicología', 'Formación Pedagógica General', 'Educación Preescolar', 'Educación Primaria'],
-  '-Cultura Física': ['Cultura Física', 'Ciencias Aplicadas al Deporte', 'Didáctica del Deporte', 'Educación Física y Recreación', 'CEAFIDE'],
-  '-CUM': ['Céspedes', 'Esmeralda', 'Florida', 'Guáimaro', 'Jimaguayú', 'Minas', 'Najasa', 'Nuevitas', 'Santa Cruz del Sur', 'Sibanicú', 'Sierra de Cubitas', 'Vertientes']
+  '-Ciencias Sociales': [
+    'Derecho',
+    'Estudios Socioculturales',
+    'Psicología - Sociología',
+  ],
+  '-Ciencias Aplicadas': [
+    'Alimentos',
+    'Educación Biología',
+    'Educación Geografía',
+    'Ingeniería Química',
+    'Ingeniería Industrial',
+    'Química',
+    'CEECE',
+    'CEGEA',
+  ],
+  '-Ciencias Agropecuarias': [
+    'Agronomía',
+    'Educación Agropecuaria',
+    'Morfofisiología',
+    'Medicina Veterinaria',
+    'CEDEPA',
+  ],
+  '-Ciencias Económicas': [
+    'Contabilidad',
+    'Economía',
+    'Educación Economía',
+    'Turismo',
+    'CEMTUR',
+    'CEDET',
+  ],
+  '-Electromecánica': [
+    'Educación Electromecánica',
+    'Ingeniería Eléctrica',
+    'Ingeniería Mecánica',
+    'CEEFREP',
+  ],
+  '-Construcciones': [
+    'Arquitectura',
+    'Educación Construcción',
+    'Ingeniería Civil',
+    'CECODEC',
+  ],
+  '-Lengua y Comunicación': [
+    'Español',
+    'Lenguas Extranjeras',
+    'Periodismo y Comunicación Social',
+    'Centro de Idiomas',
+  ],
+  '-Informática y Ciencias Exactas': [
+    'Educación Laboral e Informática',
+    'Ciencias de la Información',
+    'Ingeniería Informática',
+    'Física',
+    'Matemática',
+  ],
+  '-Ciencias Pedagógicas': [
+    'Educación Artística',
+    'Educación Especial',
+    'Educación Pedagogía - Psicología',
+    'Formación Pedagógica General',
+    'Educación Preescolar',
+    'Educación Primaria',
+  ],
+  '-Cultura Física': [
+    'Cultura Física',
+    'Ciencias Aplicadas al Deporte',
+    'Didáctica del Deporte',
+    'Educación Física y Recreación',
+    'CEAFIDE',
+  ],
+  '-CUM': [
+    'Céspedes',
+    'Esmeralda',
+    'Florida',
+    'Guáimaro',
+    'Jimaguayú',
+    'Minas',
+    'Najasa',
+    'Nuevitas',
+    'Santa Cruz del Sur',
+    'Sibanicú',
+    'Sierra de Cubitas',
+    'Vertientes',
+  ],
 };
 const emit = defineEmits(['update:modelValue', 'closeFirstDialog']);
 
@@ -100,11 +172,10 @@ const openFirstDialog = () => {
   firstDialog.value = true;
 };
 if (props.openFirstDialogAutomatically) {
-  openFirstDialog(); 
+  openFirstDialog();
 }
 const closeFirstDialog = () => {
   firstDialog.value = false;
-  
 };
 const handleCloseAndEmit = () => {
   firstDialog.value = false;
@@ -112,6 +183,10 @@ const handleCloseAndEmit = () => {
 };
 
 const selectFaculty = (faculty: string) => {
+  if (!faculty.trim()) {
+    alert('Por favor selecciona una facultad.');
+    return;
+  }
   closeFirstDialog();
   selectedFaculty.value = faculty;
   openSecondDialogWithDepartments(faculty);
@@ -128,9 +203,13 @@ const closeSecondDialog = () => {
   emit('closeFirstDialog');
 };
 const selectDepartment = (department: string) => {
+  if (!department.trim()) {
+    alert('Por favor selecciona un departamento.');
+    return;
+  }
   closeSecondDialog();
-  emit('update:modelValue', department); // Actualiza el valor del departamento
-  emit('closeFirstDialog'); // Indica que el primer diálogo debe cerrarse
+  emit('update:modelValue', department);
+  emit('closeFirstDialog');
 };
 
 // Propiedades computadas y otros hooks opcionales van aquí

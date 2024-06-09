@@ -11,7 +11,6 @@ const routes: RouteRecordRaw[] = [
         name: 'home',
         component: () => import('src/pages/HomePage.vue'),
         meta: { requiresAuth: true },
-        meta: { requiresAuth: true },
       },
     ],
   },
@@ -111,6 +110,55 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
+  //avales de bibliografia///////////////////////////////////////////////////////
+  {
+    path: '/lista_avales_biblio',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'ListaAvalesBiblio',
+        component: () => import('src/pages/AvalesBiblio/ListaAvalesBiblio.vue'),
+        meta: { requiresAuth: true },
+      },
+    ],
+  },
+  {
+    path: '/detallesbiblio',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'DetallesBiblio',
+        component: () =>
+          import('src/pages/AvalesBiblio/DetallesPageBiblio.vue'),
+        meta: { requiresAuth: true },
+      },
+    ],
+  },
+  {
+    path: '/showbiblio/:id',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'ShowBiblio',
+        component: () => import('src/pages/AvalesBiblio/ShowPageBiblio.vue'),
+        meta: { requiresAuth: true },
+      },
+    ],
+  },
+  {
+    path: '/crear_aval_biblio',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('src/pages/AvalesBiblio/FormAvalBiblio.vue'),
+        meta: { requiresAuth: true },
+      },
+    ],
+  },
   //login////////////////////////////////////////////////////
   {
     path: '/',
@@ -149,6 +197,18 @@ const routes: RouteRecordRaw[] = [
       {
         path: '',
         component: () => import('src/pages/users/ListUsers.vue'),
+        meta: { requiresAuth: true },
+      },
+    ],
+  },
+  //reportes//////////////////////////////////////////////////////
+  {
+    path: '/Report_depart',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('src/pages/Reportes/ReportDepartamento.vue'),
         meta: { requiresAuth: true },
       },
     ],

@@ -11,7 +11,7 @@
   </q-page>
 </template>
 
- <style scoped>
+<style scoped>
 .container {
   display: flex;
   justify-content: center;

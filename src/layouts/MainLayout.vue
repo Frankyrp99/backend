@@ -17,7 +17,7 @@
         <q-toolbar-title class="text-black text-bold">SIGAV</q-toolbar-title>
 
 
-        <q-btn-group flat dense class="row justify-end">
+        <q-btn-group flat dense class="row justify-end ">
           <q-btn-dropdown
             color="bg-color"
             icon="account_circle"
@@ -76,7 +76,8 @@
 <script setup lang="ts">
 import DrawerComponent from 'src/components/DrawerComponent.vue';
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { api } from 'src/boot/axios';
+
 import { useRouter } from 'vue-router';
 
 const user = ref({ role: 'invitado', isAdmin: false, isViewerOnly: false  });
@@ -93,7 +94,7 @@ const fetchUserData = async () => {
       },
     };
 
-    const response = await axios.get('http://127.0.0.1:8000/api/users', config);
+    const response = await api.get('/api/users', config);
 
     // Verificar si la petición fue exitosa
     if (response.status === 200) {

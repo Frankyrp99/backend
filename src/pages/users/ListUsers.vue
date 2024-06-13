@@ -4,7 +4,7 @@
       title="Lista de Usuarios"
       :rows="users"
       :columns="columns"
-      row-key="id"
+      row-key="nombre"
       :filter="search"
     >
       <template v-slot:top-right>
@@ -19,22 +19,8 @@
           </q-td>
 
           <q-td auto-width>
-            <q-btn
-              color="primary"
-              icon="visibility"
-              size="sm"
-              flat
-              dense
-              @click="showUserDetails(props.row)"
-            />
-            <q-btn
-              color="positive"
-              icon="edit"
-              size="sm"
-              flat
-              dense
-              @click="editUser(props.row)"
-            />
+            <q-btn color="primary" icon="visibility" size="sm" flat dense />
+            <q-btn color="positive" icon="edit" size="sm" flat dense @click="editUser(props.row)" />
             <q-btn
               color="negative"
               icon="delete"
@@ -42,7 +28,6 @@
               class="q-ml-sm"
               flat
               dense
-              @click="deleteUser(props.row)"
             />
           </q-td>
         </q-tr>
@@ -56,20 +41,17 @@
         </q-card-section>
 
         <q-card-section>
-          <q-input autogrow v-model="editForm.username" label="Username" />
+          <q-input autogrow v-model="editForm.nombre" label="Nombre" />
+          <q-input autogrow v-model="editForm.apellidos" label="apellidos" />
           <q-input autogrow v-model="editForm.email" label="Email" />
-          <!-- Add more fields as necessary -->
+          <q-input autogrow v-model="editForm.role" label="Rol" />
+          <q-input type="password" autogrow v-model="editForm.password" label="Contraseña" />
+
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn flat rounded label="Cancelar" v-close-popup />
-          <q-btn
-            flat
-            rounded
-            color="primary"
-            label="Guardar"
-            @click="saveEditUser"
-          />
+          <q-btn flat rounded color="primary" label="Guardar" @click="saveEditUser"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -81,13 +63,42 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 const search = ref('');
-const users = ref([]);
+const users = ref<UsersType[]>([]);
 const router = useRouter();
+console.log('das',users)
+type UsersType = {
+  id:string,
+  nombre: string;
+  apellidos: string;
+  email: string;
+  role: string;
+  password:string
 
+};
 const columns = [
-  { name: 'username', label: 'Username', field: 'username', sortable: true, filter: true },
-  { name: 'email', label: 'Email', field: 'email', sortable: true, filter: true },
-  // Agrega más columnas según sea necesario
+  {
+    name: 'nombre',
+    label: 'Nombre',
+    field: 'nombre',
+    sortable: true,
+    filter: true,
+    align: 'left',
+  },
+  {
+    name: 'apellidos',
+    label: 'Apellidos',
+    field: 'apellidos',
+    sortable: true,
+    filter: true,
+  },
+  {
+    name: 'email',
+    label: 'Email',
+    field: 'email',
+    sortable: true,
+    filter: true,
+  },
+  { name: 'role', label: 'Rol', field: 'role', sortable: true, filter: true },
 ];
 
 onMounted(async () => {
@@ -100,9 +111,10 @@ onMounted(async () => {
       },
     };
 
-    const response = await axios.get('http://127.0.0.1:8000/api/users', config);
-    console.log('Usuarios recuperados:', response.data);
-    users.value = response.data; // Asumiendo que la respuesta directa es el array de usuarios
+    const response = await axios.get('http://127.0.0.1:8000/api/users/list', config);
+
+    users.value = response.data.results;
+    console.log('Usuarios recuperados:', users.value);
   } catch (error) {
     console.error('Error fetching users:', error);
   }
@@ -110,24 +122,37 @@ onMounted(async () => {
 
 const editDialogOpen = ref(false);
 const editForm = reactive({
-  username: '',
+  id: '',
+  nombre: '',
+  apellidos:'',
   email: '',
   role: '',
+  password: '',
+
   // Agrega más campos según sea necesario
 });
 
 const editUser = (user) => {
-  editForm.username = user.username;
+  editForm.id = user.id;
+  editForm.nombre = user.nombre;
+  editForm.apellidos = user.apellidos;
   editForm.email = user.email;
   editForm.role = user.role;
-  editForm.id = user.id; // Asegúrate de guardar el ID del usuario para usarlo en saveEditUser
+  editForm.password = user.password;
 
   editDialogOpen.value = true;
 };
 
-const saveEditUser = async () => {
+async function saveEditUser() {
   try {
-    await axios.put(`http://127.0.0.1:8000/api/users/${editForm.id}/`, editForm);
+    const authToken = localStorage.getItem('authToken');
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    await axios.put(`http://127.0.0.1:8000/api/users/${editForm.id}/`, editForm, config);
     const index = users.value.findIndex(user => user.id === editForm.id);
     if (index!== -1) {
       Object.assign(users.value[index], editForm);
@@ -137,7 +162,8 @@ const saveEditUser = async () => {
   } catch (error) {
     console.error('Error updating user:', error);
   }
-};
+}
+
 
 const deleteUser = async (user) => {
   try {
@@ -154,4 +180,3 @@ const showUserDetails = (user) => {
   router.push({ name: 'user-details', params: { id: user.id } });
 };
 </script>
-

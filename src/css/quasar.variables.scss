@@ -118,3 +118,9 @@ $background-color-end: #ace0f9;
   align-items: center;
   padding-left: 30px;
 }
+.texto-truncado {
+  max-width: 150px; /* Ajusta este valor según el ancho deseado */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

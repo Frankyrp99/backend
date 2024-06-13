@@ -73,8 +73,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useQuasar } from 'quasar';
 import { useRoute } from 'vue-router';
-import axios from 'axios';
+import { api } from 'src/boot/axios';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -91,13 +92,13 @@ interface ResponseItem {
 
 const route = useRoute();
 const id = route.params.id;
-
+const $q = useQuasar();
 const response = ref<ResponseItem>({});
 
 const fetchData = async () => {
   try {
-    const result = await axios.get<ResponseItem>(
-      `http://127.0.0.1:8000/api/avales_tuto/${id}/`
+    const result = await api.get<ResponseItem>(
+      `/api/avales_tuto/${id}/`
     );
     response.value = result.data;
   } catch (error) {
@@ -121,6 +122,11 @@ const exportToPDF = () => {
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
     pdf.save(`${response.value.titulo_recurso}.pdf`);
+  });
+  $q.notify({
+    type: 'positive',
+    message: '¡Aval Exportado Correctamente!',
+    position: 'top-right',
   });
 };
 </script>

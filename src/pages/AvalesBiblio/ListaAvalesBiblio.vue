@@ -2,14 +2,19 @@
   <div class="q-pa-lg">
     <q-table
       title="Avales de Bibliografía"
+      title-class="text-bold"
       :rows="rows"
       :columns="columns"
       row-key="name"
       :filter="search"
-      pidap
+      dense
+      no-data-label="No hay datos disponibles."
+      no-results-label="No se encontraron resultados para tu búsqueda."
+      :loading="isLoading"
+      loading-label="Cargando..."
     >
       <template v-slot:top-right>
-        <q-btn icon="dehaze " size="md" flat dense to="/detallesbiblio" />
+        <q-btn label="Más Detalles" color="primary" size="md" flat dense to="/detallesbiblio" />
         <q-input dense outlined v-model="search" placeholder="Buscar" />
       </template>
 
@@ -106,9 +111,11 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, watch, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { api } from 'src/boot/axios';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
+import { useQuasar } from 'quasar';
 
+const $q = useQuasar();
 const user = ref({ role: 'invitado', isAdmin: false, isViewerOnly: false });
 const search = ref('');
 const rows = ref<RowType[]>([]);
@@ -118,6 +125,7 @@ const showSelectorDepartamento = ref(false);
 const closeFirstDialogAndUpdateModel = () => {
   showSelectorDepartamento.value = false;
 };
+const isLoading = ref(false);
 type RowType = {
   id: number;
   nombre: string;
@@ -181,7 +189,7 @@ const fetchUserData = async () => {
       },
     };
 
-    const response = await axios.get('http://127.0.0.1:8000/api/users', config);
+    const response = await api.get('/api/users', config);
 
     // Verificar si la petición fue exitosa
     if (response.status === 200) {
@@ -200,12 +208,13 @@ const fetchUserData = async () => {
 };
 onMounted(async () => {
   try {
-    const response = await axios.get('http://127.0.0.1:8000/api/avales_biblio/');
+    const response = await api.get('/api/avales_biblio/');
     console.log('Formulario enviado con éxito:', response.data.results);
     rows.value = response.data.results;
   } catch (error) {
     console.error('Error al obtener los datos de los profesores:', error);
   }
+  cargarDatos()
   fetchUserData();
 });
 const editDialogOpen = ref(false);
@@ -238,7 +247,12 @@ function capitalizeWords(text: string): string {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
-
+function cargarDatos() {
+  isLoading.value = true;
+  setTimeout(() => {
+    isLoading.value = false; // Finaliza la simulación de carga después de 2 segundos
+  }, 2000);
+}
 //watchers
 watch(
   nombre,
@@ -272,8 +286,8 @@ const editRow = (row: RowType) => {
 
 const saveEdit = async () => {
   try {
-    await axios.put(
-      `http://127.0.0.1:8000/api/avales_biblio/${selectedRow.value.id}/`,
+    await api.put(
+      `/api/avales_biblio/${selectedRow.value.id}/`,
       editForm
     );
 
@@ -290,6 +304,11 @@ const saveEdit = async () => {
   } catch (error) {
     console.error('Error al actualizar el recurso:', error);
   }
+  $q.notify({
+    type: 'positive',
+    message: '¡Aval Actualizado Correctamente!',
+    position: 'top-right',
+  });
 };
 
 //boton mostrar
@@ -300,7 +319,7 @@ const showRow = (row: null) => {
 // boton eliminar
 const deleteRow = async (row: { id: null }) => {
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/avales_biblio/${row.id}/`);
+    await api.delete(`/api/avales_biblio/${row.id}/`);
     console.log('Recurso eliminado con éxito');
 
     rows.value = rows.value.filter((item) => item.id !== row.id);

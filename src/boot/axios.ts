@@ -19,7 +19,6 @@ const api = axios.create({ baseURL: 'http://127.0.0.1:8000/' });
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
-  app.config.globalProperties.$axios = axios; // This line is fine as it is, but it's redundant since we already have $api configured.
   app.config.globalProperties.$api = api; // This ensures that you're using the configured instance with the baseURL
 
   // Note: If you want to use both $axios and $api, ensure they serve different purposes or have distinct configurations.

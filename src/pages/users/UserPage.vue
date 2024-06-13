@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import axios from 'axios'; // Asegúrate de tener axios instalado
+import { api } from 'src/boot/axios';
 
 interface UserData {
   nombre: string;
@@ -79,7 +79,7 @@ async function fetchUserData() {
       },
     };
 
-    const response = await axios.get('http://127.0.0.1:8000/api/users', config);
+    const response = await api.get('/api/users', config);
     user.value = response.data; // Asigna los datos del usuario a user.value
   } catch (error) {
     console.error('Error al obtener los datos del usuario:', error);

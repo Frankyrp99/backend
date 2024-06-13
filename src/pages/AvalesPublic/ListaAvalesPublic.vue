@@ -2,14 +2,19 @@
   <div class="q-pa-lg">
     <q-table
       title="Avales de Publicación"
+      title-class="text-bold"
       :rows="rows"
       :columns="columns"
       row-key="name"
       :filter="search"
-      pidap
+      dense
+      no-data-label="No hay datos disponibles."
+      no-results-label="No se encontraron resultados para tu búsqueda."
+      :loading="isLoading"
+      loading-label="Cargando..."
     >
       <template v-slot:top-right>
-        <q-btn icon="dehaze " size="md" flat dense to="detalles" />
+        <q-btn  label="Más Detalles" color="primary" size="md" flat dense to="detalles" />
         <q-input dense outlined v-model="search" placeholder="Buscar" />
       </template>
 
@@ -84,6 +89,74 @@
             v-model="editForm.lugar_pub"
             label="Lugar de Publicacion"
           />
+
+          <q-input
+            filled
+            v-model="editForm.tipo_recurso"
+            label="Tipo de Recurso"
+            class="form-item"
+            @click="showTipoRecursoDialog = true"
+            :rules="tipo_recursoRules"
+          />
+          <q-dialog v-model="showTipoRecursoDialog" persistent>
+            <selector-tipo-recurso
+              v-model="editForm.tipo_recurso"
+              :resource-types="['Artículo', 'Libro', 'Capítulo', 'Epígrafe']"
+              :open-dialog-automatically="showTipoRecursoDialog"
+              @update:modelValue="editForm.tipo_recurso = $event"
+              @dialogClosed="hideTipoRecursoDialog"
+            />
+          </q-dialog>
+          <q-input
+            filled
+            v-model="editForm.tipo_publicacion"
+            label="Tipo de Publicación"
+            class="form-item"
+            @click="showTipoPublicDialog = true"
+            :rules="tipoPubRules"
+          />
+          <q-dialog v-model="showTipoPublicDialog" persistent>
+            <selector-tipo-public
+              v-model="editForm.tipo_publicacion"
+              :public-types="[
+                'Revista Impresa',
+                'Revista Digital',
+                'Libro Impreso',
+                'Libro Digital',
+              ]"
+              :open-dialog-automatically="showTipoPublicDialog"
+              @update:modelValue="editForm.tipo_publicacion = $event"
+              @dialogClosed="hideTipoPublicDialog"
+            />
+          </q-dialog>
+
+          <q-input
+            v-if="editForm.tipo_publicacion === 'Revista Impresa'"
+            filled
+            v-model="editForm.issn"
+            label="ISSN"
+            class="form-item"
+            :rules="issnRules"
+          />
+          <q-input
+            v-if="editForm.tipo_publicacion === 'Revista Digital'"
+            filled
+            v-model="editForm.e_issn"
+            label="E-ISSN"
+            class="form-item"
+            :rules="eissnRules"
+          />
+          <q-input
+            v-if="
+              editForm.tipo_publicacion === 'Libro Impreso' ||
+              editForm.tipo_publicacion === 'Libro Digital'
+            "
+            filled
+            v-model="editForm.isbn"
+            label="ISBN"
+            class="form-item"
+            :rules="isbnRules"
+          />
           <q-input v-model="editForm.tomo" label="Tomo" />
           <q-input v-model="editForm.folio" label="Folio" />
         </q-card-section>
@@ -106,9 +179,13 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, watch, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
+import SelectorTipoRecurso from 'src/components/SelectorTipoRecurso.vue';
+import SelectorTipoPublic from 'src/components/SelectorTipoPublic.vue';
+import { api } from 'src/boot/axios';
+import { useQuasar } from 'quasar';
 
+const $q = useQuasar();
 const user = ref({ role: 'invitado', isAdmin: false, isViewerOnly: false });
 const search = ref('');
 const rows = ref<RowType[]>([]);
@@ -118,6 +195,16 @@ const showSelectorDepartamento = ref(false);
 const closeFirstDialogAndUpdateModel = () => {
   showSelectorDepartamento.value = false;
 };
+const showTipoRecursoDialog = ref(false);
+const hideTipoRecursoDialog = () => {
+  showTipoRecursoDialog.value = false;
+};
+
+const showTipoPublicDialog = ref(false);
+const hideTipoPublicDialog = () => {
+  showTipoPublicDialog.value = false;
+};
+const isLoading = ref(false);
 type RowType = {
   id: number;
   nombre: string;
@@ -186,6 +273,17 @@ const columns = [
     filter: true,
   },
 ];
+/////rules
+type Rule = (value: string) => boolean | string;
+const tipo_recursoRules: Rule[] = [
+  (v) => !!v || 'El Tipo de Recurso es requerido',
+];
+const tipoPubRules: Rule[] = [
+  (v) => !!v || 'El Tipo de Publicación es requerido',
+];
+const issnRules: Rule[] = [(v) => !!v || 'El ISSN es requerido'];
+const eissnRules: Rule[] = [(v) => !!v || 'El E-ISSN es requerido'];
+const isbnRules: Rule[] = [(v) => !!v || 'El ISBN es requerido'];
 const fetchUserData = async () => {
   try {
     const authToken = localStorage.getItem('authToken');
@@ -196,7 +294,7 @@ const fetchUserData = async () => {
       },
     };
 
-    const response = await axios.get('http://127.0.0.1:8000/api/users', config);
+    const response = await api.get('/api/users', config);
 
     // Verificar si la petición fue exitosa
     if (response.status === 200) {
@@ -215,12 +313,13 @@ const fetchUserData = async () => {
 };
 onMounted(async () => {
   try {
-    const response = await axios.get('http://127.0.0.1:8000/api/profesores/');
+    const response = await api.get('/api/profesores/');
     console.log('Formulario enviado con éxito:', response.data.results);
     rows.value = response.data.results;
   } catch (error) {
     console.error('Error al obtener los datos de los profesores:', error);
   }
+  cargarDatos();
   fetchUserData();
 });
 const editDialogOpen = ref(false);
@@ -268,6 +367,12 @@ function capitalizeWords(text: string): string {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
+function cargarDatos() {
+  isLoading.value = true;
+  setTimeout(() => {
+    isLoading.value = false; // Finaliza la simulación de carga después de 2 segundos
+  }, 2000);
+}
 //watchers
 watch(
   nombre,
@@ -310,8 +415,8 @@ const editRow = (row: RowType) => {
 
 const saveEdit = async () => {
   try {
-    await axios.put(
-      `http://127.0.0.1:8000/api/profesores/${selectedRow.value.id}/`,
+    await api.put(
+      `/api/profesores/${selectedRow.value.id}/`,
       { ...editForm }
     );
 
@@ -328,6 +433,11 @@ const saveEdit = async () => {
   } catch (error) {
     console.error('Error al actualizar el recurso:', error);
   }
+  $q.notify({
+    type: 'positive',
+    message: '¡Aval Actualizado Correctamente!',
+    position: 'top-right',
+  });
 };
 //boton mostrar
 const showRow = (row: null) => {
@@ -337,7 +447,7 @@ const showRow = (row: null) => {
 // boton eliminar
 const deleteRow = async (row: { id: null }) => {
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/profesores/${row.id}/`);
+    await api.delete(`/api/profesores/${row.id}/`);
     console.log('Recurso eliminado con éxito');
 
     rows.value = rows.value.filter((item) => item.id !== row.id);

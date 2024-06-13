@@ -117,10 +117,12 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
-import axios from 'axios';
+import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
-// Definición de tipos para el formulario
+import { useQuasar } from 'quasar';
+
+
 interface Form {
   nombre: string;
   apellidos: string;
@@ -145,7 +147,7 @@ const form = reactive<Form>({
   fecha: '',
 });
 const router = useRouter();
-
+const $q = useQuasar();
 //variables del selector del departamento
 const showSelectorDepartamento = ref(false);
 const closeFirstDialogAndUpdateModel = () => {
@@ -204,8 +206,8 @@ function onSubmit() {
     return;
   }
 
-  axios
-    .post('http://127.0.0.1:8000/api/avales_tuto/', form)
+  api
+    .post('/api/avales_tuto/', form)
     .then((response) => {
       console.log('Formulario enviado con éxito:', response.data);
       router.push({ name: 'ListaAvalesTuto' });
@@ -221,6 +223,11 @@ function onSubmit() {
       }
       console.error('Error al enviar el formulario:', error);
     });
+    $q.notify({
+    type: 'positive',
+    message: '¡Aval Registrado con Éxito !',
+    position: 'top-right'
+  });
 }
 
 // Declaración de variables reactivas adicionales si es necesario

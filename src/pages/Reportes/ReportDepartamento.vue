@@ -19,6 +19,11 @@
       :columns="columnas"
       :filter="search"
       class="q-mt-md"
+      dense
+      no-data-label="No hay datos disponibles."
+      no-results-label="No se encontraron resultados para tu búsqueda."
+      :loading="isLoading"
+      loading-label="Cargando..."
     >
       <template v-slot:top-left>
         <q-input
@@ -42,15 +47,7 @@
 
           <q-td auto-width>
             <q-btn color="primary" icon="visibility" size="sm" flat dense />
-            <q-btn color="positive" icon="edit" size="sm" flat dense />
-            <q-btn
-              color="negative"
-              icon="delete"
-              size="sm"
-              class="q-ml-sm"
-              flat
-              dense
-            />
+
           </q-td>
         </q-tr>
       </template>
@@ -102,7 +99,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch, computed } from 'vue';
-import axios from 'axios';
+import { api } from 'src/boot/axios';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
 
 interface Aval {
@@ -136,7 +133,7 @@ const closeFirstDialogAndUpdateModel = () => {
   showSelectorDepartamento.value = false;
 };
 const dialogDepartamentosVisible = ref(false);
-
+const isLoading = ref(false);
 const columnas: ColumnType[] = [
   {
     name: 'tipo',
@@ -290,8 +287,8 @@ const departamentosPorFacultad = reactive({
 ///////////consultas////////
 async function cargarDatos() {
   try {
-    const response = await axios.get(
-      `http://127.0.0.1:8000/api/reporte-departamento/${departamentoSeleccionado.value}/`
+    const response = await api.get(
+      `/api/reporte-departamento/${departamentoSeleccionado.value}/`
     );
 
     const data = response.data;
@@ -304,12 +301,13 @@ async function cargarDatos() {
   } catch (error) {
     console.error('Error al cargar los datos del endpoint:', error);
   }
+  cargarDatos1()
 }
 
 async function procesarAvalessPorDepartamento() {
   try {
-    const response = await axios.get(
-      'http://127.0.0.1:8000/api/reporte-total-avaless-por-departamento/'
+    const response = await api.get(
+      '/api/reporte-total-avaless-por-departamento/'
     );
     const data = response.data;
 
@@ -350,6 +348,12 @@ function mostrarAvales() {
   } else {
     reportData.rows = [];
   }
+}
+function cargarDatos1() {
+  isLoading.value = true;
+  setTimeout(() => {
+    isLoading.value = false; // Finaliza la simulación de carga después de 2 segundos
+  }, 2000);
 }
 function obtenerFacultadPorDepartamento(departamento: string): string | '' {
   for (const [facultad, departamentos] of Object.entries(

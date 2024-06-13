@@ -38,12 +38,7 @@
             <div class="col-6 datos-recurso">{{ response.titulo_recurso }}</div>
             <div class="col-6 text-bold datos-recurso">Departamento</div>
             <div class="col-6 datos-recurso">{{ response.departamento }}</div>
-            <div class="col-6 text-bold datos-recurso">Tomo</div>
-            <div class="col-6 datos-recurso">{{ response.tomo }}</div>
-            <div class="col-6 text-bold datos-recurso">Folio</div>
-            <div class="col-6 datos-recurso">{{ response.folio }}</div>
-            <div class="col-6 text-bold datos-recurso">Fecha</div>
-            <div class="col-6 datos-recurso">{{ response.fecha }}</div>
+
             <div class="col-6 text-bold datos-recurso">
               Lugar donde se Publicó
             </div>
@@ -55,7 +50,12 @@
               {{ response.tipo_publicacion }}
             </div>
             <div class="col-6 text-bold datos-recurso">URL</div>
-            <div class="col-6 datos-recurso">{{ response.url }}</div>
+            <div class="col-6 datos-recurso">{{ response.url }}</div> <div class="col-6 text-bold datos-recurso">Tomo</div>
+            <div class="col-6 datos-recurso">{{ response.tomo }}</div>
+            <div class="col-6 text-bold datos-recurso">Folio</div>
+            <div class="col-6 datos-recurso">{{ response.folio }}</div>
+            <div class="col-6 text-bold datos-recurso">Fecha</div>
+            <div class="col-6 datos-recurso">{{ response.fecha }}</div>
           </div>
         </q-list>
         <div class="row items-center justify-between">
@@ -85,8 +85,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useQuasar } from 'quasar';
 import { useRoute } from 'vue-router';
-import axios from 'axios';
+import { api } from 'src/boot/axios';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -109,11 +110,11 @@ const route = useRoute();
 const id = route.params.id;
 
 const response = ref<ResponseItem>({});
-
+const $q = useQuasar();
 const fetchData = async () => {
   try {
-    const result = await axios.get<ResponseItem>(
-      `http://127.0.0.1:8000/api/profesores/${id}/`
+    const result = await api.get<ResponseItem>(
+      `/api/profesores/${id}/`
     );
     response.value = result.data;
   } catch (error) {
@@ -138,6 +139,11 @@ const exportToPDF = () => {
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
     pdf.save(`${response.value.titulo_recurso}.pdf`);
 });
+$q.notify({
+    type: 'positive',
+    message: '¡Aval Exportado Correctamente!',
+    position: 'top-right',
+  });
 };
 </script>
 

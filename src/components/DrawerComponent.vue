@@ -73,7 +73,7 @@ const categories: Category[] = [
         route: '/Report_depart',
       },
       { label: 'Artículos por Año', route: '/Report_fecha' },
-      { label: 'Artículos por Profesor', route: '/reportes_por_profesor' },
+      { label: 'Artículos por Profesor', route: '/Report_Autor' },
     ],
   },
 ];

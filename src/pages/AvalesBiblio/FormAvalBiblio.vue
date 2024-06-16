@@ -4,7 +4,7 @@
       <div style="margin-top: 20px; margin-bottom: 20px">
         <h4 class="text-bold">Nuevo Aval de Bibliografía</h4>
       </div>
-      <q-form @submit="onSubmit" class="bg-color" id="form">
+      <q-form @submit="onSubmit"  id="form">
         <div class="q-gutter-md row justify-center items-center ">
           <q-input
             style="max-width: 300px"

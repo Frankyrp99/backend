@@ -67,6 +67,7 @@
           <div class="text-h6 text-bold">
             Cantidad de Avales por Departamento y Facultad
           </div>
+          <q-separator />
           <ul class="text-bold">
             <li
 

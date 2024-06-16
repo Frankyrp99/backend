@@ -25,3 +25,12 @@
 <script setup lang="ts">
 
 </script>
+onMounted(async () => {
+  try {
+    const response = await api.get('/api/reporte-total-avaless-por-fecha/');
+    datos.value = response.data; // Asigna los datos recibidos
+    console.log('Datos cargados:', datos.value);
+  } catch (error) {
+    console.error('Error al cargar los datos:', error);
+  }
+});

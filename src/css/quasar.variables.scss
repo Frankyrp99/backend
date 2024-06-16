@@ -124,3 +124,13 @@ $background-color-end: #ace0f9;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.q-btn-dropdown {
+  background: none!important; /* Elimina el fondo */
+  border: none!important;
+  box-shadow: none; /* Elimina el borde */
+}
+
+.q-btn-dropdown.q-icon {
+  /* Ajusta el tamaño del ícono si es necesario */
+  font-size: 24px;
+}

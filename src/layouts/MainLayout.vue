@@ -19,7 +19,7 @@
 
         <q-btn-group flat dense class="row justify-end ">
           <q-btn-dropdown
-            color="bg-color"
+            
             icon="account_circle"
             text-color="black"
             align="between"
@@ -58,14 +58,7 @@
       <drawer-component />
     </q-drawer>
 
-    <div class="container">
-      <img
-        src="/src/assets/logo.png"
-        alt="Descripción de la imagen"
-        class="centered-image"
-        width="400"
-      />
-    </div>
+
 
     <q-page-container>
       <router-view />
@@ -124,22 +117,4 @@ const toggleLeftDrawer = () => {
 onMounted(fetchUserData);
 </script>
 
-<style scoped>
-.container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1; /* Asegura que la imagen esté detrás de otros contenidos */
-  opacity: 0.7; /* Ajusta la opacidad de la imagen */
-}
 
-.centered-image {
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 1; /* Asegura que la imagen centrada sea completamente opaca */
-}
-</style>

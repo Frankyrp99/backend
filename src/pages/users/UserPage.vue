@@ -1,43 +1,43 @@
 <template>
   <q-page class="row items-center justify-evenly">
-    <q-card class="my-card bg-color" >
+    <q-card class="my-card bg-color">
       <q-card-section>
-        <div class="text-h6">Perfil de Usuario</div>
+        <div class="text-h5 text-bold">Perfil de Usuario:</div>
       </q-card-section>
-
+      <q-separator />
       <q-card-section>
         <q-list>
           <q-item>
             <q-item-section>
-              <q-item-label class="text-bold">Nombre</q-item-label>
+              <q-item-label class="text-bold text-h6">Nombre:</q-item-label>
             </q-item-section>
-            <q-item-section side>
+            <q-item-section side class="text-bold">
               {{ user.nombre }}
             </q-item-section>
           </q-item>
           <q-item>
             <q-item-section>
-              <q-item-label class="text-bold">Apellidos</q-item-label>
+              <q-item-label class="text-bold text-h6">Apellidos:</q-item-label>
             </q-item-section>
-            <q-item-section side>
+            <q-item-section side class="text-bold">
               {{ user.apellidos }}
             </q-item-section>
           </q-item>
 
           <q-item>
             <q-item-section>
-              <q-item-label class="text-bold">Correo electrónico</q-item-label>
+              <q-item-label class="text-bold text-h6">Email:</q-item-label>
             </q-item-section>
-            <q-item-section side>
+            <q-item-section side class="text-bold">
               {{ user.email }}
             </q-item-section>
           </q-item>
 
           <q-item>
             <q-item-section>
-              <q-item-label class="text-bold">Rol</q-item-label>
+              <q-item-label class="text-bold text-h6">Rol:</q-item-label>
             </q-item-section>
-            <q-item-section side>
+            <q-item-section side class="text-bold">
               {{ user.role }}
             </q-item-section>
           </q-item>
@@ -90,10 +90,9 @@ async function fetchUserData() {
 onMounted(fetchUserData);
 </script>
 
-
 <style scoped>
 .my-card {
-  width:  100%;
-  max-width:  400px;
+  width: 100%;
+  max-width: 400px;
 }
 </style>

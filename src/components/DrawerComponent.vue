@@ -1,5 +1,10 @@
 <template>
   <div>
+    <q-item to="home" clickable v-close-popup>
+      <q-item-section>
+        <q-item-label class="text-bold">Home</q-item-label>
+      </q-item-section>
+    </q-item>
     <q-expansion-item
       v-for="category in categories"
       :key="category.title"
@@ -25,8 +30,6 @@
 </template>
 
 <script setup lang="ts">
-
-
 interface NavigationItem {
   label: string;
   route: string;
@@ -41,26 +44,26 @@ const categories: Category[] = [
   {
     title: 'Avales de Publicación',
     items: [
-      { label: 'Crear Aval de Publicación', route: '/crear_aval_public'  },
+      { label: 'Crear Aval de Publicación', route: '/crear_aval_public' },
       { label: 'Listar Avales de Publicación', route: '/lista_avales_public' },
     ],
   },
   {
-    title: 'Avales de Tutorias',
+    title: 'Avales de Tutorías',
     items: [
-      { label: 'Crear Aval de Tutoria', route: '/crear_aval_tuto' },
-      { label: 'Listar Avales de Tutorias', route: '/lista_avales_tuto' },
+      { label: 'Crear Aval de Tutoría', route: '/crear_aval_tuto' },
+      { label: 'Listar Avales de Tutorías', route: '/lista_avales_tuto' },
     ],
   },
   {
-    title: 'Avales de Bibliografias',
+    title: 'Avales de Bibliografías',
     items: [
       {
         label: 'Crear Aval de Bibliografía',
         route: '/crear_aval_biblio',
       },
       {
-        label: 'Listar Avales de Bibliografias',
+        label: 'Listar Avales de Bibliografías',
         route: '/lista_avales_biblio',
       },
     ],
@@ -69,13 +72,12 @@ const categories: Category[] = [
     title: 'Reportes',
     items: [
       {
-        label: 'Artículos por Departamento',
+        label: 'Avales por Departamento',
         route: '/Report_depart',
       },
-      { label: 'Artículos por Año', route: '/Report_fecha' },
-      { label: 'Artículos por Profesor', route: '/Report_Autor' },
+      { label: 'Avales por Año', route: '/Report_fecha' },
+      { label: 'Avales por Profesor', route: '/Report_Autor' },
     ],
   },
 ];
-
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-lg">
     <q-table
-      title="Avales de Tutorias"
+      title="Avales de Tutorías"
       title-class="text-bold"
       :rows="rows"
       :columns="columns"
@@ -78,7 +78,6 @@
             label="Titulo del Recurso"
           />
           <q-input
-            filled
             v-model="editForm.departamento"
             label="Departamento"
             class="form-item"
@@ -91,11 +90,7 @@
               @close-first-dialog="closeFirstDialogAndUpdateModel"
             />
           </q-dialog>
-          <q-input
-            autogrow
-            v-model="editForm.lugar_pub"
-            label="Lugar de Publicacion"
-          />
+         
           <q-input v-model="editForm.tomo" label="Tomo" />
           <q-input v-model="editForm.folio" label="Folio" />
         </q-card-section>

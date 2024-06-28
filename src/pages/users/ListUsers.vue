@@ -2,13 +2,13 @@
   <div class="q-pa-lg">
     <q-table
       title="Lista de Usuarios"
+      title-class="text-bold"
       :rows="users"
       :columns="columns"
       row-key="nombre"
       :filter="search"
     >
       <template v-slot:top-right>
-        <q-btn icon="dehaze" size="md" flat dense to="detalles" />
         <q-input dense outlined v-model="search" placeholder="Buscar" />
       </template>
 
@@ -20,7 +20,14 @@
 
           <q-td auto-width>
             <q-btn color="primary" icon="visibility" size="sm" flat dense />
-            <q-btn color="positive" icon="edit" size="sm" flat dense @click="editUser(props.row)" />
+            <q-btn
+              color="positive"
+              icon="edit"
+              size="sm"
+              flat
+              dense
+              @click="editUser(props.row)"
+            />
             <q-btn
               color="negative"
               icon="delete"
@@ -45,13 +52,23 @@
           <q-input autogrow v-model="editForm.apellidos" label="apellidos" />
           <q-input autogrow v-model="editForm.email" label="Email" />
           <q-input autogrow v-model="editForm.role" label="Rol" />
-          <q-input type="password" autogrow v-model="editForm.password" label="Contraseña" />
-
+          <q-input
+            type="password"
+            autogrow
+            v-model="editForm.password"
+            label="Contraseña"
+          />
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn flat rounded label="Cancelar" v-close-popup />
-          <q-btn flat rounded color="primary" label="Guardar" @click="saveEditUser"/>
+          <q-btn
+            flat
+            rounded
+            color="primary"
+            label="Guardar"
+            @click="saveEditUser"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -65,15 +82,15 @@ import axios from 'axios';
 const search = ref('');
 const users = ref<UsersType[]>([]);
 const router = useRouter();
-console.log('das',users)
+console.log('das', users);
 type UsersType = {
-  id:string,
+  id: string;
   nombre: string;
   apellidos: string;
   email: string;
   role: string;
-  password:string
-
+  password: string;
+  format?: (value: string) => string;
 };
 const columns = [
   {
@@ -98,7 +115,24 @@ const columns = [
     sortable: true,
     filter: true,
   },
-  { name: 'role', label: 'Rol', field: 'role', sortable: true, filter: true },
+  {
+    name: 'role',
+    label: 'Rol',
+    field: 'role',
+    sortable: true,
+    filter: true,
+    format: (value: string) => {
+      if (value === 'admin') {
+        return 'Administrador';
+      } else if (value === 'especialista') {
+        return 'Especialista';
+      } else if (value === 'invitado') {
+        return 'Invitado';
+      } else {
+        return value;
+      }
+    },
+  },
 ];
 
 onMounted(async () => {
@@ -111,7 +145,10 @@ onMounted(async () => {
       },
     };
 
-    const response = await axios.get('http://127.0.0.1:8000/api/users/list', config);
+    const response = await axios.get(
+      'http://127.0.0.1:8000/api/users/list',
+      config
+    );
 
     users.value = response.data.results;
     console.log('Usuarios recuperados:', users.value);
@@ -124,7 +161,7 @@ const editDialogOpen = ref(false);
 const editForm = reactive({
   id: '',
   nombre: '',
-  apellidos:'',
+  apellidos: '',
   email: '',
   role: '',
   password: '',
@@ -152,9 +189,13 @@ async function saveEditUser() {
         'Content-Type': 'application/json',
       },
     };
-    await axios.put(`http://127.0.0.1:8000/api/users/${editForm.id}/`, editForm, config);
-    const index = users.value.findIndex(user => user.id === editForm.id);
-    if (index!== -1) {
+    await axios.put(
+      `http://127.0.0.1:8000/api/users/${editForm.id}/`,
+      editForm,
+      config
+    );
+    const index = users.value.findIndex((user) => user.id === editForm.id);
+    if (index !== -1) {
       Object.assign(users.value[index], editForm);
     }
     console.log('Usuario actualizado con éxito');
@@ -164,12 +205,11 @@ async function saveEditUser() {
   }
 }
 
-
 const deleteUser = async (user) => {
   try {
     await axios.delete(`http://127.0.0.1:8000/api/users/${user.id}/`);
     console.log('Usuario eliminado con éxito');
-    users.value = users.value.filter(u => u.id!== user.id);
+    users.value = users.value.filter((u) => u.id !== user.id);
   } catch (error) {
     console.error('Error deleting user:', error);
   }

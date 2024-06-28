@@ -1,9 +1,9 @@
 <template>
-  <q-page class="flex flex-center">
-    <q-form @submit="onSubmit" class="q-gutter-md">
-      <div class="text-h6">Iniciar sesión</div>
+  <q-page class="flex flex-center bg-color">
+    <q-form @submit="onSubmit" id="form-login">
+      <q-avatar size="200px" icon="account_circle" />
+
       <q-input
-        filled
         v-model="email"
         label="Correo electrónico"
         lazy-rules
@@ -16,7 +16,6 @@
 
       <q-input
         type="password"
-        filled
         v-model="password"
         label="Contraseña"
         lazy-rules

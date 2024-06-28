@@ -1,9 +1,9 @@
 <template>
   <div class="q-pa-lg">
-    <q-card class="row justify-evenly align-center">
-      <div class="flex flex-row items-center">
+    <q-card class="row justify-evenly align-center ">
+      <div class="flex flex-row items-center ">
         <q-card-section>
-          <q-btn class="text-bold"
+          <q-btn class="text-bold "
             >Cantidad de Avales del Departamento: {{ cantidadDeAvaless }}</q-btn
           >
         </q-card-section>

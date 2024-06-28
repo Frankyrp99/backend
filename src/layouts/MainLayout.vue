@@ -1,7 +1,8 @@
 <template>
-  <q-layout view="hHh LpR lfr" class="bg-color">
+  <q-layout view="hHh LpR lfr" >
     <q-header elevated>
       <q-toolbar class="bg-color ">
+        
         <q-btn
           dense
           flat
@@ -14,12 +15,12 @@
           <img src="src/assets/logotoolbar.png" />
         </q-avatar>
 
-        <q-toolbar-title class="text-black text-bold">SIGAV</q-toolbar-title>
+        <q-toolbar-title class="text-black  text-gliker">SIGAV</q-toolbar-title>
 
 
         <q-btn-group flat dense class="row justify-end ">
           <q-btn-dropdown
-            
+
             icon="account_circle"
             text-color="black"
             align="between"
@@ -38,7 +39,12 @@
 
               <q-item clickable v-close-popup @click="logout">
                 <q-item-section>
-                  <q-item-label class="text-bold">Logout</q-item-label>
+                  <q-item-label class="text-bold">Cerrar Sesión</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup >
+                <q-item-section>
+                  <q-item-label class="text-bold">Acerca De</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -53,7 +59,7 @@
       v-model="leftDrawerOpen"
       side="left"
       elevated
-      class="bg-color text-black"
+      class=" text-black"
     >
       <drawer-component />
     </q-drawer>

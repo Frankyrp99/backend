@@ -6,6 +6,7 @@
           >Selecciona la Facultad:</q-card-section
         >
         <q-select
+          class="text-bold"
           filled
           v-model="selectedFaculty"
           :options="faculty"
@@ -67,25 +68,25 @@ const selectedFaculty = ref('');
 const selectedDepartment = ref('');
 const selectedDepartmentOptions = ref(['']);
 const faculty = [
-  '-Ciencias Sociales',
-  '-Ciencias Aplicadas',
-  '-Ciencias Agropecuarias',
-  '-Ciencias Económicas',
-  '-Electromecánica',
-  '-Construcciones',
-  '-Lengua y Comunicación',
-  '-Informática y Ciencias Exactas',
-  '-Ciencias Pedagógicas',
-  '-Cultura Física',
-  '-CUM',
+  'Ciencias Sociales',
+  'Ciencias Aplicadas',
+  'Ciencias Agropecuarias',
+  'Ciencias Económicas',
+  'Electromecánica',
+  'Construcciones',
+  'Lengua y Comunicación',
+  'Informática y Ciencias Exactas',
+  'Ciencias Pedagógicas',
+  'Cultura Física',
+  'CUM',
 ];
 const departmentsByFaculty: DepartmentsByFaculty = {
-  '-Ciencias Sociales': [
+  'Ciencias Sociales': [
     'Derecho',
     'Estudios Socioculturales',
     'Psicología - Sociología',
   ],
-  '-Ciencias Aplicadas': [
+  'Ciencias Aplicadas': [
     'Alimentos',
     'Educación Biología',
     'Educación Geografía',
@@ -95,14 +96,14 @@ const departmentsByFaculty: DepartmentsByFaculty = {
     'CEECE',
     'CEGEA',
   ],
-  '-Ciencias Agropecuarias': [
+  'Ciencias Agropecuarias': [
     'Agronomía',
     'Educación Agropecuaria',
     'Morfofisiología',
     'Medicina Veterinaria',
     'CEDEPA',
   ],
-  '-Ciencias Económicas': [
+  'Ciencias Económicas': [
     'Contabilidad',
     'Economía',
     'Educación Economía',
@@ -110,32 +111,32 @@ const departmentsByFaculty: DepartmentsByFaculty = {
     'CEMTUR',
     'CEDET',
   ],
-  '-Electromecánica': [
+  Electromecánica: [
     'Educación Electromecánica',
     'Ingeniería Eléctrica',
     'Ingeniería Mecánica',
     'CEEFREP',
   ],
-  '-Construcciones': [
+  Construcciones: [
     'Arquitectura',
     'Educación Construcción',
     'Ingeniería Civil',
     'CECODEC',
   ],
-  '-Lengua y Comunicación': [
+  'Lengua y Comunicación': [
     'Español',
     'Lenguas Extranjeras',
     'Periodismo y Comunicación Social',
     'Centro de Idiomas',
   ],
-  '-Informática y Ciencias Exactas': [
+  'Informática y Ciencias Exactas': [
     'Educación Laboral e Informática',
     'Ciencias de la Información',
     'Ingeniería Informática',
     'Física',
     'Matemática',
   ],
-  '-Ciencias Pedagógicas': [
+  'Ciencias Pedagógicas': [
     'Educación Artística',
     'Educación Especial',
     'Educación Pedagogía - Psicología',
@@ -143,14 +144,14 @@ const departmentsByFaculty: DepartmentsByFaculty = {
     'Educación Preescolar',
     'Educación Primaria',
   ],
-  '-Cultura Física': [
+  'Cultura Física': [
     'Cultura Física',
     'Ciencias Aplicadas al Deporte',
     'Didáctica del Deporte',
     'Educación Física y Recreación',
     'CEAFIDE',
   ],
-  '-CUM': [
+  CUM: [
     'Céspedes',
     'Esmeralda',
     'Florida',

@@ -8,7 +8,7 @@
 // It's highly recommended to change the default colors
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
-$primary: #1976d2;
+$primary: #53afff;
 $secondary: #26a69a;
 $accent: #fdfafe;
 $dark: #1d1d1d;
@@ -17,12 +17,17 @@ $positive: #21ba45;
 $negative: #c10015;
 $info: #31ccec;
 $warning: #f2c037;
+@font-face {
+  font-family: 'Gliker';
+  src: url('/src/assets/Gliker.ttf') format('truetype');
+}
+
 @mixin linear-gradient($direction, $start-color, $end-color) {
   background-image: linear-gradient($direction, $start-color, $end-color);
 }
 
-$background-color-start: #fff1eb;
-$background-color-end: #ace0f9;
+$background-color-start: #e0e0e0;
+$background-color-end: #2a8cb9;
 
 .bg-color {
   background-image: linear-gradient(
@@ -46,21 +51,11 @@ $background-color-end: #ace0f9;
 
   // Asegurándonos de que el contenido de la tarjeta sea legible contra el fondo
   color: #333; // Color del texto
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.8
-  );
+  background-color: rgba(255, 255, 255, 0.8);
 }
 // Estilo para la tarjeta
 .q-form {
   // Aplicando el fondo con el mixin
-  @include linear-gradient(
-    to top,
-    $background-color-start 0%,
-    $background-color-end 100%
-  );
 
   border-radius: 10px; // Bordes redondeados
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Sombra para dar profundidad
@@ -69,9 +64,9 @@ $background-color-end: #ace0f9;
   // Asegurándonos de que el contenido de la tarjeta sea legible contra el fondo
   color: #333; // Color del texto
   background-color: rgba(
-    255,
-    255,
-    255,
+    163,
+    49,
+    49,
     0.8
   ); // Fondo semi-transparente para mejorar la legibilidad
 
@@ -84,11 +79,9 @@ $background-color-end: #ace0f9;
   // Ancho máximo y margen centrado
   max-width: 400px;
   margin: auto;
-
-
-
 }
-.q-card{  // Aplicando el fondo con el mixin
+.q-card {
+  // Aplicando el fondo con el mixin
   @include linear-gradient(
     to top,
     $background-color-start 0%,
@@ -119,18 +112,21 @@ $background-color-end: #ace0f9;
   padding-left: 30px;
 }
 .texto-truncado {
-  max-width: 150px; /* Ajusta este valor según el ancho deseado */
+  max-width: 50px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .q-btn-dropdown {
-  background: none!important; /* Elimina el fondo */
-  border: none!important;
+  background: none !important; /* Elimina el fondo */
+  border: none !important;
   box-shadow: none; /* Elimina el borde */
 }
 
 .q-btn-dropdown.q-icon {
   /* Ajusta el tamaño del ícono si es necesario */
   font-size: 24px;
+}
+.text-gliker {
+  font-family: 'Gliker', fallback, sans-serif;
 }

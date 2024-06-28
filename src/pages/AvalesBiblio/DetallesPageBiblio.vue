@@ -14,7 +14,14 @@
       loading-label="Cargando..."
     >
       <template v-slot:top-right>
-        <q-btn label="Menos Detalles" color="primary" size="md" flat dense to="/lista_avales_biblio" />
+        <q-btn
+          label="Menos Detalles"
+          color="primary"
+          size="md"
+          flat
+          dense
+          to="/lista_avales_biblio"
+        />
         <q-input dense outlined v-model="search" placeholder="Buscar" />
       </template>
 
@@ -65,13 +72,8 @@
         <q-card-section>
           <q-input autogrow v-model="editForm.nombre" label="Nombre" />
           <q-input autogrow v-model="editForm.apellidos" label="Apellidos" />
+
           <q-input
-            autogrow
-            v-model="editForm.titulo_recurso"
-            label="Titulo del Recurso"
-          />
-          <q-input
-            filled
             v-model="editForm.departamento"
             label="Departamento"
             class="form-item"
@@ -85,9 +87,77 @@
             />
           </q-dialog>
           <q-input
-            autogrow
-            v-model="editForm.lugar_pub"
-            label="Lugar de Publicacion"
+            v-model="editForm.total_asient"
+            label="Total de Asientos Bibliográficos"
+            class="form-item"
+          />
+          <q-input
+            v-model="editForm.rev_bilio"
+            label="Tipo de Revisión Bibliográfica"
+            class="form-item"
+            @click="showRevBiblioDialog = true"
+          />
+          <q-dialog v-model="showRevBiblioDialog" persistent>
+            <selector-rev-biblio
+              v-model="editForm.rev_bilio"
+              :public-types="[
+                'Maestría',
+                'Doctorado',
+                'Trabajo de Diplma',
+                'Proyecto',
+                'Curso de Posgrado',
+                'Projecto de Curso',
+                'Disciplina',
+                'Asignatura',
+                'Evaluación Ind. Prof',
+              ]"
+              :open-dialog-automatically="showRevBiblioDialog"
+              @update:modelValue="editForm.rev_bilio = $event"
+              @dialogClosed="hideRevBiblioDialog"
+            />
+          </q-dialog>
+          <q-input
+            v-model="editForm.niv_act"
+            label="Nivel de Actualización"
+            class="form-item"
+            @click="showNivActDialog = true"
+          />
+          <q-dialog v-model="showNivActDialog" persistent>
+            <selector-niv-act
+              v-model="editForm.niv_act"
+              :public-types="['Alto', 'Medio', 'Bajo']"
+              :open-dialog-automatically="showNivActDialog"
+              @update:modelValue="editForm.niv_act = $event"
+              @dialogClosed="hideNivActDialog"
+            />
+          </q-dialog>
+
+          <q-checkbox
+            v-model="editForm.bd_local"
+            label="Base de Datos Locales"
+          />
+          <q-checkbox v-model="editForm.cd_rom" label="CD ROM / DVD" />
+          <q-checkbox
+            v-model="editForm.bd_internet"
+            label="Base de Datos en Internet"
+          />
+          <q-checkbox
+            v-model="editForm.curso_pos_bus"
+            label="Curso de Posgrado"
+          />
+
+          <q-checkbox
+            v-model="editForm.busqueda_internet"
+            label="Busqueda en Internet"
+          />
+          <q-checkbox
+            v-model="editForm.biblio_personal"
+            label="Bibliografía Personal"
+          />
+          <q-checkbox v-model="editForm.otros" label="Otros" />
+          <q-checkbox
+            v-model="editForm.no_biblio"
+            label="No Existe Bibliografía"
           />
           <q-input v-model="editForm.tomo" label="Tomo" />
           <q-input v-model="editForm.folio" label="Folio" />
@@ -113,6 +183,8 @@ import { ref, onMounted, reactive, watch, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
 import { api } from 'src/boot/axios';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
+import SelectorRevBiblio from 'src/components/SelectorRevBiblio.vue';
+import SelectorNivAct from 'src/components/SelectorNivAct.vue';
 import { useQuasar } from 'quasar';
 
 const $q = useQuasar();
@@ -125,17 +197,35 @@ const showSelectorDepartamento = ref(false);
 const closeFirstDialogAndUpdateModel = () => {
   showSelectorDepartamento.value = false;
 };
+const showNivActDialog = ref(false);
+const hideNivActDialog = () => {
+  showNivActDialog.value = false;
+};
+const showRevBiblioDialog = ref(false);
+const hideRevBiblioDialog = () => {
+  showRevBiblioDialog.value = false;
+};
 const isLoading = ref(false);
 type RowType = {
   id: number;
   nombre: string;
   apellidos: string;
-  titulo_recurso: string;
   departamento: string;
-  lugar_pub: string;
+  total_asient: string;
+  rev_bilio: string;
+  bd_local: boolean;
+  cd_rom?: boolean;
+  bd_internet: boolean;
+  curso_pos_bus: boolean;
+  busqueda_internet: boolean;
+  biblio_personal: boolean;
+  otros: boolean;
+  no_biblio: boolean;
   tomo: string;
+  pag: string;
   folio: string;
   fecha: string;
+  niv_act: string;
 };
 const columns = [
   {
@@ -156,17 +246,32 @@ const columns = [
     sortable: true,
   },
 
-  {
-    name: 'titulo_recurso',
-    label: 'Titulo del Recurso',
-    field: 'titulo_recurso',
-    sortable: true,
-    filter: true,
-  },
+
   {
     name: 'departamento',
     label: 'Departamento de Trabajo',
     field: 'departamento',
+    sortable: true,
+    filter: true,
+  },
+  {
+    name: 'total_asient',
+    label: 'Total de Asientos',
+    field: 'total_asient',
+    sortable: true,
+    filter: true,
+  },
+  {
+    name: 'rev_bilio',
+    label: 'Tipo de Revisión',
+    field: 'rev_bilio',
+    sortable: true,
+    filter: true,
+  },
+  {
+    name: 'niv_act',
+    label: 'Nivel de Actualizacion',
+    field: 'niv_act',
     sortable: true,
     filter: true,
   },
@@ -228,28 +333,48 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error al obtener los datos de los profesores:', error);
   }
-  cargarDatos()
+  cargarDatos();
   fetchUserData();
 });
 const editDialogOpen = ref(false);
 interface Form {
   nombre: string;
   apellidos: string;
-  titulo_recurso: string;
   departamento: string;
-  lugar_pub: string;
+  total_asient: string;
+  rev_bilio: string;
+  bd_local: boolean;
+  cd_rom: boolean;
+  bd_internet: boolean;
+  curso_pos_bus: boolean;
+  busqueda_internet: boolean;
+  biblio_personal: boolean;
+  otros: boolean;
+  no_biblio: boolean;
   tomo: string;
+  pag: string;
   folio: string;
   fecha: string;
+  niv_act: string;
 }
 
 const editForm = reactive<Form>({
   nombre: '',
   apellidos: '',
-  titulo_recurso: '',
   departamento: '',
-  lugar_pub: '',
+  rev_bilio: '',
+  niv_act: '',
+  total_asient: '',
+  bd_local: false,
+  cd_rom: false,
+  bd_internet: false,
+  curso_pos_bus: false,
+  busqueda_internet: false,
+  biblio_personal: false,
+  otros: false,
+  no_biblio: false,
   tomo: '',
+  pag: '',
   folio: '',
   fecha: '',
 });
@@ -289,21 +414,27 @@ const editRow = (row: RowType) => {
   selectedRow.value = row;
   editForm.nombre = row.nombre;
   editForm.apellidos = row.apellidos;
-  editForm.titulo_recurso = row.titulo_recurso;
+  editForm.niv_act = row.niv_act;
+  editForm.rev_bilio = row.rev_bilio;
+  editForm.total_asient = row.total_asient;
   editForm.departamento = row.departamento;
-  editForm.lugar_pub = row.lugar_pub;
   editForm.tomo = row.tomo;
   editForm.folio = row.folio;
   editForm.fecha = row.fecha;
+  editForm.bd_local = row.bd_local;
+  editForm.bd_internet = row.bd_internet;
+  editForm.cd_rom = row.cd_rom || false;
+  editForm.curso_pos_bus = row.curso_pos_bus ;
+  editForm.busqueda_internet = row.busqueda_internet;
+  editForm.biblio_personal = row.biblio_personal;
+  editForm.otros = row.otros;
+  editForm.no_biblio = row.no_biblio;
   editDialogOpen.value = true;
 };
 
 const saveEdit = async () => {
   try {
-    await api.put(
-      `/api/avales_biblio/${selectedRow.value.id}/`,
-      editForm
-    );
+    await api.put(`/api/avales_biblio/${selectedRow.value.id}/`, editForm);
 
     const index = rows.value.findIndex(
       (row) => row.id === selectedRow.value.id
@@ -317,7 +448,8 @@ const saveEdit = async () => {
     editDialogOpen.value = false;
   } catch (error) {
     console.error('Error al actualizar el recurso:', error);
-  }$q.notify({
+  }
+  $q.notify({
     type: 'positive',
     message: '¡Aval Actualizado Correctamente!',
     position: 'top-right',

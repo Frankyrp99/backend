@@ -13,62 +13,99 @@
               </q-avatar>
             </div>
             <div>
-              <q-avatar size="200px">
+              <q-avatar size="250px">
                 <img src="src/assets/logodgic.png" />
               </q-avatar>
             </div>
           </div>
-
-          <div class="text-bold text-h4">Aval de Publicación</div>
         </div>
-        <div class="text-bold datos-recurso text-h6">
-          MsC. Adrian Eduardo Cancino Gutiérrez,Director de la Dirección de
-          Gestión de Información Científica de la Universidad de Camagüey
-          "Ignacio Agramonte Loynaz"
+        <div class="row justify-center items-center text-bold text-h4">
+          Aval de Publicación
         </div>
-        <div class="text-bold datos-recurso text-h6">Hago constar que:</div>
-        <div class="text-bold datos-recurso text-h5">Datos del Aval:</div>
-        <q-list v-if="response">
-          <div class="row datos-recurso" style="align-items: normal">
-            <div class="col-6 text-bold datos-recurso">Nombre</div>
-            <div class="col-6 datos-recurso">{{ response.nombre }}</div>
-            <div class="col-6 text-bold datos-recurso">Apellidos</div>
-            <div class="col-6 datos-recurso">{{ response.apellidos }}</div>
-            <div class="col-6 text-bold datos-recurso">Titulo del Recurso</div>
-            <div class="col-6 datos-recurso">{{ response.titulo_recurso }}</div>
-            <div class="col-6 text-bold datos-recurso">Departamento</div>
-            <div class="col-6 datos-recurso">{{ response.departamento }}</div>
+        <div class="text-semibold datos-recurso text-h6">
+          MsC. Adrián Eduardo Cancino Gutiérrez, Director de Información
+          Científico-Técnica de la Universidad de Camagüey "Ignacio Agramonte
+          Loynaz"
+        </div>
+        <div class="text-semibold datos-recurso text-h6">
+          Hago constar que: {{ response.nombre }} {{ response.apellidos }}
+        </div>
+        <div class="text-semibold datos-recurso text-h6">
+          Del Departamento: {{ response.departamento }}
+        </div>
+        <div class="text-semibold datos-recurso text-h6">
+          Ha publicado el: {{ response.tipo_recurso }}
+        </div>
+        <div class="text-semibold datos-recurso text-h6">
+          Denominado: {{ response.titulo_recurso }}
+        </div>
+        <div class="text-semibold datos-recurso text-h6">
+          En: {{ response.lugar_pub }}
+        </div>
 
-            <div class="col-6 text-bold datos-recurso">
-              Lugar donde se Publicó
-            </div>
-            <div class="col-6 datos-recurso">{{ response.lugar_pub }}</div>
-            <div class="col-6 text-bold datos-recurso">Tipo de Recurso</div>
-            <div class="col-6 datos-recurso">{{ response.tipo_recurso }}</div>
-            <div class="col-6 text-bold datos-recurso">Tipo de Publicación</div>
-            <div class="col-6 datos-recurso">
-              {{ response.tipo_publicacion }}
-            </div>
-            <div class="col-6 text-bold datos-recurso">URL</div>
-            <div class="col-6 datos-recurso">{{ response.url }}</div> <div class="col-6 text-bold datos-recurso">Tomo</div>
-            <div class="col-6 datos-recurso">{{ response.tomo }}</div>
-            <div class="col-6 text-bold datos-recurso">Folio</div>
-            <div class="col-6 datos-recurso">{{ response.folio }}</div>
-            <div class="col-6 text-bold datos-recurso">Fecha</div>
-            <div class="col-6 datos-recurso">{{ response.fecha }}</div>
+        <div
+          class="text-semibold datos-recurso text-h6"
+          v-if="response.tipo_publicacion"
+        >
+          Siendo esta publicación: {{ response.tipo_publicacion }}
+        </div>
+
+        <div class="text-semibold datos-recurso text-h6">
+          Sitio Web(indicar URL): {{ response.url }}
+        </div>
+        <div class="row">
+          <div class="text-semibold datos-recurso text-h6">
+            CD-ROM/DVD:
+            <q-checkbox
+              v-model="isCdromDvdEnabled"
+              :disable="response.cdrom_dvd"
+            />
           </div>
-        </q-list>
+          <div class="text-semibold datos-recurso text-h6">
+            Base(s) de Datos:
+            <q-checkbox
+              v-model="isBDEnabled"
+              :disable="response.base_de_datos"
+            />
+          </div>
+          <div class="text-semibold datos-recurso text-h6" v-if="response.isbn">
+            ISBN: {{ response.isbn }}
+          </div>
+          <div class="text-semibold datos-recurso text-h6" v-if="response.issn">
+            ISSN: {{ response.issn }}
+          </div>
+          <div
+            class="text-semibold datos-recurso text-h6"
+            v-if="response.e_issn"
+          >
+            E-ISSN: {{ response.e_issn }}
+          </div>
+        </div>
+        <div class="text-semibold datos-recurso text-h6">
+          Para que así conste, firmo la presente en la fecha:
+          {{ response.fecha }}
+        </div>
         <div class="row items-center justify-between">
-          <div class="text-bold datos-recurso text-h6">
-            MsC. Adrian Eduardo Cancino Gutiérrez:
+          <div class="text-semibold datos-recurso text-h6">
+            MsC. Adrián Eduardo Cancino Gutiérrez / Director
           </div>
-          <div class="text-bold datos-recurso text-h6">______________</div>
+          <div class="text-semibold datos-recurso text-h6">
+            Firma:______________
+          </div>
         </div>
-        <div class="text-bold datos-recurso text-h6">
-          Dirección de Gestión de Información Científica. Universidad de
-          Camagüey "Ignacio Agramonte Loynaz". Circunvalación Norte Km 5 1/2
-          CP74650,Camagüey,Cuba. Telefono:(53)(322)-262332. E-mail:
-          cgi@reduc.edu.cu
+        <div class="row">
+          <div class="text-semibold datos-recurso text-h6">
+            Tomo: {{ response.tomo }}
+          </div>
+          <div class="text-semibold datos-recurso text-h6">
+            Folio: {{ response.folio }}
+          </div>
+        </div>
+
+        <div class="text-semibold datos-recurso text-h6">
+          Dirección de Información Científico-Técnica de la Universidad de
+          Camagüey "Ignacio Agramonte Loynaz". Telefono:(53)32262332. E-mail:
+          dict@reduc.edu.cu. http://infocien.reduc.edu.cu
         </div>
       </div>
       <q-btn
@@ -84,7 +121,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useQuasar } from 'quasar';
 import { useRoute } from 'vue-router';
 import { api } from 'src/boot/axios';
@@ -104,19 +141,28 @@ interface ResponseItem {
   tipo_recurso?: string;
   tipo_publicacion?: string;
   url?: string;
+  cdrom_dvd?: boolean;
+  base_de_datos?: boolean;
+  issn: string;
+  e_issn: string;
+  isbn: string;
 }
 
 const route = useRoute();
 const id = route.params.id;
 
-const response = ref<ResponseItem>({});
+const response = ref<ResponseItem>({
+  cdrom_dvd: false,
+  base_de_datos: false,
+});
+const isCdromDvdEnabled = computed(() => response.value.cdrom_dvd);
+const isBDEnabled = computed(() => response.value.base_de_datos);
 const $q = useQuasar();
 const fetchData = async () => {
   try {
-    const result = await api.get<ResponseItem>(
-      `/api/profesores/${id}/`
-    );
+    const result = await api.get<ResponseItem>(`/api/profesores/${id}/`);
     response.value = result.data;
+    console.log(result.data);
   } catch (error) {
     console.error('Error al obtener los detalles:', error);
   }
@@ -134,12 +180,12 @@ const exportToPDF = () => {
   html2canvas(element).then((canvas) => {
     const imgData = canvas.toDataURL('image/png');
     const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    const pdfHeight = pdf.internal.pageSize.getHeight(); // Altura del PDF
+    const pdfWidth = (pdfHeight * imgProps.width) / imgProps.height;
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`${response.value.titulo_recurso}.pdf`);
-});
-$q.notify({
+    pdf.save(`Aval de Publicación Autor:${response.value.nombre} ${response.value.apellidos} Titulo:${response.value.titulo_recurso} ${response.value.fecha}.pdf`);
+  });
+  $q.notify({
     type: 'positive',
     message: '¡Aval Exportado Correctamente!',
     position: 'top-right',

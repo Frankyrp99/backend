@@ -58,7 +58,6 @@ interface UserData {
   apellidos: string;
   email: string;
   role: string;
-  // Agrega aquí otras propiedades que esperas que tenga user
 }
 
 const user = ref<UserData>({
@@ -66,7 +65,7 @@ const user = ref<UserData>({
   apellidos: '',
   email: '',
   role: '',
-  // Inicializa aquí otras propiedades si es necesario
+
 });
 
 async function fetchUserData() {

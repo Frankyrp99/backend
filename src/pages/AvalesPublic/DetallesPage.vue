@@ -71,7 +71,6 @@
             label="Titulo del Recurso"
           />
           <q-input
-            filled
             v-model="editForm.departamento"
             label="Departamento"
             class="form-item"
@@ -89,6 +88,71 @@
             v-model="editForm.lugar_pub"
             label="Lugar de Publicacion"
           />
+
+          <q-input
+            v-model="editForm.tipo_recurso"
+            label="Tipo de Recurso"
+            class="form-item"
+            @click="showTipoRecursoDialog = true"
+
+          />
+          <q-dialog v-model="showTipoRecursoDialog" persistent>
+            <selector-tipo-recurso
+              v-model="editForm.tipo_recurso"
+              :resource-types="['Artículo', 'Libro', 'Capítulo', 'Epígrafe']"
+              :open-dialog-automatically="showTipoRecursoDialog"
+              @update:modelValue="editForm.tipo_recurso = $event"
+              @dialogClosed="hideTipoRecursoDialog"
+            />
+          </q-dialog>
+          <q-input
+            v-model="editForm.tipo_publicacion"
+            label="Tipo de Publicación"
+            class="form-item"
+            @click="showTipoPublicDialog = true"
+
+          />
+          <q-dialog v-model="showTipoPublicDialog" persistent>
+            <selector-tipo-public
+              v-model="editForm.tipo_publicacion"
+              :public-types="[
+                'Revista Impresa',
+                'Revista Digital',
+                'Libro Impreso',
+                'Libro Digital',
+              ]"
+              :open-dialog-automatically="showTipoPublicDialog"
+              @update:modelValue="editForm.tipo_publicacion = $event"
+              @dialogClosed="hideTipoPublicDialog"
+            />
+          </q-dialog>
+
+          <q-input
+            v-if="editForm.tipo_publicacion === 'Revista Impresa'"
+            v-model="editForm.issn"
+            label="ISSN"
+            class="form-item"
+
+          />
+          <q-input
+            v-if="editForm.tipo_publicacion === 'Revista Digital'"
+            v-model="editForm.e_issn"
+            label="E-ISSN"
+            class="form-item"
+
+          />
+          <q-input
+            v-if="
+              editForm.tipo_publicacion === 'Libro Impreso' ||
+              editForm.tipo_publicacion === 'Libro Digital'
+            "
+            v-model="editForm.isbn"
+            label="ISBN"
+            class="form-item"
+
+          />
+          <q-checkbox v-model="editForm.cdrom_dvd" label="CDROM/DVD" />
+          <q-checkbox v-model="editForm.base_de_datos" label="Base de Datos" />
           <q-input v-model="editForm.tomo" label="Tomo" />
           <q-input v-model="editForm.folio" label="Folio" />
         </q-card-section>
@@ -112,6 +176,8 @@
 import { ref, onMounted, reactive, watch, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
+import SelectorTipoRecurso from 'src/components/SelectorTipoRecurso.vue';
+import SelectorTipoPublic from 'src/components/SelectorTipoPublic.vue';
 import { api } from 'src/boot/axios';
 import { useQuasar } from 'quasar';
 
@@ -124,6 +190,15 @@ const router = useRouter();
 const showSelectorDepartamento = ref(false);
 const closeFirstDialogAndUpdateModel = () => {
   showSelectorDepartamento.value = false;
+};
+const showTipoRecursoDialog = ref(false);
+const hideTipoRecursoDialog = () => {
+  showTipoRecursoDialog.value = false;
+};
+
+const showTipoPublicDialog = ref(false);
+const hideTipoPublicDialog = () => {
+  showTipoPublicDialog.value = false;
 };
 const isLoading = ref(false);
 type RowType = {
@@ -171,6 +246,7 @@ const columns = [
     field: 'titulo_recurso',
     sortable: true,
     filter: true,
+    classes: 'texto-truncado',
   },
   {
     name: 'departamento',
@@ -179,19 +255,53 @@ const columns = [
     sortable: true,
     filter: true,
   },
-  {
-    name: 'fecha',
-    label: 'Fecha de Publicación',
-    field: 'fecha',
-    sortable: true,
-    filter: true,
-  },
+
   {
     name: 'lugar_pub',
     label: 'Lugar de Publicación',
     field: 'lugar_pub',
     sortable: true,
     filter: true,
+  },
+  {
+    name: 'tipo_recurso',
+    label: 'Tipo de Publicación',
+    field: 'tipo_recurso',
+    sortable: true,
+    filter: true,
+    classes: 'texto-truncado',
+  },
+  {
+    name: 'tipo_publicacion',
+    label: 'Tipo de Recurso',
+    field: 'tipo_publicacion',
+    sortable: true,
+    filter: true,
+    classes: 'texto-truncado',
+  },
+  {
+    name: 'isbn',
+    label: 'ISBN',
+    field: 'isbn',
+    sortable: true,
+    filter: true,
+    classes: 'texto-truncado',
+  },
+  {
+    name: 'issn',
+    label: 'ISSN',
+    field: 'issn',
+    sortable: true,
+    filter: true,
+    classes: 'texto-truncado',
+  },
+  {
+    name: 'e_issn',
+    label: 'E-ISSN',
+    field: 'e_issn',
+    sortable: true,
+    filter: true,
+    classes: 'texto-truncado',
   },
   {
   name: 'tomo',
@@ -207,6 +317,13 @@ const columns = [
   sortable: true,
   filter: true,
 },
+{
+    name: 'fecha',
+    label: 'Fecha de Publicación',
+    field: 'fecha',
+    sortable: true,
+    filter: true,
+  },
 ];
 const fetchUserData = async () => {
   try {

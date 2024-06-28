@@ -2,11 +2,9 @@
 #form {
   width: 100%;
   max-width: 800px;
-  background-color: #f9f9f9;
+  background-color: rgba(206, 206, 206, 0.6);
   border-radius: 8px;
-  q-gutter-md
-
-  .form-item {
+  q-gutter-md .form-item {
     min-width: 18rem;
     word-break: break-word;
     overflow-wrap: break-word;
@@ -32,4 +30,23 @@
   display: flex;
   align-items: center;
   padding-left: 30px;
+}
+
+#form-login {
+  width: 100%;
+  max-width: 350px;
+  background-color: rgba(224, 224, 224, 0.7);
+  border-radius: 20px;
+  q-gutter-md .form-item-login {
+    min-width: 18rem;
+    max-width: 400px;
+    margin: auto;
+    margin-top: 20px;
+  }
+  @media screen and (max-width: 840px) {
+    #form {
+      flex-direction: column;
+      width: 200px;
+    }
+  }
 }

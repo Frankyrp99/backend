@@ -2,7 +2,7 @@
   <q-page>
     <div class="container">
       <img
-        src="/src/assets/logo.png"
+        src="/src/assets/logo-bg.png"
         alt="Descripción de la imagen"
         class="centered-image"
         width="400"

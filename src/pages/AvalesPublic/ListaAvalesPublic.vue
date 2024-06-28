@@ -71,7 +71,6 @@
             label="Titulo del Recurso"
           />
           <q-input
-            filled
             v-model="editForm.departamento"
             label="Departamento"
             class="form-item"
@@ -91,7 +90,6 @@
           />
 
           <q-input
-            filled
             v-model="editForm.tipo_recurso"
             label="Tipo de Recurso"
             class="form-item"
@@ -108,7 +106,6 @@
             />
           </q-dialog>
           <q-input
-            filled
             v-model="editForm.tipo_publicacion"
             label="Tipo de Publicación"
             class="form-item"
@@ -132,7 +129,6 @@
 
           <q-input
             v-if="editForm.tipo_publicacion === 'Revista Impresa'"
-            filled
             v-model="editForm.issn"
             label="ISSN"
             class="form-item"
@@ -140,7 +136,6 @@
           />
           <q-input
             v-if="editForm.tipo_publicacion === 'Revista Digital'"
-            filled
             v-model="editForm.e_issn"
             label="E-ISSN"
             class="form-item"
@@ -151,12 +146,13 @@
               editForm.tipo_publicacion === 'Libro Impreso' ||
               editForm.tipo_publicacion === 'Libro Digital'
             "
-            filled
             v-model="editForm.isbn"
             label="ISBN"
             class="form-item"
             :rules="isbnRules"
           />
+          <q-checkbox v-model="editForm.cdrom_dvd" label="CDROM/DVD" />
+          <q-checkbox v-model="editForm.base_de_datos" label="Base de Datos" />
           <q-input v-model="editForm.tomo" label="Tomo" />
           <q-input v-model="editForm.folio" label="Folio" />
         </q-card-section>
@@ -233,6 +229,7 @@ const columns = [
     field: 'nombre',
     filter: true,
     sortable: true,
+    classes: 'texto-truncado',
   },
   {
     name: 'apellidos',
@@ -242,6 +239,7 @@ const columns = [
     align: null,
     filter: true,
     sortable: true,
+    classes: 'texto-truncado',
   },
 
   {
@@ -250,6 +248,7 @@ const columns = [
     field: 'titulo_recurso',
     sortable: true,
     filter: true,
+    classes: 'texto-truncado',
   },
   {
     name: 'departamento',
@@ -258,17 +257,20 @@ const columns = [
     sortable: true,
     filter: true,
   },
-  {
-    name: 'fecha',
-    label: 'Fecha de Publicación',
-    field: 'fecha',
-    sortable: true,
-    filter: true,
-  },
+
   {
     name: 'lugar_pub',
     label: 'Lugar de Publicación',
     field: 'lugar_pub',
+    sortable: true,
+    filter: true,
+    classes: 'texto-truncado',
+  },
+
+  {
+    name: 'fecha',
+    label: 'Fecha de Publicación',
+    field: 'fecha',
     sortable: true,
     filter: true,
   },
@@ -359,7 +361,7 @@ const editForm = reactive<Form>({
   tipo_recurso: '',
   fecha: '',
 });
-const { nombre, apellidos } = toRefs(editForm);
+const { nombre, apellidos, } = toRefs(editForm);
 //metodos
 function capitalizeWords(text: string): string {
   return text

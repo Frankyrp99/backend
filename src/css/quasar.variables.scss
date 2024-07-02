@@ -8,7 +8,7 @@
 // It's highly recommended to change the default colors
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
-$primary: #53afff;
+$primary: #216fb3;
 $secondary: #26a69a;
 $accent: #fdfafe;
 $dark: #1d1d1d;
@@ -37,68 +37,47 @@ $background-color-end: #2a8cb9;
   );
 }
 .q-btn {
-  // Transición suave para los efectos hover
   transition: transform 0.3s ease-in-out;
 
   &:hover {
-    transform: translateY(
-      -5px
-    ); // Mover la tarjeta hacia arriba ligeramente al pasar el mouse
+    transform: translateY(-5px);
   }
-  border-radius: 10px; // Bordes redondeados
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Sombra para dar profundidad
-  padding: 10px; // Padding para separar el contenido de los bordes
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
 
-  // Asegurándonos de que el contenido de la tarjeta sea legible contra el fondo
-  color: #333; // Color del texto
+  color: #131313;
   background-color: rgba(255, 255, 255, 0.8);
 }
-// Estilo para la tarjeta
+
 .q-form {
-  // Aplicando el fondo con el mixin
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 
-  border-radius: 10px; // Bordes redondeados
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Sombra para dar profundidad
-  padding: 20px; // Padding para separar el contenido de los bordes
+  color: #050505;
+  background-color: rgb(255, 255, 255);
 
-  // Asegurándonos de que el contenido de la tarjeta sea legible contra el fondo
-  color: #333; // Color del texto
-  background-color: rgba(
-    163,
-    49,
-    49,
-    0.8
-  ); // Fondo semi-transparente para mejorar la legibilidad
-
-  // Alineación del contenido
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  // Ancho máximo y margen centrado
   max-width: 400px;
   margin: auto;
 }
 .q-card {
-  // Aplicando el fondo con el mixin
-  @include linear-gradient(
-    to top,
-    $background-color-start 0%,
-    $background-color-end 100%
-  );
-
-  border-radius: 10px; // Bordes redondeados
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Sombra para dar profundidad
-  padding: 20px; // Padding para separar el contenido de los bordes
-
-  // Asegurándonos de que el contenido de la tarjeta sea legible contra el fondo
-  color: #333; // Color del texto
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  color: #080808;
   background-color: rgba(
     255,
     255,
     255,
-    0.8
+    0.904
   ); // Fondo semi-transparente para mejorar la legibilidad
 }
 .titulos {
@@ -129,4 +108,23 @@ $background-color-end: #2a8cb9;
 }
 .text-gliker {
   font-family: 'Gliker', fallback, sans-serif;
+}
+.content-div {
+  width: calc(
+    100% - 60px
+  ); /* Restamos 60px porque queremos 30px en cada lado */
+  margin-left: 80px;
+  margin-right: 80px;
+}
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.flex-item {
+  flex-basis: calc(33.333% - 40px);
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  padding: 10px;
 }

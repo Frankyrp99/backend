@@ -51,7 +51,7 @@
               class="q-ml-sm"
               flat
               dense
-              @click="deleteRow(props.row)"
+              @click="eliminar(props.row)"
             />
           </q-td>
         </q-tr>
@@ -330,14 +330,37 @@ const showRow = (row: null) => {
   router.push({ name: 'ShowTuto', params: { id: row.id } });
 };
 // boton eliminar
-const deleteRow = async (row: { id: null }) => {
-  try {
-    await api.delete(`/api/avales_tuto/${row.id}/`);
-    console.log('Recurso eliminado con éxito');
+async function eliminar(row: { id: null }) {
 
-    rows.value = rows.value.filter((item) => item.id !== row.id);
-  } catch (error) {
-    console.error('Error al eliminar el recurso:', error);
-  }
-};
+
+   try {
+     await $q.dialog({
+       title: 'Eliminar Aval',
+       message: '¿Estás seguro de eliminar?',
+       cancel: true,
+       persistent: true,
+     }).onOk(() => {
+       api.delete(`/api/avales_tuto/${row.id}/`)
+        .then(() => {
+           console.log('Recurso eliminado con éxito');
+           rows.value = rows.value.filter(item => item.id!== row.id);
+           $q.notify({
+             type: 'positive', // Cambiado a positive para indicar éxito
+             message: '¡Aval Eliminado Correctamente!',
+             position: 'top-right',
+           });
+         })
+        .catch(error => {
+           console.error('Error al eliminar el recurso:', error);
+           $q.notify({
+             type: 'negative',
+             message: 'Hubo un error al eliminar el Aval.',
+             position: 'top-right',
+           });
+         });
+     });
+   } catch (error) {
+     console.error('Error al mostrar el diálogo:', error);
+   }
+ }
 </script>

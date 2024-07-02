@@ -57,7 +57,7 @@
               class="q-ml-sm"
               flat
               dense
-              @click="deleteRow(props.row)"
+              @click="eliminar(props.row)"
             />
           </q-td>
         </q-tr>
@@ -159,6 +159,7 @@
             v-model="editForm.no_biblio"
             label="No Existe Bibliografía"
           />
+          <q-input v-model="editForm.pag" label="Página" />
           <q-input v-model="editForm.tomo" label="Tomo" />
           <q-input v-model="editForm.folio" label="Folio" />
         </q-card-section>
@@ -254,13 +255,7 @@ const columns = [
     sortable: true,
     filter: true,
   },
-  {
-    name: 'total_asient',
-    label: 'Total de Asientos',
-    field: 'total_asient',
-    sortable: true,
-    filter: true,
-  },
+
   {
     name: 'rev_bilio',
     label: 'Tipo de Revisión',
@@ -276,12 +271,13 @@ const columns = [
     filter: true,
   },
   {
-    name: 'fecha',
-    label: 'Fecha de Publicación',
-    field: 'fecha',
+    name: 'total_asient',
+    label: 'Total de Asientos',
+    field: 'total_asient',
     sortable: true,
     filter: true,
   },
+
   {
     name: 'tomo',
     label: 'Tomo',
@@ -293,6 +289,13 @@ const columns = [
     name: 'folio',
     label: 'Folio',
     field: 'folio',
+    sortable: true,
+    filter: true,
+  },
+  {
+    name: 'fecha',
+    label: 'Fecha de Publicación',
+    field: 'fecha',
     sortable: true,
     filter: true,
   },
@@ -427,8 +430,9 @@ const editRow = (row: RowType) => {
   editForm.curso_pos_bus = row.curso_pos_bus ;
   editForm.busqueda_internet = row.busqueda_internet;
   editForm.biblio_personal = row.biblio_personal;
-  editForm.otros = row.otros;
   editForm.no_biblio = row.no_biblio;
+  editForm.otros = row.otros;
+  editForm.pag = row.pag;
   editDialogOpen.value = true;
 };
 
@@ -462,14 +466,37 @@ const showRow = (row: null) => {
   router.push({ name: 'ShowBiblio', params: { id: row.id } });
 };
 // boton eliminar
-const deleteRow = async (row: { id: null }) => {
-  try {
-    await api.delete(`/api/avales_biblio/${row.id}/`);
-    console.log('Recurso eliminado con éxito');
+async function eliminar(row: { id: null }) {
 
-    rows.value = rows.value.filter((item) => item.id !== row.id);
-  } catch (error) {
-    console.error('Error al eliminar el recurso:', error);
-  }
-};
+
+   try {
+     await $q.dialog({
+       title: 'Eliminar Aval',
+       message: '¿Estás seguro de eliminar?',
+       cancel: true,
+       persistent: true,
+     }).onOk(() => {
+       api.delete(`/api/avales_biblio/${row.id}/`)
+        .then(() => {
+           console.log('Recurso eliminado con éxito');
+           rows.value = rows.value.filter(item => item.id!== row.id);
+           $q.notify({
+             type: 'positive', // Cambiado a positive para indicar éxito
+             message: '¡Aval Eliminado Correctamente!',
+             position: 'top-right',
+           });
+         })
+        .catch(error => {
+           console.error('Error al eliminar el recurso:', error);
+           $q.notify({
+             type: 'negative',
+             message: 'Hubo un error al eliminar el Aval.',
+             position: 'top-right',
+           });
+         });
+     });
+   } catch (error) {
+     console.error('Error al mostrar el diálogo:', error);
+   }
+ }
 </script>

@@ -50,7 +50,7 @@
               class="q-ml-sm"
               flat
               dense
-              @click="deleteRow(props.row)"
+              @click="eliminar(props.row)"
             />
           </q-td>
         </q-tr>
@@ -132,6 +132,7 @@
             v-model="editForm.issn"
             label="ISSN"
             class="form-item"
+            :rules="issnRules"
 
           />
           <q-input
@@ -139,6 +140,7 @@
             v-model="editForm.e_issn"
             label="E-ISSN"
             class="form-item"
+            :rules="eissnRules"
 
           />
           <q-input
@@ -149,8 +151,31 @@
             v-model="editForm.isbn"
             label="ISBN"
             class="form-item"
+            :rules="isbnRules"
 
           />
+          <q-input
+            v-model="editForm.grupo"
+            label="Grupo"
+            class="form-item"
+            @click="showGrupoDialog = true"
+
+          />
+          <q-dialog v-model="showGrupoDialog" persistent>
+            <selector-grupo
+              v-model="editForm.grupo"
+              :public-types="[
+                'Grupo 1',
+                ' Grupo 2',
+                ' Grupo 3',
+                ' Grupo 4',
+                ' No Precisado',
+              ]"
+              :open-dialog-automatically="showGrupoDialog"
+              @update:modelValue="editForm.grupo = $event"
+              @dialogClosed="hideGrupoDialog"
+            />
+          </q-dialog>
           <q-checkbox v-model="editForm.cdrom_dvd" label="CDROM/DVD" />
           <q-checkbox v-model="editForm.base_de_datos" label="Base de Datos" />
           <q-input v-model="editForm.tomo" label="Tomo" />
@@ -178,6 +203,7 @@ import { useRouter } from 'vue-router';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
 import SelectorTipoRecurso from 'src/components/SelectorTipoRecurso.vue';
 import SelectorTipoPublic from 'src/components/SelectorTipoPublic.vue';
+import SelectorGrupo from 'src/components/SelectorGrupo.vue';
 import { api } from 'src/boot/axios';
 import { useQuasar } from 'quasar';
 
@@ -200,6 +226,10 @@ const showTipoPublicDialog = ref(false);
 const hideTipoPublicDialog = () => {
   showTipoPublicDialog.value = false;
 };
+const showGrupoDialog = ref(false);
+const hideGrupoDialog = () => {
+  showGrupoDialog.value = false;
+};
 const isLoading = ref(false);
 type RowType = {
   id: number;
@@ -211,6 +241,7 @@ type RowType = {
   tomo: string;
   folio: string;
   tipo_publicacion: string;
+  grupo: string;
   issn: string;
   e_issn: string;
   isbn: string;
@@ -304,6 +335,14 @@ const columns = [
     classes: 'texto-truncado',
   },
   {
+    name: 'grupo',
+    label: 'Grupo',
+    field: 'grupo',
+    sortable: true,
+    filter: true,
+    classes: 'texto-truncado',
+  },
+  {
   name: 'tomo',
   label: 'Tomo',
   field: 'tomo',
@@ -324,6 +363,24 @@ const columns = [
     sortable: true,
     filter: true,
   },
+];
+/////reglas
+type Rule = (value: string) => boolean | string;
+const issnRules: Rule[] = [
+  (v) => !!v || 'El ISSN es requerido',
+  (v) =>
+    v.length <= 8 || 'El lugar de publicación excede el límite de 8 caracteres',
+];
+const eissnRules: Rule[] = [
+  (v) => !!v || 'El E-ISSN es requerido',
+  (v) =>
+    v.length <= 8 || 'El lugar de publicación excede el límite de 8 caracteres',
+];
+const isbnRules: Rule[] = [
+  (v) => !!v || 'El ISBN es requerido',
+  (v) =>
+    v.length <= 13 ||
+    'El lugar de publicación excede el límite de 13 caracteres',
 ];
 const fetchUserData = async () => {
   try {
@@ -370,6 +427,7 @@ interface Form {
   titulo_recurso: string;
   departamento: string;
   lugar_pub: string;
+  grupo: string;
   tomo: string;
   folio: string;
   tipo_publicacion: string;
@@ -388,6 +446,7 @@ const editForm = reactive<Form>({
   titulo_recurso: '',
   departamento: '',
   lugar_pub: '',
+  grupo: '',
   tomo: '',
   folio: '',
   tipo_publicacion: '',
@@ -440,6 +499,7 @@ const editRow = (row: RowType) => {
   editForm.departamento = row.departamento;
   editForm.lugar_pub = row.lugar_pub;
   editForm.tomo = row.tomo;
+  editForm.grupo = row.grupo;
   editForm.folio = row.folio;
   editForm.tipo_publicacion = row.tipo_publicacion || '';
   editForm.issn = row.issn || '';
@@ -486,16 +546,39 @@ const showRow = (row: null) => {
   router.push({ name: 'show', params: { id: row.id } });
 };
 // boton eliminar
-const deleteRow = async (row: { id: null }) => {
-  try {
-    await api.delete(`/api/profesores/${row.id}/`);
-    console.log('Recurso eliminado con éxito');
+async function eliminar(row: { id: null }) {
 
-    rows.value = rows.value.filter((item) => item.id !== row.id);
-  } catch (error) {
-    console.error('Error al eliminar el recurso:', error);
-  }
-};
+
+   try {
+     await $q.dialog({
+       title: 'Eliminar Aval',
+       message: '¿Estás seguro de eliminar?',
+       cancel: true,
+       persistent: true,
+     }).onOk(() => {
+       api.delete(`/api/profesores/${row.id}/`)
+        .then(() => {
+           console.log('Recurso eliminado con éxito');
+           rows.value = rows.value.filter(item => item.id!== row.id);
+           $q.notify({
+             type: 'positive', // Cambiado a positive para indicar éxito
+             message: '¡Aval Eliminado Correctamente!',
+             position: 'top-right',
+           });
+         })
+        .catch(error => {
+           console.error('Error al eliminar el recurso:', error);
+           $q.notify({
+             type: 'negative',
+             message: 'Hubo un error al eliminar el Aval.',
+             position: 'top-right',
+           });
+         });
+     });
+   } catch (error) {
+     console.error('Error al mostrar el diálogo:', error);
+   }
+ }
 </script>
 
 

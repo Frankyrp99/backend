@@ -1,24 +1,27 @@
 <template>
   <div>
-    <q-item to="home" clickable v-close-popup>
+    <q-item to="/home" clickable v-close-popup>
       <q-item-section>
-        <q-item-label class="text-bold">Home</q-item-label>
+        <q-item-label class="text-weight-bolder">Home</q-item-label>
       </q-item-section>
     </q-item>
     <q-expansion-item
       v-for="category in categories"
       :key="category.title"
       :label="category.title"
-      class="text-bold"
+      expand-separator
+      :content-inset-level="0.5"
+      class="text-weight-bolder"
     >
       <q-list>
         <q-item
           v-for="item in category.items"
           :key="item.label"
           :to="item.route"
+
           clickable
           v-close-popup
-          class="text-bold"
+          class="text-weight-bolder"
         >
           <q-item-section>
             <q-item-label>{{ item.label }}</q-item-label>

@@ -1,6 +1,6 @@
 <template>
   <q-page class="row items-center justify-evenly">
-    <q-card class="my-card bg-color">
+    <q-card class="my-card ">
       <q-card-section>
         <div class="text-h5 text-bold">Perfil de Usuario:</div>
       </q-card-section>

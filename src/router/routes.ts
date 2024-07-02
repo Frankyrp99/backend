@@ -1,7 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
-  //avales de publicacion///////////////////////////////////////////////////////
   {
     path: '/home',
     component: () => import('layouts/MainLayout.vue'),
@@ -14,6 +13,19 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: '/acerca_de',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'acerca',
+        component: () => import('src/pages/AcercaDe.vue'),
+        meta: { requiresAuth: true },
+      },
+    ],
+  },
+  //avales de publicacion///////////////////////////////////////////////////////
   {
     path: '/lista_avales_public',
     component: () => import('layouts/MainLayout.vue'),

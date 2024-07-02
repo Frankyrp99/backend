@@ -43,10 +43,7 @@
           En: {{ response.lugar_pub }}
         </div>
 
-        <div
-          class="text-semibold datos-recurso text-h6"
-          v-if="response.tipo_publicacion"
-        >
+        <div class="text-semibold datos-recurso text-h6">
           Siendo esta publicación: {{ response.tipo_publicacion }}
         </div>
 
@@ -68,6 +65,8 @@
               :disable="response.base_de_datos"
             />
           </div>
+        </div>
+        <div class="row">
           <div class="text-semibold datos-recurso text-h6" v-if="response.isbn">
             ISBN: {{ response.isbn }}
           </div>
@@ -80,7 +79,11 @@
           >
             E-ISSN: {{ response.e_issn }}
           </div>
+          <div class="text-semibold datos-recurso text-h6">
+            Grupo: {{ response.grupo }}
+          </div>
         </div>
+
         <div class="text-semibold datos-recurso text-h6">
           Para que así conste, firmo la presente en la fecha:
           {{ response.fecha }}
@@ -113,7 +116,7 @@
         rounded
         label="Exportar a PDF"
         @click="exportToPDF"
-        class="btn-export mt-4"
+        class="btn-export mt-4 text-weight-bolder"
         style="margin-top: 20px; margin-bottom: 20px"
       />
     </div>
@@ -138,6 +141,7 @@ interface ResponseItem {
   titulo_recurso?: string;
   tomo?: string;
   lugar_pub?: string;
+  grupo: string;
   tipo_recurso?: string;
   tipo_publicacion?: string;
   url?: string;
@@ -183,7 +187,9 @@ const exportToPDF = () => {
     const pdfHeight = pdf.internal.pageSize.getHeight(); // Altura del PDF
     const pdfWidth = (pdfHeight * imgProps.width) / imgProps.height;
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`Aval de Publicación Autor:${response.value.nombre} ${response.value.apellidos} Titulo:${response.value.titulo_recurso} ${response.value.fecha}.pdf`);
+    pdf.save(
+      `Aval de Publicación Autor:${response.value.nombre} ${response.value.apellidos} Titulo:${response.value.titulo_recurso} ${response.value.fecha}.pdf`
+    );
   });
   $q.notify({
     type: 'positive',

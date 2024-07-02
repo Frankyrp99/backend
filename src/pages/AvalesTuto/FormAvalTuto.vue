@@ -1,103 +1,107 @@
 <template>
   <q-page>
     <div class="column justify-center items-center">
-      <div style="margin-top: 20px; margin-bottom: 20px">
-        <h4 class="text-bold">Nuevo Aval de Tutorias</h4>
-      </div>
-      <q-form @submit="onSubmit"  id="form">
-        <div class="q-gutter-md row justify-center items-center ">
-          <q-input
-            style="max-width: 300px"
-            autogrow
-            filled
-            v-model="form.nombre"
-            label="Nombre"
-            class="form-item"
-            :rules="nombreRules"
-          />
-          <q-input
-            style="max-width: 300px"
-            autogrow
-            filled
-            v-model="form.apellidos"
-            label="Apellidos"
-            class="form-item"
-            :rules="apellidosRules"
-          />
-          <q-input
-            style="max-width: 300px"
-            autogrow
-            filled
-            v-model="form.titulo_recurso"
-            label="Título del Recurso"
-            class="form-item"
-            :rules="titulo_recursoRules"
-          />
-          <q-input
-            filled
-            v-model="form.departamento"
-            label="Departamento"
-            class="form-item"
-            @click="showSelectorDepartamento = true"
-            :rules="departamentoRules"
-          />
-          <q-dialog v-model="showSelectorDepartamento" persistent>
-            <SelectorDepartamento
-              v-model="form.departamento"
-              :departamento-rules="departamentoRules"
-              :open-first-dialog-automatically="true"
-              @close-first-dialog="closeFirstDialogAndUpdateModel"
+      <q-form @submit="onSubmit" id="form">
+        <div style="margin-top: 10px; margin-bottom: 10px">
+          <h4 class="text-bold">Nuevo Aval de Tutorias</h4>
+        </div>
+        <div class="q-gutter-md row justify-center items-center">
+          <div class="q-gutter-xl q-gutter-y-md row justify-around">
+            <q-input
+              style="max-width: 300px"
+              autogrow
+              filled
+              v-model="form.nombre"
+              label="Nombre"
+              class="form-item"
+              :rules="nombreRules"
             />
-          </q-dialog>
+            <q-input
+              style="max-width: 300px"
+              autogrow
+              filled
+              v-model="form.apellidos"
+              label="Apellidos"
+              class="form-item"
+              :rules="apellidosRules"
+            />
+            <q-input
+              filled
+              v-model="form.departamento"
+              label="Departamento"
+              class="form-item"
+              @click="showSelectorDepartamento = true"
+              :rules="departamentoRules"
+            />
+            <q-dialog v-model="showSelectorDepartamento" persistent>
+              <SelectorDepartamento
+                v-model="form.departamento"
+                :departamento-rules="departamentoRules"
+                :open-first-dialog-automatically="true"
+                @close-first-dialog="closeFirstDialogAndUpdateModel"
+              />
+            </q-dialog>
+          </div>
+          <div class="content-div">
+            <q-input
+              autogrow
+              filled
+              v-model="form.titulo_recurso"
+              label="Título del Recurso"
+              class="form-item"
+              :rules="titulo_recursoRules"
+            />
+          </div>
 
-          <q-input
-            filled
-            v-model="form.tomo"
-            label="Tomo"
-            :rules="[
-              (val) => (val && val.trim().length > 0) || 'Tomo es requerido',
-              (val) => /^\d+$/.test(val) || 'Solo se permiten números',
-            ]"
-          />
-          <q-input
-            filled
-            v-model="form.folio"
-            label="Folio"
-            class="form-item"
-            :rules="[
-              (val) => (val && val.trim().length > 0) || 'Folio es requerido',
-              (val) => /^\d+$/.test(val) || 'Solo se permiten números',
-            ]"
-          />
-
-          <q-input
-            filled
-            readonly
-            v-model="form.fecha"
-            label="Fecha"
-            :rules="fechaRules"
-          >
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy
-                  cover
-                  transition-show="scale"
-                  transition-hide="scale"
-                >
-                  <q-date v-model="form.fecha" mask="YYYY-MM-DD">
-                    <div class="row items-center justify-end">
-                      <q-btn
-                        v-close-popup
-                        label="Cerrar"
-                        color="primary"
-                        flat
-                      />
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
+          <div class="row q-gutter-md">
+            <q-input
+              filled
+              v-model="form.tomo"
+              label="Tomo"
+              :rules="[
+                (val) => (val && val.trim().length > 0) || 'Tomo es requerido',
+                (val) => /^\d+$/.test(val) || 'Solo se permiten números',
+              ]"
+            />
+            <q-input
+              filled
+              v-model="form.folio"
+              label="Folio"
+              class="form-item"
+              :rules="[
+                (val) => (val && val.trim().length > 0) || 'Folio es requerido',
+                (val) => /^\d+$/.test(val) || 'Solo se permiten números',
+              ]"
+            />
+            <q-input
+              filled
+              readonly
+              v-model="form.fecha"
+              label="Fecha"
+              :rules="fechaRules"
+            >
+              <template v-slot:append>
+                <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy
+                    cover
+                    transition-show="scale"
+                    transition-hide="scale"
+                  >
+                    <q-date v-model="form.fecha" mask="YYYY-MM-DD">
+                      <div class="row items-center justify-end">
+                        <q-btn
+                          v-close-popup
+                          label="Cerrar"
+                          color="primary"
+                          flat
+                        />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+          </div>
         </div>
         <div class="row justify-center items-center">
           <q-btn
@@ -105,7 +109,7 @@
             rounded
             label="Guardar"
             type="submit"
-            class="form-item"
+            class="form-item text-weight-bolder"
             color="primary"
             style="margin-top: 20px; margin-bottom: 20px"
           />
@@ -121,7 +125,6 @@ import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
 import { useQuasar } from 'quasar';
-
 
 interface Form {
   nombre: string;
@@ -214,19 +217,25 @@ function onSubmit() {
     })
     .catch((error) => {
       if (error.response && error.response.status === 400) {
-        errorMessage.value =
-          error.response.data.detail ||
-          'Hubo un error al enviar el formulario.';
+        $q.notify({
+          type: 'negative',
+          message: 'Hubo un error al enviar el formulario.',
+          position: 'top-right',
+        });
       } else {
-        errorMessage.value =
-          'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.';
+        $q.notify({
+          type: 'negative',
+          message:
+            'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.',
+          position: 'top-right',
+        });
       }
       console.error('Error al enviar el formulario:', error);
     });
-    $q.notify({
+  $q.notify({
     type: 'positive',
     message: '¡Aval Registrado con Éxito !',
-    position: 'top-right'
+    position: 'top-right',
   });
 }
 

@@ -1,10 +1,10 @@
 <template>
   <q-page>
     <div class="column justify-center items-center">
-      <div style="margin-top: 20px; margin-bottom: 20px">
-        <h4 class="text-bold">Nuevo Aval de Bibliografía</h4>
-      </div>
       <q-form @submit="onSubmit" id="form">
+        <div style="margin-top: 10px; margin-bottom: 10px">
+          <h4 class="text-bold">Nuevo Aval de Bibliografía</h4>
+        </div>
         <div class="q-gutter-md row justify-center items-center">
           <div class="column">
             <q-input
@@ -49,7 +49,12 @@
               v-model="form.total_asient"
               label="Total de Asientos Bibliográficos"
               class="form-item"
-              :rules="revRules"
+              :rules="[
+                (val) =>
+                  (val && val.trim().length > 0) ||
+                  'Total de Asientos es requerido',
+                (val) => /^\d+$/.test(val) || 'Solo se permiten números',
+              ]"
             />
             <q-input
               filled
@@ -199,7 +204,7 @@
             rounded
             label="Guardar"
             type="submit"
-            class="form-item"
+            class="form-item text-weight-bolder"
             color="primary"
             style="margin-top: 20px; margin-bottom: 20px"
           />
@@ -315,12 +320,7 @@ const apellidosRules: Rule[] = [
   (v) => !!v || 'Los Apellidos son requeridos',
   (v) => v.length <= 50 || 'Los apellidos exceden el límite de 100 caracteres',
 ];
-const titulo_recursoRules: Rule[] = [
-  (v) => !!v || 'El Título del Recurso es requerido',
-  (v) =>
-    v.length <= 500 ||
-    'El título del recurso excede el límite de 500 caracteres',
-];
+
 const departamentoRules: Array<(value: string) => boolean | string> = [
   (v) => !!v || 'El Departamento de Trabajo es requerido',
 ];
@@ -341,12 +341,19 @@ function onSubmit() {
     })
     .catch((error) => {
       if (error.response && error.response.status === 400) {
-        errorMessage.value =
-          error.response.data.detail ||
-          'Hubo un error al enviar el formulario.';
+        $q.notify({
+          type: 'negative',
+          message: 'Hubo un error al enviar el formulario.',
+          position: 'top-right',
+        });
+
       } else {
-        errorMessage.value =
-          'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.';
+        $q.notify({
+          type: 'negative',
+          message: 'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.',
+          position: 'top-right',
+        });
+        
       }
       console.error('Error al enviar el formulario:', error);
     });

@@ -68,7 +68,7 @@
         rounded
         label="Exportar a PDF"
         @click="exportToPDF"
-        class="btn-export mt-4"
+        class="btn-export mt-4 text-weight-bolder"
         style="margin-top: 20px; margin-bottom: 20px"
       />
     </div>

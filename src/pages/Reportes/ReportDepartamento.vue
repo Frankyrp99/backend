@@ -1,32 +1,9 @@
 <template>
   <div class="q-pa-lg">
-    <q-card class="row justify-evenly align-center ">
-      <div class="flex flex-row items-center ">
-        <q-card-section>
-          <q-btn class="text-bold "
-            >Cantidad de Avales del Departamento: {{ cantidadDeAvaless }}</q-btn
-          >
-        </q-card-section>
-        <q-card-section class="text-bold">
-          <q-btn @click="dialogDepartamentosVisible = true" class="text-bold"
-            >Ver Cantidad Global por Departamento</q-btn
-          >
-        </q-card-section>
-      </div>
-    </q-card>
-    <q-table
-      :rows="reportData.rows"
-      :columns="columnas"
-      :filter="search"
-      class="q-mt-md"
-      dense
-      no-data-label="No hay datos disponibles."
-      no-results-label="No se encontraron resultados para tu búsqueda."
-      :loading="isLoading"
-      loading-label="Cargando..."
-    >
-      <template v-slot:top-left>
+    <q-card class="column q-gutter-y-md">
+      <div class="column text-subtitle1 text-bold">
         <q-input
+          style="max-width: 250px"
           autogrow
           filled
           v-model="departamentoSeleccionado"
@@ -34,81 +11,56 @@
           @click="showSelectorDepartamento = true"
           @update:model-value="mostrarAvales"
         />
-      </template>
-      <template v-slot:top-right>
-        <q-input dense outlined v-model="search" placeholder="Buscar" />
-      </template>
-
-      <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.value }}
-          </q-td>
-
-          <q-td auto-width>
-            <q-btn color="primary" icon="visibility" size="sm" flat dense />
-
-          </q-td>
-        </q-tr>
-      </template>
-    </q-table>
-
-    <q-dialog v-model="showSelectorDepartamento" persistent>
-      <SelectorDepartamento
-        v-model="departamentoSeleccionado"
-        :open-first-dialog-automatically="true"
-        @close-first-dialog="closeFirstDialogAndUpdateModel"
-        @update:model-value="mostrarAvales"
-      />
-    </q-dialog>
-    <q-dialog v-model="dialogDepartamentosVisible" persistent>
-      <q-card>
-        <q-card-section>
-          <div class="text-h6 text-bold">
-            Cantidad de Avales por Departamento y Facultad
-          </div>
-          <q-separator />
+        <q-dialog v-model="showSelectorDepartamento" persistent>
+          <SelectorDepartamento
+            v-model="departamentoSeleccionado"
+            :open-first-dialog-automatically="true"
+            @close-first-dialog="closeFirstDialogAndUpdateModel"
+            @update:model-value="mostrarAvales"
+          />
+        </q-dialog>
+        Cantidad de avales en el Departamento
+      </div>
+      <q-separator />
+      <div class="row justify-around text-subtitle1 text-bold">
+        <div>Aval de Publicación: {{ datos?.avales_por_tipo['Profesor'] }}</div>
+        <div>Aval de Tutoría: {{ datos?.avales_por_tipo['avales_tuto'] }}</div>
+        <div>Aval de Bibliografía: {{ datos?.avales_por_tipo[ 'avales_biblio'] }}</div>
+        <div>Total: {{ datos?.total_avales }}</div>
+      </div>
+    </q-card>
+    <q-card>
+      <q-card-section>
+        <div class="text-h6 text-bold">
+          Cantidad de Avales por Departamento y Facultad
+        </div>
+        <q-separator />
+      </q-card-section>
+      <q-card-section class="flex-container">
+        <div
+          class="flex-item"
+          v-for="(departamentos, facultad) in avalesPorFacultad"
+          :key="facultad"
+        >
+          <strong>{{ facultad }}:</strong>
           <ul class="text-bold">
             <li
-
-              v-for="(departamentos, facultad) in avalesPorFacultad"
-              :key="facultad"
+              v-for="departamento in Object.keys(departamentos)"
+              :key="departamento"
             >
-              <strong>{{ facultad }}:</strong>
-              <ul>
-                <li
-                  v-for="departamento in Object.keys(departamentos)"
-                  :key="departamento"
-                >
-                  {{ departamento }}: {{ departamentos[departamento] || 0 }}
-                </li>
-              </ul>
+              {{ departamento }}: {{ departamentos[departamento] || 0 }}
             </li>
           </ul>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            label="Cerrar"
-            @click="dialogDepartamentosVisible = false"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+        </div>
+      </q-card-section>
+    </q-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch, computed } from 'vue';
+import { onMounted, ref, reactive, watch, computed } from 'vue';
 import { api } from 'src/boot/axios';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
-
-interface Aval {
-  tipo: string;
-  nombre_completo: string;
-  departamento: string;
-  fecha: string;
-}
 
 interface avalesPorFacultad {
   [facultad: string]: {
@@ -116,87 +68,24 @@ interface avalesPorFacultad {
   };
 }
 
-type ColumnType = {
-  name: string;
-  required?: boolean;
-  label: string;
-  align: string;
-  field: string;
-  filter?: boolean;
-  sortable?: boolean;
-  format?: (value: string) => string;
-};
-
 let departamentoSeleccionado = ref('');
-const search = ref('');
+
 const showSelectorDepartamento = ref(false);
 const closeFirstDialogAndUpdateModel = () => {
   showSelectorDepartamento.value = false;
 };
-const dialogDepartamentosVisible = ref(false);
-const isLoading = ref(false);
-const columnas: ColumnType[] = [
-  {
-    name: 'tipo',
-    required: true,
-    label: 'Tipo de Aval',
-    align: 'left',
-    field: 'tipo',
-    filter: true,
-    sortable: true,
-    format: (value: string) => {
-      if (value === 'Profesor') {
-        return 'Aval de Publicación';
-      } else if (value === 'avales_tuto') {
-        return 'Aval de Tutoría';
-      } else if (value === 'avales_biblio') {
-        return 'Aval de Bibliografía';
-      } else {
-        return value;
-      }
-    },
-  },
-  {
-    name: 'nombre_completo',
-    required: true,
-    label: 'Nombre Completo',
-    align: 'left',
-    field: 'nombre_completo',
-    filter: true,
-    sortable: true,
-  },
-  {
-    name: 'departamento',
-    required: true,
-    label: 'Departamento',
-    align: 'left',
-    field: 'departamento',
-    filter: true,
-    sortable: true,
-  },
-  {
-    name: 'fecha',
-    required: true,
-    label: 'Fecha',
-    align: 'left',
-    field: 'fecha',
-    filter: true,
-    sortable: true,
-  },
-];
+const reporte = ref(null);
+const loading = ref(true);
+interface Datos {
+  total_avales: number;
+  avales_por_tipo: Record<string, number>;
+}
+const datos = ref<Datos | null>(null);
+interface AvaPorDepartamento {
+  [departamento: string]: number;
+}
 
-const reportData = reactive({
-  rows: [] as Aval[],
-});
-
-const cantidadDeAvaless = computed(() => {
-  if (!departamentoSeleccionado.value) return 0;
-  return reportData.rows.filter(
-    (row) => row.departamento === departamentoSeleccionado.value
-  ).length;
-});
-
-const avalesPorDepartamento = reactive({});
+const avalesPorDepartamento: AvaPorDepartamento = reactive({});
 const avalesPorFacultad: avalesPorFacultad = reactive({});
 const departamentosPorFacultad = reactive({
   'Ciencias Sociales': [
@@ -292,20 +181,15 @@ async function cargarDatos() {
       `/api/reporte-departamento/${departamentoSeleccionado.value}/`
     );
 
-    const data = response.data;
+    datos.value = response.data;
 
-    // Combina los arrays de avales en uno único
-    const combinedAvals = Object.values(data).flat() as Aval[];
-
-    // Actualiza avales con los avales combinados
-    reportData.rows = combinedAvals;
+    console.log(datos.value);
   } catch (error) {
     console.error('Error al cargar los datos del endpoint:', error);
   }
-  cargarDatos1()
 }
 
-async function procesarAvalessPorDepartamento() {
+onMounted(async () => {
   try {
     const response = await api.get(
       '/api/reporte-total-avaless-por-departamento/'
@@ -340,22 +224,15 @@ async function procesarAvalessPorDepartamento() {
   } catch (error) {
     console.error('Error al cargar los datos del endpoint:', error);
   }
-}
+});
 
 /////////////////////// Funciónes
 function mostrarAvales() {
   if (departamentoSeleccionado.value) {
     cargarDatos();
-  } else {
-    reportData.rows = [];
   }
 }
-function cargarDatos1() {
-  isLoading.value = true;
-  setTimeout(() => {
-    isLoading.value = false; // Finaliza la simulación de carga después de 2 segundos
-  }, 2000);
-}
+
 function obtenerFacultadPorDepartamento(departamento: string): string | '' {
   for (const [facultad, departamentos] of Object.entries(
     departamentosPorFacultad
@@ -372,16 +249,6 @@ function obtenerFacultadPorDepartamento(departamento: string): string | '' {
 watch(departamentoSeleccionado, async (nuevoValor, antiguoValor) => {
   if (nuevoValor !== antiguoValor) {
     await mostrarAvales();
-  }
-});
-
-watch(dialogDepartamentosVisible, async (nuevoValor, antiguoValor) => {
-  if (nuevoValor && !antiguoValor) {
-    Object.keys(avalesPorFacultad).forEach((facultad) => {
-      avalesPorFacultad[facultad].total = 0;
-    });
-
-    await procesarAvalessPorDepartamento();
   }
 });
 </script>

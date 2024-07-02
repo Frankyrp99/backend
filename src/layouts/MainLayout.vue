@@ -1,8 +1,7 @@
 <template>
-  <q-layout view="hHh LpR lfr" >
+  <q-layout view="hHh LpR lfr" class="bg-color">
     <q-header elevated>
-      <q-toolbar class="bg-color ">
-        
+      <q-toolbar class="bg-color">
         <q-btn
           dense
           flat
@@ -15,25 +14,27 @@
           <img src="src/assets/logotoolbar.png" />
         </q-avatar>
 
-        <q-toolbar-title class="text-black  text-gliker">SIGAV</q-toolbar-title>
+        <q-toolbar-title class="text-black text-gliker">SIGAV</q-toolbar-title>
 
-
-        <q-btn-group flat dense class="row justify-end ">
+        <q-btn-group flat dense class="row justify-end">
           <q-btn-dropdown
-
             icon="account_circle"
             text-color="black"
             align="between"
           >
             <q-list>
-              <q-item v-if="user.isAdmin" to="Usuarios" clickable v-close-popup>
+              <q-item v-if="user.isAdmin" to="/Usuarios" clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label icon="account_circle" class="text-bold">Administracion</q-item-label>
+                  <q-item-label icon="account_circle" class="text-bold"
+                    >Administracion</q-item-label
+                  >
                 </q-item-section>
               </q-item>
-              <q-item to="user" clickable v-close-popup>
+              <q-item to="/user" clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label icon="account_circle" class="text-bold">Usuario</q-item-label>
+                  <q-item-label icon="account_circle" class="text-bold"
+                    >Usuario</q-item-label
+                  >
                 </q-item-section>
               </q-item>
 
@@ -42,7 +43,7 @@
                   <q-item-label class="text-bold">Cerrar Sesión</q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item clickable v-close-popup >
+              <q-item to="/acerca_de" clickable v-close-popup>
                 <q-item-section>
                   <q-item-label class="text-bold">Acerca De</q-item-label>
                 </q-item-section>
@@ -50,7 +51,6 @@
             </q-list>
           </q-btn-dropdown>
         </q-btn-group>
-
       </q-toolbar>
     </q-header>
 
@@ -59,12 +59,10 @@
       v-model="leftDrawerOpen"
       side="left"
       elevated
-      class=" text-black"
+      class="text-black "
     >
       <drawer-component />
     </q-drawer>
-
-
 
     <q-page-container>
       <router-view />
@@ -79,7 +77,7 @@ import { api } from 'src/boot/axios';
 
 import { useRouter } from 'vue-router';
 
-const user = ref({ role: 'invitado', isAdmin: false, isViewerOnly: false  });
+const user = ref({ role: 'invitado', isAdmin: false, isViewerOnly: false });
 const router = useRouter();
 const leftDrawerOpen = ref(false);
 
@@ -102,14 +100,14 @@ const fetchUserData = async () => {
       user.value.isViewerOnly = response.data.role === 'invitado';
       console.log('Datos del usuario obtenidos correctamente.');
     } else {
-      console.error(`Error al obtener los datos del usuario: Estado ${response.status}`);
+      console.error(
+        `Error al obtener los datos del usuario: Estado ${response.status}`
+      );
     }
-
   } catch (error) {
     console.error('Error al obtener los datos del usuario:', error);
   }
 };
-
 
 const logout = () => {
   localStorage.removeItem('authToken');
@@ -117,10 +115,8 @@ const logout = () => {
 };
 
 const toggleLeftDrawer = () => {
-  leftDrawerOpen.value =!leftDrawerOpen.value;
+  leftDrawerOpen.value = !leftDrawerOpen.value;
 };
 
 onMounted(fetchUserData);
 </script>
-
-

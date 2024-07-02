@@ -112,7 +112,7 @@
           {{ response.fecha }}
         </div>
         <div class="text-semibold datos-recurso text-h6">
-          Este aval tiene una duración de un año a partir de la fechaen que se
+          Este aval tiene una duración de un año a partir de la fecha en que se
           expide.
         </div>
         <div class="row">
@@ -142,7 +142,7 @@
         rounded
         label="Exportar a PDF"
         @click="exportToPDF"
-        class="btn-export mt-4"
+        class="btn-export mt-4 text-weight-bolder"
         style="margin-top: 20px; margin-bottom: 20px"
       />
     </div>

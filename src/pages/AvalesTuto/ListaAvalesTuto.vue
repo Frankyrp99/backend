@@ -57,7 +57,7 @@
               class="q-ml-sm"
               flat
               dense
-              @click="deleteRow(props.row)"
+              @click="eliminar(props.row)"
             />
           </q-td>
         </q-tr>
@@ -90,7 +90,7 @@
               @close-first-dialog="closeFirstDialogAndUpdateModel"
             />
           </q-dialog>
-         
+
           <q-input v-model="editForm.tomo" label="Tomo" />
           <q-input v-model="editForm.folio" label="Folio" />
         </q-card-section>
@@ -127,7 +127,7 @@ const showSelectorDepartamento = ref(false);
 const closeFirstDialogAndUpdateModel = () => {
   showSelectorDepartamento.value = false;
 };
-const isLoading = ref(false);
+const isLoading = ref(true);
 type RowType = {
   id: number;
   nombre: string;
@@ -217,7 +217,7 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error al obtener los datos de los profesores:', error);
   }
-  cargarDatos();
+  isLoading.value = false;
   fetchUserData();
 });
 const editDialogOpen = ref(false);
@@ -250,12 +250,7 @@ function capitalizeWords(text: string): string {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
-function cargarDatos() {
-  isLoading.value = true;
-  setTimeout(() => {
-    isLoading.value = false; // Finaliza la simulación de carga después de 2 segundos
-  }, 2000);
-}
+
 
 //watchers
 watch(
@@ -318,14 +313,37 @@ const showRow = (row: null) => {
   router.push({ name: 'ShowTuto', params: { id: row.id } });
 };
 // boton eliminar
-const deleteRow = async (row: { id: null }) => {
-  try {
-    await api.delete(`/api/avales_tuto/${row.id}/`);
-    console.log('Recurso eliminado con éxito');
+async function eliminar(row: { id: null }) {
 
-    rows.value = rows.value.filter((item) => item.id !== row.id);
-  } catch (error) {
-    console.error('Error al eliminar el recurso:', error);
-  }
-};
+
+   try {
+     await $q.dialog({
+       title: 'Eliminar Aval',
+       message: '¿Estás seguro de eliminar?',
+       cancel: true,
+       persistent: true,
+     }).onOk(() => {
+       api.delete(`/api/avales_tuto/${row.id}/`)
+        .then(() => {
+           console.log('Recurso eliminado con éxito');
+           rows.value = rows.value.filter(item => item.id!== row.id);
+           $q.notify({
+             type: 'positive', // Cambiado a positive para indicar éxito
+             message: '¡Aval Eliminado Correctamente!',
+             position: 'top-right',
+           });
+         })
+        .catch(error => {
+           console.error('Error al eliminar el recurso:', error);
+           $q.notify({
+             type: 'negative',
+             message: 'Hubo un error al eliminar el Aval.',
+             position: 'top-right',
+           });
+         });
+     });
+   } catch (error) {
+     console.error('Error al mostrar el diálogo:', error);
+   }
+ }
 </script>

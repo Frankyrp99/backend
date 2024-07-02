@@ -2,7 +2,7 @@
   <div class="q-pa-lg">
     <q-table
       v-model:selected="selectedAuthor"
-      title="Autores"
+      title="Lista de Profesores"
       title-class="text-bold"
       :rows="Autor"
       :columns="columnas"

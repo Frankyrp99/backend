@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, reactive, watch, computed } from 'vue';
+import { onMounted, ref, reactive, watch,  } from 'vue';
 import { api } from 'src/boot/axios';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
 
@@ -195,7 +195,7 @@ onMounted(async () => {
       '/api/reporte-total-avaless-por-departamento/'
     );
     const data = response.data;
-
+   
     // Procesar los datos obtenidos
     Object.keys(data).forEach((departamento) => {
       const facultad = obtenerFacultadPorDepartamento(departamento);

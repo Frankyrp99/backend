@@ -1,7 +1,6 @@
 <template>
   <div class="q-pa-lg">
     <q-table
-      v-model:selected="selectedAuthor"
       title="Lista de Profesores"
       title-class="text-bold"
       :rows="Autor"
@@ -31,7 +30,7 @@
               size="sm"
               flat
               dense
-              @click="obtenerAvalProfesor"
+              @click="showRow(props.row)"
             />
           </q-td>
         </q-tr>
@@ -43,18 +42,29 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { api } from 'src/boot/axios';
+import { useRouter } from 'vue-router';
 
-const isLoading = ref(false);
+const router = useRouter();
+const isLoading = ref(true);
 const search = ref('');
 type AutorType = {
-
+  id:number;
   nombre: string;
   apellidos: string;
   departamento: string;
 };
 const Autor = ref<AutorType[]>([]);
-const selectedAuthor = ref<AutorType>();
+
 const columnas = ref([
+  {
+    name: 'id',
+    required: true,
+    label: 'ID',
+    align: 'left',
+    field: 'id',
+    filter: true,
+    sortable: true,
+  },
   {
     name: 'nombre',
     required: true,
@@ -89,42 +99,25 @@ const columnas = ref([
 onMounted(async () => {
   try {
     const response = await api.get('/api/autores/');
-    Autor.value = response.data;
-    console.log('Formulario enviado con éxito:', response.data);
+    Autor.value = response.data.results;;
+    console.log('Formulario enviado con éxito:', response.data.results);
   } catch (error) {
     console.error('Error al obtener los datos de los profesores:', error);
   }
-  cargarDatos();
+  isLoading.value = false;
 });
-function cargarDatos() {
-  isLoading.value = true;
-  setTimeout(() => {
-    isLoading.value = false;
-  }, 2000);
-}
-async function obtenerAvalProfesor() {
-  if (!selectedAuthor.value) return;
 
-  try {
-    const response = await api.get(
-      `/api/avales-profesor/?nombre=${selectedAuthor.value.nombre}&apellidos=${selectedAuthor.value.apellidos}`
-    );
+const showRow = (row: any) => {
+  router.push({
+    name: 'AvalesProfesor',
+    params: {
+      id: row.id,
+      nombre:row.nombre,
+      apellidos:row.apellidos
 
-    // Asegúrate de que la respuesta sea tratada como un arreglo
-    const avalesData = Array.isArray(response.data)? response.data : [response.data];
+    },
+  });
+};
 
-    // Verifica si hay datos antes de asignarlos a Autor.value
-    if (avalesData.length > 0) {
-      Autor.value = avalesData;
-      console.log(Autor.value)
-    } else {
-      console.log('No se encontraron avales para el profesor seleccionado.');
-    }
-  } catch (error) {
-    console.error('Error al obtener los avales del profesor:', error);
-  } finally {
-    cargarDatos();
-  }
-}
 
 </script>

@@ -247,6 +247,18 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: '/Report_Autor_Aval/:id',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'AvalesProfesor',
+        component: () => import('src/pages/Reportes/ReportProfesorAval.vue'),
+        meta: { requiresAuth: true },
+      },
+    ],
+  },
 
   // Always leave this as last one,
   // but you can also remove it

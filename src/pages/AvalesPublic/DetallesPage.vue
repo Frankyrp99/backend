@@ -230,7 +230,7 @@ const showGrupoDialog = ref(false);
 const hideGrupoDialog = () => {
   showGrupoDialog.value = false;
 };
-const isLoading = ref(false);
+const isLoading = ref(true);
 type RowType = {
   id: number;
   nombre: string;
@@ -417,7 +417,7 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error al obtener los datos de los profesores:', error);
   }
-  cargarDatos()
+  isLoading.value = false;
   fetchUserData();
 });
 const editDialogOpen = ref(false);
@@ -467,12 +467,7 @@ function capitalizeWords(text: string): string {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
-function cargarDatos() {
-  isLoading.value = true;
-  setTimeout(() => {
-    isLoading.value = false; // Finaliza la simulación de carga después de 2 segundos
-  }, 2000);
-}
+
 //watchers
 watch(
   nombre,

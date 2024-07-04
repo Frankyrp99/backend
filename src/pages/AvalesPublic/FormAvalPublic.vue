@@ -1,11 +1,10 @@
 <template>
   <q-page>
     <div class="column justify-center items-center">
-
       <q-form @submit="onSubmit" id="form">
         <div style="margin-top: 10px; margin-bottom: 10px">
-        <h4 class="text-bold">Nuevo Aval de Publicación</h4>
-      </div>
+          <h4 class="text-bold">Nuevo Aval de Publicación</h4>
+        </div>
         <div class="q-gutter-md flex flex-row flex-wrap justify-center">
           <div class="q-gutter-xl q-gutter-y-md row justify-around">
             <q-input
@@ -262,6 +261,7 @@ interface Form {
   tipo_recurso: string;
   fecha: string;
   grupo: string;
+
 }
 
 // Definición de tipos para reglas de validación
@@ -286,6 +286,7 @@ const form = reactive<Form>({
   tipo_recurso: '',
   fecha: '',
   grupo: '',
+
 });
 
 const $q = useQuasar();
@@ -355,18 +356,25 @@ const tipoPubRules: Rule[] = [
 const issnRules: Rule[] = [
   (v) => !!v || 'El ISSN es requerido',
   (v) =>
-    v.length <= 8 || 'El lugar de publicación excede el límite de 8 caracteres',
+    v.length <= 8 || 'El ISSN excede el límite de 8 caracteres',
+  (v) =>
+    v.length >= 8 || 'El ISSN es requerido',
 ];
 const eissnRules: Rule[] = [
   (v) => !!v || 'El E-ISSN es requerido',
   (v) =>
-    v.length <= 8 || 'El lugar de publicación excede el límite de 8 caracteres',
+    v.length <= 8 || 'El E-ISSN excede el límite de 8 caracteres',
+  (v) =>
+    v.length >= 8 || 'El E-ISSN es requerido',
 ];
 const isbnRules: Rule[] = [
   (v) => !!v || 'El ISBN es requerido',
   (v) =>
     v.length <= 13 ||
-    'El lugar de publicación excede el límite de 13 caracteres',
+    'El ISBN excede el límite de 13 caracteres',
+  (v) =>
+    v.length >= 13 ||
+    'El ISBN es requerido',
 ];
 
 // Reglas de validación actualizadas para el campo de URL
@@ -378,6 +386,7 @@ const urlRules: Rule[] = [
     'La URL debe terminar con una extensión de dominio válida (.com,.cu,.ru)',
 ];
 
+// Watcher
 watch(
   () => form.nombre,
   (newValue) => {
@@ -399,12 +408,12 @@ watchEffect(() => {
   }
 });
 
+
 function onSubmit() {
   if (!form.nombre || !form.apellidos || !form.titulo_recurso) {
     errorMessage.value = 'Por favor, completa todos los campos requeridos.';
     return;
   }
-
   api
     .post('/api/profesores/', form)
     .then((response) => {
@@ -418,14 +427,13 @@ function onSubmit() {
           message: 'Hubo un error al enviar el formulario.',
           position: 'top-right',
         });
-
       } else {
         $q.notify({
           type: 'negative',
-          message: 'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.',
+          message:
+            'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.',
           position: 'top-right',
         });
-
       }
       console.error('Error al enviar el formulario:', error);
     });

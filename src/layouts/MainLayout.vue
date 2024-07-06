@@ -74,7 +74,6 @@
 import DrawerComponent from 'src/components/DrawerComponent.vue';
 import { ref, onMounted } from 'vue';
 import { api } from 'src/boot/axios';
-
 import { useRouter } from 'vue-router';
 
 const user = ref({ role: 'invitado', isAdmin: false, isViewerOnly: false });
@@ -98,7 +97,7 @@ const fetchUserData = async () => {
       user.value.role = response.data.role;
       user.value.isAdmin = response.data.role === 'admin';
       user.value.isViewerOnly = response.data.role === 'invitado';
-      console.log('Datos del usuario obtenidos correctamente.');
+      console.log('Datos del usuario obtenidos correctamente.',user.value);
     } else {
       console.error(
         `Error al obtener los datos del usuario: Estado ${response.status}`

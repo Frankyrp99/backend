@@ -9,7 +9,19 @@
       :filter="search"
     >
       <template v-slot:top-right>
-        <q-input dense outlined v-model="search" placeholder="Buscar" />
+        <div class="row q-gutter-md">
+          <q-btn
+            color="positive"
+            icon="add"
+            size="md"
+            align="left"
+            dense
+            label="Nuevo Usuario"
+            class="text-bold"
+            to="/NuevoUsuario"
+          />
+          <q-input dense outlined v-model="search" placeholder="Buscar" />
+        </div>
       </template>
 
       <template v-slot:body="props">
@@ -19,7 +31,6 @@
           </q-td>
 
           <q-td auto-width>
-            <q-btn color="primary" icon="visibility" size="sm" flat dense />
             <q-btn
               color="positive"
               icon="edit"
@@ -35,6 +46,7 @@
               class="q-ml-sm"
               flat
               dense
+              @click="eliminar(props.row)"
             />
           </q-td>
         </q-tr>
@@ -50,13 +62,26 @@
         <q-card-section>
           <q-input autogrow v-model="editForm.nombre" label="Nombre" />
           <q-input autogrow v-model="editForm.apellidos" label="apellidos" />
-          <q-input autogrow v-model="editForm.email" label="Email" />
-          <q-input autogrow v-model="editForm.role" label="Rol" />
+          <q-input
+            v-model="editForm.role"
+            label="Rol"
+            class="form-item"
+            @click="showNivActDialog = true"
+          />
+          <q-dialog v-model="showNivActDialog" persistent>
+            <selector-rol
+              v-model="editForm.role"
+              :public-types="['admin', 'especialista', 'invitado']"
+              :open-dialog-automatically="showNivActDialog"
+              @update:modelValue="editForm.role = $event"
+              @dialogClosed="hideNivActDialog"
+            />
+          </q-dialog>
           <q-input
             type="password"
             autogrow
             v-model="editForm.password"
-            label="Contraseña"
+            label="Nueva Contraseña"
           />
         </q-card-section>
 
@@ -77,12 +102,19 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { api } from 'src/boot/axios';
+import { useQuasar } from 'quasar';
+import SelectorRol from 'src/components/SelectorRol.vue';
 
+const $q = useQuasar();
 const search = ref('');
 const users = ref<UsersType[]>([]);
 const router = useRouter();
-console.log('das', users);
+const showNivActDialog = ref(false);
+const hideNivActDialog = () => {
+  showNivActDialog.value = false;
+};
+
 type UsersType = {
   id: string;
   nombre: string;
@@ -107,6 +139,7 @@ const columns = [
     field: 'apellidos',
     sortable: true,
     filter: true,
+    align: 'left',
   },
   {
     name: 'email',
@@ -114,11 +147,14 @@ const columns = [
     field: 'email',
     sortable: true,
     filter: true,
+    align: 'left',
   },
   {
     name: 'role',
     label: 'Rol',
     field: 'role',
+    align: 'left',
+
     sortable: true,
     filter: true,
     format: (value: string) => {
@@ -145,10 +181,7 @@ onMounted(async () => {
       },
     };
 
-    const response = await axios.get(
-      'http://127.0.0.1:8000/api/users/list',
-      config
-    );
+    const response = await api.get('/api/users/list', config);
 
     users.value = response.data.results;
     console.log('Usuarios recuperados:', users.value);
@@ -162,21 +195,18 @@ const editForm = reactive({
   id: '',
   nombre: '',
   apellidos: '',
-  email: '',
   role: '',
   password: '',
 
   // Agrega más campos según sea necesario
 });
 
-const editUser = (user) => {
-  editForm.id = user.id;
-  editForm.nombre = user.nombre;
-  editForm.apellidos = user.apellidos;
-  editForm.email = user.email;
-  editForm.role = user.role;
-  editForm.password = user.password;
-
+const editUser = (selectedUser: UsersType) => {
+  editForm.id = selectedUser.id;
+  editForm.nombre = selectedUser.nombre;
+  editForm.apellidos = selectedUser.apellidos;
+  editForm.role = selectedUser.role;
+  editForm.password = selectedUser.password;
   editDialogOpen.value = true;
 };
 
@@ -189,34 +219,62 @@ async function saveEditUser() {
         'Content-Type': 'application/json',
       },
     };
-    await axios.put(
-      `http://127.0.0.1:8000/api/users/${editForm.id}/`,
-      editForm,
-      config
-    );
+    await api.put(`/api/users/${editForm.id}/`, editForm, config);
+
     const index = users.value.findIndex((user) => user.id === editForm.id);
     if (index !== -1) {
       Object.assign(users.value[index], editForm);
     }
-    console.log('Usuario actualizado con éxito');
+    $q.notify({
+      type: 'positive', // Cambiado a positive para indicar éxito
+      message: '¡Usuario Actualizado Correctamente!',
+      position: 'top-right',
+    });
     editDialogOpen.value = false;
   } catch (error) {
     console.error('Error updating user:', error);
   }
 }
 
-const deleteUser = async (user) => {
+async function eliminar(user: { id: null }) {
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/users/${user.id}/`);
-    console.log('Usuario eliminado con éxito');
-    users.value = users.value.filter((u) => u.id !== user.id);
+    const authToken = localStorage.getItem('authToken');
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    await $q
+      .dialog({
+        title: 'Eliminar Usuario',
+        message: '¿Estás seguro de eliminar?',
+        cancel: true,
+        persistent: true,
+      })
+      .onOk(() => {
+        api
+          .delete(`/api/deleteuser/${user.id}/`, config)
+          .then(() => {
+            console.log('Recurso eliminado con éxito');
+            users.value = users.value.filter((item) => item.id !== user.id);
+            $q.notify({
+              type: 'positive',
+              message: '¡Usuario Eliminado Correctamente!',
+              position: 'top-right',
+            });
+          })
+          .catch((error) => {
+            console.error('Error al eliminar el recurso:', error);
+            $q.notify({
+              type: 'negative',
+              message: 'Hubo un error al eliminar el Usuario.',
+              position: 'top-right',
+            });
+          });
+      });
   } catch (error) {
-    console.error('Error deleting user:', error);
+    console.error('Error al mostrar el diálogo:', error);
   }
-};
-
-const showUserDetails = (user) => {
-  console.log('Detalles del usuario:', user);
-  router.push({ name: 'user-details', params: { id: user.id } });
-};
+}
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-lg">
     <q-table
-    :title="'Avales Registrados de: ' + nombre + ' ' + apellidos"
+      :title="'Avales Registrados de: ' + nombre + ' ' + apellidos"
       title-class="text-bold"
       :rows="rows"
       :columns="columnas"
@@ -24,7 +24,14 @@
           </q-td>
 
           <q-td auto-width>
-            <q-btn color="primary" icon="visibility" size="sm" flat dense />
+            <q-btn
+              color="primary"
+              icon="visibility"
+              size="sm"
+              flat
+              dense
+              @click="showRow(props.row)"
+            />
           </q-td>
         </q-tr>
       </template>
@@ -35,13 +42,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { api } from 'src/boot/axios';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const isLoading = ref(true);
 const search = ref('');
 const route = useRoute();
+const router = useRouter();
 const id = route.params.id;
 const nombre = route.params.nombre;
+
 const apellidos = route.params.apellidos;
 const rows = ref<RowType[]>([]);
 type RowType = {
@@ -63,12 +72,12 @@ const columnas = [
   },
   {
     name: 'titulo_recurso',
-    label: 'Título del Recurso',
-    align: 'left',
+    label: 'Titulo del Recurso',
     field: 'titulo_recurso',
-    required: true,
-    filter: true,
+    align: 'left',
     sortable: true,
+    filter: true,
+    classes: 'texto-truncado',
   },
   {
     name: 'rev_bilio',
@@ -80,6 +89,22 @@ const columnas = [
     sortable: true,
   },
 ];
+const showRow = (row: any) => {
+  let routeName;
+  if (row.tipo_aval === 'Aval de Publicación') {
+    routeName = 'show';
+  } else if (row.tipo_aval === 'Aval de Tutoría') {
+    routeName = 'ShowTuto';
+  } else if (row.tipo_aval === 'Aval de Bibliografía') {
+    routeName = 'ShowBiblio';
+  }
+  router.push({
+    name: routeName,
+    params: {
+      id: row.id,
+    },
+  });
+};
 
 const fetchData = async () => {
   try {

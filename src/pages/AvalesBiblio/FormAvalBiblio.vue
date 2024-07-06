@@ -336,7 +336,7 @@ function onSubmit() {
   api
     .post('/api/avales_biblio/', form)
     .then((response) => {
-      console.log('Formulario enviado con éxito:', response.data);
+     
       router.push({ name: 'ListaAvalesBiblio' });
     })
     .catch((error) => {
@@ -353,7 +353,7 @@ function onSubmit() {
           message: 'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.',
           position: 'top-right',
         });
-        
+
       }
       console.error('Error al enviar el formulario:', error);
     });

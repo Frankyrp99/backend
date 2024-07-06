@@ -14,15 +14,17 @@
       loading-label="Cargando..."
     >
       <template v-slot:top-right>
+        <div class="row q-gutter-md">
         <q-btn
           label="Más Detalles"
           color="primary"
           size="md"
-          flat
+          align="left"
           dense
           to="/detallesbiblio"
         />
         <q-input dense outlined v-model="search" placeholder="Buscar" />
+      </div>
       </template>
 
       <template v-slot:body="props">
@@ -31,7 +33,7 @@
             {{ col.value }}
           </q-td>
 
-          <q-td auto-width>
+          <q-td auto-width class="q-gutter-sm">
             <q-btn
               color="primary"
               icon="visibility"
@@ -181,7 +183,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive, watch, toRefs, computed } from 'vue';
+import { ref, onMounted, reactive, watch, toRefs,  } from 'vue';
 import { useRouter } from 'vue-router';
 import { api } from 'src/boot/axios';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
@@ -244,6 +246,7 @@ const columns = [
     required: true,
     label: ' Apellidos',
     field: 'apellidos',
+    align: 'left',
     filter: true,
     sortable: true,
   },
@@ -252,6 +255,7 @@ const columns = [
     name: 'departamento',
     label: 'Departamento de Trabajo',
     field: 'departamento',
+    align: 'left',
     sortable: true,
     filter: true,
   },
@@ -260,6 +264,7 @@ const columns = [
     name: 'rev_bilio',
     label: 'Tipo de Revisión',
     field: 'rev_bilio',
+    align: 'left',
     sortable: true,
     filter: true,
   },
@@ -267,6 +272,7 @@ const columns = [
     name: 'niv_act',
     label: 'Nivel de Actualizacion',
     field: 'niv_act',
+    align: 'left',
     sortable: true,
     filter: true,
   },
@@ -274,6 +280,7 @@ const columns = [
     name: 'fecha',
     label: 'Fecha de Publicación',
     field: 'fecha',
+    align: 'left',
     sortable: true,
     filter: true,
   },
@@ -368,7 +375,6 @@ function capitalizeWords(text: string): string {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
-
 
 //watchers
 watch(

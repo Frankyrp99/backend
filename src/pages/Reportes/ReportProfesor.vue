@@ -112,11 +112,13 @@ const showRow = (row: any) => {
     name: 'AvalesProfesor',
     params: {
       id: row.id,
-      nombre:row.nombre,
-      apellidos:row.apellidos
+      nombre: row.nombre,
+      apellidos: row.apellidos,
 
     },
+
   });
+  console.log(row)
 };
 
 

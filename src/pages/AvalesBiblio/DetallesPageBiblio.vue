@@ -14,15 +14,18 @@
       loading-label="Cargando..."
     >
       <template v-slot:top-right>
-        <q-btn
-          label="Menos Detalles"
-          color="primary"
-          size="md"
-          flat
-          dense
-          to="/lista_avales_biblio"
-        />
-        <q-input dense outlined v-model="search" placeholder="Buscar" />
+        <div class="row q-gutter-md">
+          <q-btn
+            label="Menos Detalles"
+            color="primary"
+            size="md"
+            align="left"
+            dense
+            to="/lista_avales_biblio"
+          />
+
+          <q-input dense outlined v-model="search" placeholder="Buscar" />
+        </div>
       </template>
 
       <template v-slot:body="props">
@@ -31,7 +34,7 @@
             {{ col.value }}
           </q-td>
 
-          <q-td auto-width>
+          <q-td auto-width class="q-gutter-sm">
             <q-btn
               color="primary"
               icon="visibility"
@@ -243,15 +246,16 @@ const columns = [
     required: true,
     label: ' Apellidos',
     field: 'apellidos',
+    align: 'left',
     filter: true,
     sortable: true,
   },
-
 
   {
     name: 'departamento',
     label: 'Departamento de Trabajo',
     field: 'departamento',
+    align: 'left',
     sortable: true,
     filter: true,
   },
@@ -260,6 +264,7 @@ const columns = [
     name: 'rev_bilio',
     label: 'Tipo de Revisión',
     field: 'rev_bilio',
+    align: 'left',
     sortable: true,
     filter: true,
   },
@@ -267,6 +272,7 @@ const columns = [
     name: 'niv_act',
     label: 'Nivel de Actualizacion',
     field: 'niv_act',
+    align: 'left',
     sortable: true,
     filter: true,
   },
@@ -274,6 +280,7 @@ const columns = [
     name: 'total_asient',
     label: 'Total de Asientos',
     field: 'total_asient',
+    align: 'left',
     sortable: true,
     filter: true,
   },
@@ -282,6 +289,7 @@ const columns = [
     name: 'tomo',
     label: 'Tomo',
     field: 'tomo',
+    align: 'left',
     sortable: true,
     filter: true,
   },
@@ -289,6 +297,7 @@ const columns = [
     name: 'folio',
     label: 'Folio',
     field: 'folio',
+    align: 'left',
     sortable: true,
     filter: true,
   },
@@ -296,6 +305,7 @@ const columns = [
     name: 'fecha',
     label: 'Fecha de Publicación',
     field: 'fecha',
+    align: 'left',
     sortable: true,
     filter: true,
   },
@@ -422,7 +432,7 @@ const editRow = (row: RowType) => {
   editForm.bd_local = row.bd_local;
   editForm.bd_internet = row.bd_internet;
   editForm.cd_rom = row.cd_rom || false;
-  editForm.curso_pos_bus = row.curso_pos_bus ;
+  editForm.curso_pos_bus = row.curso_pos_bus;
   editForm.busqueda_internet = row.busqueda_internet;
   editForm.biblio_personal = row.biblio_personal;
   editForm.no_biblio = row.no_biblio;
@@ -462,36 +472,37 @@ const showRow = (row: null) => {
 };
 // boton eliminar
 async function eliminar(row: { id: null }) {
-
-
-   try {
-     await $q.dialog({
-       title: 'Eliminar Aval',
-       message: '¿Estás seguro de eliminar?',
-       cancel: true,
-       persistent: true,
-     }).onOk(() => {
-       api.delete(`/api/avales_biblio/${row.id}/`)
-        .then(() => {
-           console.log('Recurso eliminado con éxito');
-           rows.value = rows.value.filter(item => item.id!== row.id);
-           $q.notify({
-             type: 'positive', // Cambiado a positive para indicar éxito
-             message: '¡Aval Eliminado Correctamente!',
-             position: 'top-right',
-           });
-         })
-        .catch(error => {
-           console.error('Error al eliminar el recurso:', error);
-           $q.notify({
-             type: 'negative',
-             message: 'Hubo un error al eliminar el Aval.',
-             position: 'top-right',
-           });
-         });
-     });
-   } catch (error) {
-     console.error('Error al mostrar el diálogo:', error);
-   }
- }
+  try {
+    await $q
+      .dialog({
+        title: 'Eliminar Aval',
+        message: '¿Estás seguro de eliminar?',
+        cancel: true,
+        persistent: true,
+      })
+      .onOk(() => {
+        api
+          .delete(`/api/avales_biblio/${row.id}/`)
+          .then(() => {
+            console.log('Recurso eliminado con éxito');
+            rows.value = rows.value.filter((item) => item.id !== row.id);
+            $q.notify({
+              type: 'positive', // Cambiado a positive para indicar éxito
+              message: '¡Aval Eliminado Correctamente!',
+              position: 'top-right',
+            });
+          })
+          .catch((error) => {
+            console.error('Error al eliminar el recurso:', error);
+            $q.notify({
+              type: 'negative',
+              message: 'Hubo un error al eliminar el Aval.',
+              position: 'top-right',
+            });
+          });
+      });
+  } catch (error) {
+    console.error('Error al mostrar el diálogo:', error);
+  }
+}
 </script>

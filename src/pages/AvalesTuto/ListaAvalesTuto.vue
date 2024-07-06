@@ -5,7 +5,7 @@
       title-class="text-bold"
       :rows="rows"
       :columns="columns"
-      row-key="name"
+      row-key="id"
       :filter="search"
       dense
       no-data-label="No hay datos disponibles."
@@ -14,15 +14,17 @@
       loading-label="Cargando..."
     >
       <template v-slot:top-right>
-        <q-btn
-          label="Más Detalles"
-          color="primary"
-          size="md"
-          flat
-          dense
-          to="/detallestuto"
-        />
-        <q-input dense outlined v-model="search" placeholder="Buscar" />
+        <div class="row q-gutter-md">
+          <q-btn
+            label="Más Detalles"
+            color="primary"
+            size="md"
+            align="left"
+            dense
+            to="/detallestuto"
+          />
+          <q-input dense outlined v-model="search" placeholder="Buscar" />
+        </div>
       </template>
 
       <template v-slot:body="props">
@@ -31,7 +33,7 @@
             {{ col.value }}
           </q-td>
 
-          <q-td auto-width>
+          <q-td auto-width class="q-gutter-sm">
             <q-btn
               color="primary"
               icon="visibility"
@@ -152,6 +154,7 @@ const columns = [
   {
     name: 'apellidos',
     required: true,
+    align: 'left',
     label: ' Apellidos',
     field: 'apellidos',
     filter: true,
@@ -162,6 +165,7 @@ const columns = [
     name: 'titulo_recurso',
     label: 'Titulo del Recurso',
     field: 'titulo_recurso',
+    align: 'left',
     sortable: true,
     filter: true,
     classes: 'texto-truncado',
@@ -170,12 +174,14 @@ const columns = [
     name: 'departamento',
     label: 'Departamento de Trabajo',
     field: 'departamento',
+    align: 'left',
     sortable: true,
     filter: true,
   },
   {
     name: 'fecha',
     label: 'Fecha de Publicación',
+    align: 'left',
     field: 'fecha',
     sortable: true,
     filter: true,
@@ -251,7 +257,6 @@ function capitalizeWords(text: string): string {
     .join(' ');
 }
 
-
 //watchers
 watch(
   nombre,
@@ -314,36 +319,37 @@ const showRow = (row: null) => {
 };
 // boton eliminar
 async function eliminar(row: { id: null }) {
-
-
-   try {
-     await $q.dialog({
-       title: 'Eliminar Aval',
-       message: '¿Estás seguro de eliminar?',
-       cancel: true,
-       persistent: true,
-     }).onOk(() => {
-       api.delete(`/api/avales_tuto/${row.id}/`)
-        .then(() => {
-           console.log('Recurso eliminado con éxito');
-           rows.value = rows.value.filter(item => item.id!== row.id);
-           $q.notify({
-             type: 'positive', // Cambiado a positive para indicar éxito
-             message: '¡Aval Eliminado Correctamente!',
-             position: 'top-right',
-           });
-         })
-        .catch(error => {
-           console.error('Error al eliminar el recurso:', error);
-           $q.notify({
-             type: 'negative',
-             message: 'Hubo un error al eliminar el Aval.',
-             position: 'top-right',
-           });
-         });
-     });
-   } catch (error) {
-     console.error('Error al mostrar el diálogo:', error);
-   }
- }
+  try {
+    await $q
+      .dialog({
+        title: 'Eliminar Aval',
+        message: '¿Estás seguro de eliminar?',
+        cancel: true,
+        persistent: true,
+      })
+      .onOk(() => {
+        api
+          .delete(`/api/avales_tuto/${row.id}/`)
+          .then(() => {
+            console.log('Recurso eliminado con éxito');
+            rows.value = rows.value.filter((item) => item.id !== row.id);
+            $q.notify({
+              type: 'positive', // Cambiado a positive para indicar éxito
+              message: '¡Aval Eliminado Correctamente!',
+              position: 'top-right',
+            });
+          })
+          .catch((error) => {
+            console.error('Error al eliminar el recurso:', error);
+            $q.notify({
+              type: 'negative',
+              message: 'Hubo un error al eliminar el Aval.',
+              position: 'top-right',
+            });
+          });
+      });
+  } catch (error) {
+    console.error('Error al mostrar el diálogo:', error);
+  }
+}
 </script>

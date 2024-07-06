@@ -14,8 +14,17 @@
       loading-label="Cargando..."
     >
       <template v-slot:top-right>
-        <q-btn label="Menos Detalles" color="primary" size="md" flat dense to='/lista_avales_public' />
-        <q-input dense outlined v-model="search" placeholder="Buscar" />
+        <div class="row q-gutter-md">
+          <q-btn
+            label="Menos Detalles"
+            color="primary"
+            size="md"
+            align="left"
+            dense
+            to="/lista_avales_public"
+          />
+          <q-input dense outlined v-model="search" placeholder="Buscar" />
+        </div>
       </template>
 
       <template v-slot:body="props">
@@ -24,7 +33,7 @@
             {{ col.value }}
           </q-td>
 
-          <q-td auto-width>
+          <q-td auto-width class="q-gutter-sm">
             <q-btn
               color="primary"
               icon="visibility"
@@ -94,7 +103,6 @@
             label="Tipo de Recurso"
             class="form-item"
             @click="showTipoRecursoDialog = true"
-
           />
           <q-dialog v-model="showTipoRecursoDialog" persistent>
             <selector-tipo-recurso
@@ -110,7 +118,6 @@
             label="Tipo de Publicación"
             class="form-item"
             @click="showTipoPublicDialog = true"
-
           />
           <q-dialog v-model="showTipoPublicDialog" persistent>
             <selector-tipo-public
@@ -133,7 +140,6 @@
             label="ISSN"
             class="form-item"
             :rules="issnRules"
-
           />
           <q-input
             v-if="editForm.tipo_publicacion === 'Revista Digital'"
@@ -141,7 +147,6 @@
             label="E-ISSN"
             class="form-item"
             :rules="eissnRules"
-
           />
           <q-input
             v-if="
@@ -152,14 +157,12 @@
             label="ISBN"
             class="form-item"
             :rules="isbnRules"
-
           />
           <q-input
             v-model="editForm.grupo"
             label="Grupo"
             class="form-item"
             @click="showGrupoDialog = true"
-
           />
           <q-dialog v-model="showGrupoDialog" persistent>
             <selector-grupo
@@ -266,7 +269,7 @@ const columns = [
     required: true,
     label: ' Apellidos',
     field: 'apellidos',
-    align: null,
+    align: 'left',
     filter: true,
     sortable: true,
   },
@@ -275,6 +278,7 @@ const columns = [
     name: 'titulo_recurso',
     label: 'Titulo del Recurso',
     field: 'titulo_recurso',
+    align: 'left',
     sortable: true,
     filter: true,
     classes: 'texto-truncado',
@@ -283,6 +287,7 @@ const columns = [
     name: 'departamento',
     label: 'Departamento de Trabajo',
     field: 'departamento',
+    align: 'left',
     sortable: true,
     filter: true,
   },
@@ -291,6 +296,7 @@ const columns = [
     name: 'lugar_pub',
     label: 'Lugar de Publicación',
     field: 'lugar_pub',
+    align: 'left',
     sortable: true,
     filter: true,
   },
@@ -298,6 +304,7 @@ const columns = [
     name: 'tipo_recurso',
     label: 'Tipo de Publicación',
     field: 'tipo_recurso',
+    align: 'left',
     sortable: true,
     filter: true,
     classes: 'texto-truncado',
@@ -306,60 +313,42 @@ const columns = [
     name: 'tipo_publicacion',
     label: 'Tipo de Recurso',
     field: 'tipo_publicacion',
+    align: 'left',
     sortable: true,
     filter: true,
     classes: 'texto-truncado',
   },
-  {
-    name: 'isbn',
-    label: 'ISBN',
-    field: 'isbn',
-    sortable: true,
-    filter: true,
-    classes: 'texto-truncado',
-  },
-  {
-    name: 'issn',
-    label: 'ISSN',
-    field: 'issn',
-    sortable: true,
-    filter: true,
-    classes: 'texto-truncado',
-  },
-  {
-    name: 'e_issn',
-    label: 'E-ISSN',
-    field: 'e_issn',
-    sortable: true,
-    filter: true,
-    classes: 'texto-truncado',
-  },
+
   {
     name: 'grupo',
     label: 'Grupo',
     field: 'grupo',
+    align: 'left',
     sortable: true,
     filter: true,
     classes: 'texto-truncado',
   },
   {
-  name: 'tomo',
-  label: 'Tomo',
-  field: 'tomo',
-  sortable: true,
-  filter: true,
-},
-{
-  name: 'folio',
-  label: 'Folio',
-  field: 'folio',
-  sortable: true,
-  filter: true,
-},
-{
+    name: 'tomo',
+    label: 'Tomo',
+    align: 'left',
+    field: 'tomo',
+    sortable: true,
+    filter: true,
+  },
+  {
+    name: 'folio',
+    label: 'Folio',
+    field: 'folio',
+    align: 'left',
+    sortable: true,
+    filter: true,
+  },
+  {
     name: 'fecha',
     label: 'Fecha de Publicación',
     field: 'fecha',
+    align: 'left',
     sortable: true,
     filter: true,
   },
@@ -511,10 +500,7 @@ const editRow = (row: RowType) => {
 
 const saveEdit = async () => {
   try {
-    await api.put(
-      `/api/profesores/${selectedRow.value.id}/`,
-      {...editForm}
-    );
+    await api.put(`/api/profesores/${selectedRow.value.id}/`, { ...editForm });
 
     const index = rows.value.findIndex(
       (row) => row.id === selectedRow.value.id
@@ -542,38 +528,37 @@ const showRow = (row: null) => {
 };
 // boton eliminar
 async function eliminar(row: { id: null }) {
-
-
-   try {
-     await $q.dialog({
-       title: 'Eliminar Aval',
-       message: '¿Estás seguro de eliminar?',
-       cancel: true,
-       persistent: true,
-     }).onOk(() => {
-       api.delete(`/api/profesores/${row.id}/`)
-        .then(() => {
-           console.log('Recurso eliminado con éxito');
-           rows.value = rows.value.filter(item => item.id!== row.id);
-           $q.notify({
-             type: 'positive', // Cambiado a positive para indicar éxito
-             message: '¡Aval Eliminado Correctamente!',
-             position: 'top-right',
-           });
-         })
-        .catch(error => {
-           console.error('Error al eliminar el recurso:', error);
-           $q.notify({
-             type: 'negative',
-             message: 'Hubo un error al eliminar el Aval.',
-             position: 'top-right',
-           });
-         });
-     });
-   } catch (error) {
-     console.error('Error al mostrar el diálogo:', error);
-   }
- }
+  try {
+    await $q
+      .dialog({
+        title: 'Eliminar Aval',
+        message: '¿Estás seguro de eliminar?',
+        cancel: true,
+        persistent: true,
+      })
+      .onOk(() => {
+        api
+          .delete(`/api/profesores/${row.id}/`)
+          .then(() => {
+            console.log('Recurso eliminado con éxito');
+            rows.value = rows.value.filter((item) => item.id !== row.id);
+            $q.notify({
+              type: 'positive', // Cambiado a positive para indicar éxito
+              message: '¡Aval Eliminado Correctamente!',
+              position: 'top-right',
+            });
+          })
+          .catch((error) => {
+            console.error('Error al eliminar el recurso:', error);
+            $q.notify({
+              type: 'negative',
+              message: 'Hubo un error al eliminar el Aval.',
+              position: 'top-right',
+            });
+          });
+      });
+  } catch (error) {
+    console.error('Error al mostrar el diálogo:', error);
+  }
+}
 </script>
-
-

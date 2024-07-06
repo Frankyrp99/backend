@@ -7,18 +7,12 @@
         v-model="email"
         label="Correo electrónico"
         lazy-rules
-        :rules="[
-          (val) =>
-            (val && val.length > 0) ||
-            'Por favor ingrese su correo electrónico',
-        ]"
+        :rules="[]"
+        style="width: 200px"
       />
 
-      <q-input
-        type="password"
+      <PasswordToggle
         v-model="password"
-        label="Contraseña"
-        lazy-rules
         :rules="[
           (val) => (val && val.length > 0) || 'Por favor ingrese su contraseña',
         ]"
@@ -33,9 +27,6 @@
           color="primary"
         />
       </div>
-      <div class="full-width text-center">
-        <q-spinner-circle v-if="isLoading" size="3em" color="primary" />
-      </div>
     </q-form>
   </q-page>
 </template>
@@ -45,20 +36,21 @@ import { ref } from 'vue';
 import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
+import PasswordToggle from 'src/components/PasswordToggle.vue';
 
 const email = ref('');
 const password = ref('');
 const router = useRouter();
 
 const errorMessage = ref('');
-const isLoading = ref(false);
+
 const $q = useQuasar();
 const onSubmit = async () => {
   if (!email.value || !password.value) {
     handleLoginError('Por favor, complete todos los campos.');
     return;
   }
-  isLoading.value = true;
+  $q.loading.show();
   try {
     const response = await api.post('/api/token/', {
       email: email.value,
@@ -67,12 +59,12 @@ const onSubmit = async () => {
 
     const token = response.data.token;
     localStorage.setItem('authToken', token);
+    $q.loading.hide();
     navigateHome();
   } catch (error) {
     handleLoginError('Correo electrónico o Contraseña incorrectos.');
     console.error('Error al iniciar sesión:', error);
   } finally {
-    isLoading.value = false;
   }
 };
 

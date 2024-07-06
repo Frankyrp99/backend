@@ -186,6 +186,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
+
         component: () => import('src/pages/users/UserPage.vue'),
         meta: { requiresAuth: true },
       },
@@ -208,6 +209,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
+        name: 'usuarios',
         component: () => import('src/pages/users/ListUsers.vue'),
         meta: { requiresAuth: true },
       },
@@ -248,7 +250,7 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: '/Report_Autor_Aval/:id',
+    path: '/Report_Autor_Aval/:id/:nombre/:apellidos',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {

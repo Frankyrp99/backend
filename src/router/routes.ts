@@ -180,18 +180,7 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   //userss//////////////////////////////////////////////////////
-  {
-    path: '/user',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      {
-        path: '',
 
-        component: () => import('src/pages/users/UserPage.vue'),
-        meta: { requiresAuth: true },
-      },
-    ],
-  },
   {
     path: '/NuevoUsuario',
     component: () => import('layouts/MainLayout.vue'),

@@ -8,7 +8,7 @@
 // It's highly recommended to change the default colors
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
-$primary: #216fb3;
+$primary: #2a8cb9;
 $secondary: #26a69a;
 $accent: #fdfafe;
 $dark: #1d1d1d;
@@ -26,12 +26,24 @@ $warning: #f2c037;
   background-image: linear-gradient($direction, $start-color, $end-color);
 }
 
-$background-color-start: #e0e0e0;
+$background-color-start: #9de0ff;
 $background-color-end: #2a8cb9;
 
+.text-color {
+  color: #2a8cb9;
+}
+.fondo-card-fecha {
+  background-color: #2ca6df7a;
+}
+.toolbarcolor {
+  background-color: #c0dcec;
+}
+.grisneutro {
+  background-color: #ffffff;
+}
 .bg-color {
   background-image: linear-gradient(
-    to top,
+    to left,
     $background-color-start 0%,
     $background-color-end 100%
   );
@@ -47,7 +59,7 @@ $background-color-end: #2a8cb9;
   padding: 10px;
 
   color: #131313;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgb(255, 255, 255);
 }
 
 .q-form {
@@ -56,7 +68,7 @@ $background-color-end: #2a8cb9;
   padding: 20px;
 
   color: #050505;
-  background-color: rgb(255, 255, 255);
+  background-color: #808080;
 
   display: flex;
   flex-direction: column;
@@ -73,12 +85,6 @@ $background-color-end: #2a8cb9;
   margin-top: 50px;
   margin-bottom: 50px;
   color: #080808;
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.904
-  ); // Fondo semi-transparente para mejorar la legibilidad
 }
 .titulos {
   font-size: 28px;
@@ -96,7 +102,12 @@ $background-color-end: #2a8cb9;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.q-btn-dropdown {
+.fondo-transparente {
+  background: none !important; /* Elimina el fondo */
+  border: none !important;
+  box-shadow: none; /* Elimina el borde */
+}
+.bg {
   background: none !important; /* Elimina el fondo */
   border: none !important;
   box-shadow: none; /* Elimina el borde */

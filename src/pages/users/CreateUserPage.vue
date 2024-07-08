@@ -2,28 +2,31 @@
   <div class="column justify-center items-center">
     <q-form @submit="onSubmit" id="form">
       <div style="margin-top: 10px; margin-bottom: 10px">
-        <h4 class="text-bold">Nuevo Usuario</h4>
+        <h4 class="text-bold text-color">Nuevo Usuario</h4>
       </div>
-      <div class="q-gutter-xl row justify-center items-center">
+      <div class="q-gutter-md column justify-center items-center">
         <q-input
+          style="width: 300px"
+          autogrow
           filled
           class="form-item"
-          v-model="form.nombre"
-          label="Nombre"
-          :rules="nombreRules"
+          v-model="form.email"
+          label="Email"
+          :rules="email_Rules"
         />
         <q-input
+          style="width: 250px"
           filled
-          class="form-item"
-          v-model="form.apellidos"
-          label="Apellidos"
-          :rules="apellidosRules"
+          v-model="form.password"
+          label="Contraseña"
+          :rules="password_Rules"
         />
         <q-input
           filled
           v-model="form.role"
           label="Rol"
           class="form-item"
+          :rules="profile_Rules"
           @click="showNivActDialog = true"
         />
         <q-dialog v-model="showNivActDialog" persistent>
@@ -35,34 +38,15 @@
             @dialogClosed="hideNivActDialog"
           />
         </q-dialog>
-      </div>
-      <div class="q-gutter-xl row justify-center items-center">
-        <q-input
-          style="width: 500px"
-          autogrow
-          filled
-          class="form-item"
-          v-model="form.email"
-          label="Email"
-          :rules="email_Rules"
-        />
-      </div>
-      <q-input
-        style="width: 350px"
-        filled
-        v-model="form.password"
-        label="Contraseña"
-        :rules="password_Rules"
-      />
-      <div>
-        <q-btn
-          flat
-          class="text-bold"
-          rounded
-          label="Guardar"
-          type="submit"
-          color="primary"
-        />
+        <div>
+          <q-btn
+            class="text-bold"
+            rounded
+            label="Guardar"
+            type="submit"
+            color="primary"
+          />
+        </div>
       </div>
     </q-form>
   </div>
@@ -80,25 +64,19 @@ const hideNivActDialog = () => {
   showNivActDialog.value = false;
 };
 interface Form {
-  nombre: string;
-  apellidos: string;
   email: string;
   password: string;
   role: string;
 }
 type Rule = (value: string) => boolean | string;
 const form = reactive<Form>({
-  nombre: '',
   email: '',
-  apellidos: '',
   password: '',
   role: '',
 });
 
 const $q = useQuasar();
 const router = useRouter();
-const nombreRules: Rule[] = [(v) => !!v || 'El Nombre es requerido'];
-const apellidosRules: Rule[] = [(v) => !!v || 'Los Apellidos son requeridos'];
 const email_Rules: Rule[] = [
   (v) => !!v || 'El Email es requerido',
   (v) =>
@@ -111,32 +89,12 @@ const profile_Rules: Rule[] = [
 ];
 
 //metodos
-function capitalizeWords(text: string): string {
-  return text
-    .split(/\s+/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
+
 
 //watchers
-watch(
-  () => form.nombre,
-  (newValue) => {
-    form.nombre = capitalizeWords(newValue);
-  },
-  { deep: true }
-);
-
-watch(
-  () => form.apellidos,
-  (newValue) => {
-    form.apellidos = capitalizeWords(newValue);
-  },
-  { deep: true }
-);
 
 async function onSubmit() {
-  if (!form.nombre || !form.apellidos) {
+  if (!form.email || !form.password) {
     $q.notify({
       type: 'negative',
       message: 'Por favor complete todos los campos',

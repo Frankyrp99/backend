@@ -1,31 +1,34 @@
 <template>
   <q-page class="flex flex-center bg-color">
     <q-form @submit="onSubmit" id="form-login">
-      <q-avatar size="200px" icon="account_circle" />
+      <div class="row">
+        <div>
+          <img
+            src="/src/assets/logotoolbar.png"
+            alt="Descripción de la imagen"
+            class="centered-image"
+            width="200px"
+          />
+        </div>
+        <div class="column q-gutter-md justify-center items-center">
+          <q-input
+            v-model="email"
+            label="Correo Electrónico"
+            lazy-rules
+            style="width: 200px"
+          />
 
-      <q-input
-        v-model="email"
-        label="Correo electrónico"
-        lazy-rules
-        :rules="[]"
-        style="width: 200px"
-      />
+          <PasswordToggle v-model="password" style="width: 200px" />
 
-      <PasswordToggle
-        v-model="password"
-        :rules="[
-          (val) => (val && val.length > 0) || 'Por favor ingrese su contraseña',
-        ]"
-      />
-
-      <div>
-        <q-btn
-          flat
-          rounded
-          label="Iniciar sesión"
-          type="submit"
-          color="primary"
-        />
+          <div>
+            <q-btn
+              rounded
+              label="Iniciar sesión"
+              type="submit"
+              color="primary"
+            />
+          </div>
+        </div>
       </div>
     </q-form>
   </q-page>
@@ -64,6 +67,7 @@ const onSubmit = async () => {
   } catch (error) {
     handleLoginError('Correo electrónico o Contraseña incorrectos.');
     console.error('Error al iniciar sesión:', error);
+    $q.loading.hide();
   } finally {
   }
 };

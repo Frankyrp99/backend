@@ -2,6 +2,7 @@
   <div class="q-pa-lg">
     <q-card class="column q-gutter-y-md">
       <div class="column text-subtitle1 text-bold">
+        <p class="text-h6 text-bold text-color">Cantidad de avales en el Departamento:</p>
         <q-input
           style="max-width: 250px"
           autogrow
@@ -19,20 +20,21 @@
             @update:model-value="mostrarAvales"
           />
         </q-dialog>
-        Cantidad de avales en el Departamento
       </div>
       <q-separator />
-      <div class="row justify-around text-subtitle1 text-bold">
+      <div class="row justify-around text-body1 text-bold">
         <div>Aval de Publicación: {{ datos?.avales_por_tipo['Profesor'] }}</div>
         <div>Aval de Tutoría: {{ datos?.avales_por_tipo['avales_tuto'] }}</div>
-        <div>Aval de Bibliografía: {{ datos?.avales_por_tipo[ 'avales_biblio'] }}</div>
+        <div>
+          Aval de Bibliografía: {{ datos?.avales_por_tipo['avales_biblio'] }}
+        </div>
         <div>Total: {{ datos?.total_avales }}</div>
       </div>
     </q-card>
     <q-card>
       <q-card-section>
-        <div class="text-h6 text-bold">
-          Cantidad de Avales por Departamento y Facultad
+        <div class="text-h6 text-bold text-color">
+          Cantidad de Avales por Departamento y Facultad:
         </div>
         <q-separator />
       </q-card-section>
@@ -58,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, reactive, watch,  } from 'vue';
+import { onMounted, ref, reactive, watch } from 'vue';
 import { api } from 'src/boot/axios';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
 
@@ -177,8 +179,16 @@ const departamentosPorFacultad = reactive({
 ///////////consultas////////
 async function cargarDatos() {
   try {
+    const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
     const response = await api.get(
-      `/api/reporte-departamento/${departamentoSeleccionado.value}/`
+      `/api/reporte-departamento/${departamentoSeleccionado.value}/`,
+      config
     );
 
     datos.value = response.data;
@@ -191,11 +201,19 @@ async function cargarDatos() {
 
 onMounted(async () => {
   try {
+    const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
     const response = await api.get(
-      '/api/reporte-total-avaless-por-departamento/'
+      '/api/reporte-total-avaless-por-departamento/',
+      config
     );
     const data = response.data;
-   
+
     // Procesar los datos obtenidos
     Object.keys(data).forEach((departamento) => {
       const facultad = obtenerFacultadPorDepartamento(departamento);

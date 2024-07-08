@@ -3,20 +3,24 @@
     <q-card
       v-for="(datos, fecha) in datos"
       :key="fecha"
-      class="row justify-evenly align-center"
+      class="row justify-evenly align-center fondo-card-fecha"
     >
       <div style="width: 500px">
-        <q-card-section>
+        <q-card-section >
           <div class="row justify-between align-center">
-          
             <div class="text-bold text-h6">{{ fecha }}</div>
-            <div class="text-bold text-h6">Total de Avales: {{ datos.total }}</div>
+            <div class="text-bold text-h6">
+              Total de Avales: {{ datos.total }}
+            </div>
           </div>
           <q-separator />
           <div autogrow class="text-bold">
             Departamentos:
             <ul>
-              <li v-for="(count, departamento) in datos.departamentos" :key="departamento">
+              <li
+                v-for="(count, departamento) in datos.departamentos"
+                :key="departamento"
+              >
                 {{ departamento }}: {{ count }}
               </li>
             </ul>
@@ -27,26 +31,29 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
-import {  onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { api } from 'src/boot/axios';
 
 const datos = ref({});
 
-
-
 onMounted(async () => {
   try {
-    const response = await api.get('/api/reporte-total-avaless-por-fecha/');
+    const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    const response = await api.get(
+      '/api/reporte-total-avaless-por-fecha/',
+      config
+    );
     datos.value = response.data;
     console.log('Datos cargados:', datos.value);
   } catch (error) {
     console.error('Error al cargar los datos:', error);
   }
 });
-
-
 </script>
-
-

@@ -110,7 +110,7 @@ const categories: Category[] = [
         route: '/Report_depart',
       },
       { label: 'Avales por Año', route: '/Report_fecha' },
-      { label: 'Avales por Profesor', route: '/Report_Autor' },
+      { label: 'Avales por Autor', route: '/Report_Autor' },
     ],
   },
 ];

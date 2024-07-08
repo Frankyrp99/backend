@@ -1,8 +1,8 @@
 <template>
   <div class="q-pa-lg">
     <q-table
-      title="Lista de Profesores"
-      title-class="text-bold"
+      title="Lista de Autores"
+      title-class="text-bold text-color"
       :rows="Autor"
       :columns="columnas"
       row-key="id"
@@ -98,7 +98,14 @@ const columnas = ref([
 
 onMounted(async () => {
   try {
-    const response = await api.get('/api/autores/');
+    const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    const response = await api.get('/api/autores/',config);
     Autor.value = response.data.results;;
     console.log('Formulario enviado con éxito:', response.data.results);
   } catch (error) {

@@ -1,11 +1,11 @@
 <template>
   <q-page>
-    <div class="container">
+    <div class="container card">
       <img
-        src="/src/assets/logo-bg.png"
+        src="/src/assets/logo-bg.gif"
         alt="Descripción de la imagen"
-        class="centered-image"
-        width="400"
+        class="centered-image "
+        width="500"
       />
     </div>
   </q-page>

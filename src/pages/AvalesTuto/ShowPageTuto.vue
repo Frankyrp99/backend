@@ -64,7 +64,7 @@
         </div>
       </div>
       <q-btn
-        flat
+        color="primary"
         rounded
         label="Exportar a PDF"
         @click="exportToPDF"
@@ -101,7 +101,14 @@ const response = ref<ResponseItem>({});
 
 const fetchData = async () => {
   try {
-    const result = await api.get<ResponseItem>(`/api/avales_tuto/${id}/`);
+    const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    const result = await api.get<ResponseItem>(`/api/avales_tuto/${id}/`,config);
     response.value = result.data;
   } catch (error) {
     console.error('Error al obtener los detalles:', error);

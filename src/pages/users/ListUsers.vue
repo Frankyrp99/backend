@@ -2,7 +2,7 @@
   <div class="q-pa-lg">
     <q-table
       title="Lista de Usuarios"
-      title-class="text-bold"
+      title-class="text-bold text-color"
       :rows="users"
       :columns="columns"
       row-key="nombre"
@@ -11,7 +11,7 @@
       <template v-slot:top-right>
         <div class="row q-gutter-md">
           <q-btn
-            color="positive"
+            color="primary"
             icon="add"
             size="md"
             align="left"
@@ -60,8 +60,6 @@
         </q-card-section>
 
         <q-card-section>
-          <q-input autogrow v-model="editForm.nombre" label="Nombre" />
-          <q-input autogrow v-model="editForm.apellidos" label="apellidos" />
           <q-input
             v-model="editForm.role"
             label="Rol"
@@ -86,9 +84,9 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat rounded label="Cancelar" v-close-popup />
+          <q-btn  rounded label="Cancelar" v-close-popup />
           <q-btn
-            flat
+
             rounded
             color="primary"
             label="Guardar"
@@ -117,30 +115,12 @@ const hideNivActDialog = () => {
 
 type UsersType = {
   id: string;
-  nombre: string;
-  apellidos: string;
   email: string;
   role: string;
   password: string;
   format?: (value: string) => string;
 };
 const columns = [
-  {
-    name: 'nombre',
-    label: 'Nombre',
-    field: 'nombre',
-    sortable: true,
-    filter: true,
-    align: 'left',
-  },
-  {
-    name: 'apellidos',
-    label: 'Apellidos',
-    field: 'apellidos',
-    sortable: true,
-    filter: true,
-    align: 'left',
-  },
   {
     name: 'email',
     label: 'Email',
@@ -193,8 +173,7 @@ onMounted(async () => {
 const editDialogOpen = ref(false);
 const editForm = reactive({
   id: '',
-  nombre: '',
-  apellidos: '',
+
   role: '',
   password: '',
 
@@ -203,8 +182,6 @@ const editForm = reactive({
 
 const editUser = (selectedUser: UsersType) => {
   editForm.id = selectedUser.id;
-  editForm.nombre = selectedUser.nombre;
-  editForm.apellidos = selectedUser.apellidos;
   editForm.role = selectedUser.role;
   editForm.password = selectedUser.password;
   editDialogOpen.value = true;

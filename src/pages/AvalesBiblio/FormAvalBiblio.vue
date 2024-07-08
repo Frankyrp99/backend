@@ -3,7 +3,7 @@
     <div class="column justify-center items-center">
       <q-form @submit="onSubmit" id="form">
         <div style="margin-top: 10px; margin-bottom: 10px">
-          <h4 class="text-bold">Nuevo Aval de Bibliografía</h4>
+          <h4 class="text-bold text-color">Nuevo Aval de Bibliografía</h4>
         </div>
         <div class="q-gutter-md row justify-center items-center">
           <div class="column">
@@ -150,12 +150,7 @@
                 >
                   <q-date v-model="form.fecha" mask="YYYY-MM-DD">
                     <div class="row items-center justify-end">
-                      <q-btn
-                        v-close-popup
-                        label="Cerrar"
-                        color="primary"
-                        flat
-                      />
+                      <q-btn v-close-popup label="Cerrar" color="primary" />
                     </div>
                   </q-date>
                 </q-popup-proxy>
@@ -164,7 +159,7 @@
           </q-input>
         </div>
         <div class="column items-center">
-          <h6>Tipo de Busqueda Informativa</h6>
+          <h6 class="text-color">Tipo de Búsqueda Informativa</h6>
           <div class="row">
             <div class="column">
               <q-checkbox
@@ -184,7 +179,7 @@
             <div class="column">
               <q-checkbox
                 v-model="form.busqueda_internet"
-                label="Busqueda en Internet"
+                label="Búsqueda en Internet"
               />
               <q-checkbox
                 v-model="form.biblio_personal"
@@ -200,7 +195,6 @@
         </div>
         <div class="row justify-center items-center">
           <q-btn
-            flat
             rounded
             label="Guardar"
             type="submit"
@@ -328,15 +322,21 @@ const fechaRules: Rule[] = [(v) => !!v || 'La Fecha es requerida'];
 
 //peticioens
 function onSubmit() {
+  const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
+  const config = {
+    headers: {
+      Authorization: `Token ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+  };
   if (!form.nombre || !form.apellidos) {
     errorMessage.value = 'Por favor, completa todos los campos requeridos.';
     return;
   }
 
   api
-    .post('/api/avales_biblio/', form)
+    .post('/api/avales_biblio/', form, config)
     .then((response) => {
-     
       router.push({ name: 'ListaAvalesBiblio' });
     })
     .catch((error) => {
@@ -346,14 +346,13 @@ function onSubmit() {
           message: 'Hubo un error al enviar el formulario.',
           position: 'top-right',
         });
-
       } else {
         $q.notify({
           type: 'negative',
-          message: 'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.',
+          message:
+            'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.',
           position: 'top-right',
         });
-
       }
       console.error('Error al enviar el formulario:', error);
     });

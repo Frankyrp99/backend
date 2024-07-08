@@ -3,7 +3,7 @@
     <div class="column justify-center items-center">
       <q-form @submit="onSubmit" id="form">
         <div style="margin-top: 10px; margin-bottom: 10px">
-          <h4 class="text-bold">Nuevo Aval de Tutorias</h4>
+          <h4 class="text-bold text-color">Nuevo Aval de Tutorías</h4>
         </div>
         <div class="q-gutter-md row justify-center items-center">
           <div class="q-gutter-xl q-gutter-y-md row justify-around">
@@ -89,12 +89,7 @@
                   >
                     <q-date v-model="form.fecha" mask="YYYY-MM-DD">
                       <div class="row items-center justify-end">
-                        <q-btn
-                          v-close-popup
-                          label="Cerrar"
-                          color="primary"
-                          flat
-                        />
+                        <q-btn v-close-popup label="Cerrar" color="primary" />
                       </div>
                     </q-date>
                   </q-popup-proxy>
@@ -105,7 +100,6 @@
         </div>
         <div class="row justify-center items-center">
           <q-btn
-            flat
             rounded
             label="Guardar"
             type="submit"
@@ -208,9 +202,16 @@ function onSubmit() {
     errorMessage.value = 'Por favor, completa todos los campos requeridos.';
     return;
   }
+  const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
+  const config = {
+    headers: {
+      Authorization: `Token ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+  };
 
   api
-    .post('/api/avales_tuto/', form)
+    .post('/api/avales_tuto/', form, config)
     .then((response) => {
       console.log('Formulario enviado con éxito:', response.data);
       router.push({ name: 'ListaAvalesTuto' });

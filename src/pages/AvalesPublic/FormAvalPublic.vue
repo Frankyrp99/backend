@@ -3,7 +3,7 @@
     <div class="column justify-center items-center">
       <q-form @submit="onSubmit" id="form">
         <div style="margin-top: 10px; margin-bottom: 10px">
-          <h4 class="text-bold">Nuevo Aval de Publicación</h4>
+          <h4 class="text-bold text-color">Nuevo Aval de Publicación</h4>
         </div>
         <div class="q-gutter-md flex flex-row flex-wrap justify-center">
           <div class="q-gutter-xl q-gutter-y-md row justify-around">
@@ -199,12 +199,7 @@
                   >
                     <q-date v-model="form.fecha" mask="YYYY-MM-DD">
                       <div class="row items-center justify-end">
-                        <q-btn
-                          v-close-popup
-                          label="Cerrar"
-                          color="primary"
-                          flat
-                        />
+                        <q-btn v-close-popup label="Cerrar" color="primary" />
                       </div>
                     </q-date>
                   </q-popup-proxy>
@@ -219,7 +214,6 @@
         </div>
         <div class="row justify-center items-center">
           <q-btn
-            flat
             rounded
             label="Guardar"
             type="submit"
@@ -261,7 +255,6 @@ interface Form {
   tipo_recurso: string;
   fecha: string;
   grupo: string;
-
 }
 
 // Definición de tipos para reglas de validación
@@ -286,7 +279,6 @@ const form = reactive<Form>({
   tipo_recurso: '',
   fecha: '',
   grupo: '',
-
 });
 
 const $q = useQuasar();
@@ -355,35 +347,31 @@ const tipoPubRules: Rule[] = [
 ];
 const issnRules: Rule[] = [
   (v) => !!v || 'El ISSN es requerido',
-  (v) =>
-    v.length <= 8 || 'El ISSN excede el límite de 8 caracteres',
-  (v) =>
-    v.length >= 8 || 'El ISSN es requerido',
+  (v) => v.length <= 8 || 'El ISSN excede el límite de 8 caracteres',
+  (v) => v.length >= 8 || 'El ISSN es requerido',
 ];
 const eissnRules: Rule[] = [
   (v) => !!v || 'El E-ISSN es requerido',
-  (v) =>
-    v.length <= 8 || 'El E-ISSN excede el límite de 8 caracteres',
-  (v) =>
-    v.length >= 8 || 'El E-ISSN es requerido',
+  (v) => v.length <= 8 || 'El E-ISSN excede el límite de 8 caracteres',
+  (v) => v.length >= 8 || 'El E-ISSN es requerido',
 ];
 const isbnRules: Rule[] = [
   (v) => !!v || 'El ISBN es requerido',
-  (v) =>
-    v.length <= 13 ||
-    'El ISBN excede el límite de 13 caracteres',
-  (v) =>
-    v.length >= 13 ||
-    'El ISBN es requerido',
+  (v) => v.length <= 13 || 'El ISBN excede el límite de 13 caracteres',
+  (v) => v.length >= 13 || 'El ISBN es requerido',
 ];
 
-// Reglas de validación actualizadas para el campo de URL
 const urlRules: Rule[] = [
-  (val) => !!val || 'La URL es requerida',
+  (val) => {
+    if (!val || val.trim() === '') {
+      return true;
+    }
 
-  (val) =>
-    /\.(com|cu|ru)$/i.test(val.toLowerCase()) ||
-    'La URL debe terminar con una extensión de dominio válida (.com,.cu,.ru)',
+    return (
+      /\.(com|cu|ru)$/i.test(val.toLowerCase()) ||
+      'La URL debe terminar con una extensión de dominio válida (.com,.cu,.ru)'
+    );
+  },
 ];
 
 // Watcher
@@ -403,19 +391,25 @@ watch(
   { deep: true }
 );
 watchEffect(() => {
-  if (form.url.trim() === '') {
+  if (form.url.trim() !== '') {
     form.url = 'http://';
   }
 });
-
 
 function onSubmit() {
   if (!form.nombre || !form.apellidos || !form.titulo_recurso) {
     errorMessage.value = 'Por favor, completa todos los campos requeridos.';
     return;
   }
+  const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
+  const config = {
+    headers: {
+      Authorization: `Token ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+  };
   api
-    .post('/api/profesores/', form)
+    .post('/api/profesores/', form, config)
     .then((response) => {
       console.log('Formulario enviado con éxito:', response.data);
       router.push({ name: 'ListaAvalesPublic' });

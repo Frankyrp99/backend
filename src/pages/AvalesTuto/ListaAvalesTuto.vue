@@ -2,7 +2,7 @@
   <div class="q-pa-lg">
     <q-table
       title="Avales de Tutorías"
-      title-class="text-bold"
+      title-class="text-bold text-color"
       :rows="rows"
       :columns="columns"
       row-key="id"
@@ -68,7 +68,7 @@
     <q-dialog v-model="editDialogOpen">
       <q-card style="width: 400px">
         <q-card-section>
-          <div class="text-h6">Editar Recurso</div>
+          <div class="text-h6 text-color">Editar Recurso</div>
         </q-card-section>
 
         <q-card-section>
@@ -98,14 +98,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat rounded label="Cancelar" v-close-popup />
-          <q-btn
-            flat
-            rounded
-            color="primary"
-            label="Guardar"
-            @click="saveEdit"
-          />
+          <q-btn rounded label="Cancelar" v-close-popup />
+          <q-btn rounded color="primary" label="Guardar" @click="saveEdit" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -217,7 +211,14 @@ const fetchUserData = async () => {
 };
 onMounted(async () => {
   try {
-    const response = await api.get('/api/avales_tuto/');
+    const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    const response = await api.get('/api/avales_tuto/', config);
     console.log('Formulario enviado con éxito:', response.data.results);
     rows.value = response.data.results;
   } catch (error) {
@@ -290,7 +291,18 @@ const editRow = (row: RowType) => {
 
 const saveEdit = async () => {
   try {
-    await api.put(`/api/avales_tuto/${selectedRow.value.id}/`, editForm);
+    const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    await api.put(
+      `/api/avales_tuto/${selectedRow.value.id}/`,
+      editForm,
+      config
+    );
 
     const index = rows.value.findIndex(
       (row) => row.id === selectedRow.value.id
@@ -320,6 +332,13 @@ const showRow = (row: null) => {
 // boton eliminar
 async function eliminar(row: { id: null }) {
   try {
+    const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
     await $q
       .dialog({
         title: 'Eliminar Aval',
@@ -329,7 +348,7 @@ async function eliminar(row: { id: null }) {
       })
       .onOk(() => {
         api
-          .delete(`/api/avales_tuto/${row.id}/`)
+          .delete(`/api/avales_tuto/${row.id}/`, config)
           .then(() => {
             console.log('Recurso eliminado con éxito');
             rows.value = rows.value.filter((item) => item.id !== row.id);

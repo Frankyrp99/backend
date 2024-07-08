@@ -6,7 +6,7 @@
       </div>
 
       <div class="text-h2" style="opacity:.4">
-        Oops. Nothing here...
+        Estamos teniendo problemas con el servidor
       </div>
 
       <q-btn

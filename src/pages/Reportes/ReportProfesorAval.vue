@@ -2,7 +2,7 @@
   <div class="q-pa-lg">
     <q-table
       :title="'Avales Registrados de: ' + nombre + ' ' + apellidos"
-      title-class="text-bold"
+      title-class="text-bold text-color"
       :rows="rows"
       :columns="columnas"
       row-key="id"
@@ -108,7 +108,14 @@ const showRow = (row: any) => {
 
 const fetchData = async () => {
   try {
-    const result = await api.get(`/api/avales-profesor/${id}/`);
+    const authToken = localStorage.getItem('authToken');
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    const result = await api.get(`/api/avales-profesor/${id}/`,config);
     rows.value = result.data;
     console.log(rows.value);
   } catch (error) {

@@ -112,7 +112,7 @@
         </div>
       </div>
       <q-btn
-        flat
+        color="primary"
         rounded
         label="Exportar a PDF"
         @click="exportToPDF"
@@ -132,21 +132,20 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 interface ResponseItem {
-  apellidos?: string;
-  departamento?: string;
-  fecha?: string;
-  folio?: string;
-  id?: number;
-  nombre?: string;
-  titulo_recurso?: string;
-  tomo?: string;
-  lugar_pub?: string;
+  apellidos: string;
+  departamento: string;
+  fecha: string;
+  folio: string;
+  nombre: string;
+  titulo_recurso: string;
+  tomo: string;
+  lugar_pub: string;
   grupo: string;
-  tipo_recurso?: string;
-  tipo_publicacion?: string;
-  url?: string;
-  cdrom_dvd?: boolean;
-  base_de_datos?: boolean;
+  tipo_recurso: string;
+  tipo_publicacion: string;
+  url: string;
+  cdrom_dvd: boolean;
+  base_de_datos: boolean;
   issn: string;
   e_issn: string;
   isbn: string;
@@ -156,15 +155,37 @@ const route = useRoute();
 const id = route.params.id;
 
 const response = ref<ResponseItem>({
+  apellidos: '',
+  departamento: '',
+  fecha: '',
+  folio: '',
+  nombre: '',
+  titulo_recurso: '',
+  tomo: '',
+  lugar_pub: '',
+  grupo: '',
+  tipo_recurso: '',
+  tipo_publicacion: '',
+  url: '',
   cdrom_dvd: false,
   base_de_datos: false,
+  issn: '',
+  e_issn: '',
+  isbn: '',
 });
 const isCdromDvdEnabled = computed(() => response.value.cdrom_dvd);
 const isBDEnabled = computed(() => response.value.base_de_datos);
 const $q = useQuasar();
 const fetchData = async () => {
   try {
-    const result = await api.get<ResponseItem>(`/api/profesores/${id}/`);
+    const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    const result = await api.get<ResponseItem>(`/api/profesores/${id}/`,config);
     response.value = result.data;
     console.log(result.data);
   } catch (error) {

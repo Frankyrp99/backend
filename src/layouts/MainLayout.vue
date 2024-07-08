@@ -1,56 +1,77 @@
 <template>
-  <q-layout view="hHh LpR lfr" class="bg-color">
+  <q-layout view="hHh LpR lfr" class="">
     <q-header elevated>
-      <q-toolbar class="bg-color">
+      <q-toolbar class="text-color">
         <q-btn
           dense
           flat
           round
           icon="menu"
-          class="text-black"
+          color="white"
+          class="fondo-transparente"
           @click="toggleLeftDrawer"
         />
         <q-avatar size="50px">
           <img src="src/assets/logotoolbar.png" />
         </q-avatar>
 
-        <q-toolbar-title class="text-black text-gliker">SIGAV</q-toolbar-title>
+        <q-toolbar-title class="text-white text-gliker">SIGAV</q-toolbar-title>
 
-        <q-btn-group flat dense class="row justify-end">
-          <q-btn-dropdown
-            icon="account_circle"
-            text-color="black"
-            align="between"
-          >
-            <q-list>
-              <q-item v-if="user.isAdmin" to="/Usuarios" clickable v-close-popup>
-                <q-item-section>
-                  <q-item-label icon="account_circle" class="text-bold"
-                    >Administracion</q-item-label
-                  >
-                </q-item-section>
-              </q-item>
-              <q-item to="/user" clickable v-close-popup>
-                <q-item-section>
-                  <q-item-label icon="account_circle" class="text-bold"
-                    >Usuario</q-item-label
-                  >
-                </q-item-section>
-              </q-item>
+        <q-btn
+          icon="account_circle"
+          color="white"
+          align="between"
+          class="fondo-transparente"
+        >
+          <q-menu>
+            <div class="row no-wrap q-pa-md">
+              <div class="column">
+                <div class="text-h6 q-mb-md">{{ usuario.email }}</div>
+                <div>
+                  <q-list>
+                    <q-item
+                      v-if="user.isAdmin"
+                      to="/Usuarios"
+                      clickable
+                      v-close-popup
+                    >
+                      <q-item-section>
+                        <q-item-label icon="account_circle" class="text-bold"
+                          >Administracion</q-item-label
+                        >
+                      </q-item-section>
+                    </q-item>
+                    <q-item to="/acerca_de" clickable v-close-popup>
+                      <q-item-section>
+                        <q-item-label class="text-bold">Acerca De</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </div>
+              </div>
+              <q-separator vertical inset class="q-mx-lg" />
 
-              <q-item clickable v-close-popup @click="logout">
-                <q-item-section>
-                  <q-item-label class="text-bold">Cerrar Sesión</q-item-label>
-                </q-item-section>
-              </q-item>
-              <q-item to="/acerca_de" clickable v-close-popup>
-                <q-item-section>
-                  <q-item-label class="text-bold">Acerca De</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-        </q-btn-group>
+              <div class="column items-center" >
+                <q-avatar size="72px"   >
+                  <q-icon name="account_circle" size="72px" />
+
+                </q-avatar>
+
+                <div class="text-subtitle1 q-mt-md q-mb-xs">
+                  {{ formattedRole }}
+                </div>
+
+                <q-btn
+                  color="primary"
+                  label="Logout"
+                  @click="logout"
+                  size="sm"
+                  v-close-popup
+                />
+              </div>
+            </div>
+          </q-menu>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
@@ -59,7 +80,7 @@
       v-model="leftDrawerOpen"
       side="left"
       elevated
-      class="text-black "
+      class="text-black"
     >
       <drawer-component />
     </q-drawer>
@@ -72,13 +93,22 @@
 
 <script setup lang="ts">
 import DrawerComponent from 'src/components/DrawerComponent.vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
 
 const user = ref({ role: 'invitado', isAdmin: false, isViewerOnly: false });
 const router = useRouter();
 const leftDrawerOpen = ref(false);
+interface UserData {
+  email: string;
+  role: string;
+}
+
+const usuario = ref<UserData>({
+  email: '',
+  role: '',
+});
 
 const fetchUserData = async () => {
   try {
@@ -91,13 +121,13 @@ const fetchUserData = async () => {
     };
 
     const response = await api.get('/api/users', config);
-
+    usuario.value = response.data;
     // Verificar si la petición fue exitosa
     if (response.status === 200) {
       user.value.role = response.data.role;
       user.value.isAdmin = response.data.role === 'admin';
       user.value.isViewerOnly = response.data.role === 'invitado';
-      console.log('Datos del usuario obtenidos correctamente.',user.value);
+      console.log('Datos del usuario obtenidos correctamente.', user.value);
     } else {
       console.error(
         `Error al obtener los datos del usuario: Estado ${response.status}`
@@ -116,6 +146,19 @@ const logout = () => {
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 };
+
+const formattedRole = computed(() => {
+  switch (usuario.value.role.toLowerCase()) {
+    case 'admin':
+      return 'Admin';
+    case 'especialista':
+      return 'Especialista';
+    case 'invitado':
+      return 'Invitado';
+    default:
+      return 'Usuario';
+  }
+});
 
 onMounted(fetchUserData);
 </script>

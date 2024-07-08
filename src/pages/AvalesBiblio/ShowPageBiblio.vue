@@ -138,7 +138,7 @@
         </div>
       </div>
       <q-btn
-        flat
+        color="primary"
         rounded
         label="Exportar a PDF"
         @click="exportToPDF"
@@ -158,12 +158,12 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 interface ResponseItem {
-  nombre: '';
-  apellidos: '';
-  departamento: '';
-  rev_bilio: '';
-  niv_act: '';
-  total_asient: '';
+  nombre: string;
+  apellidos: string;
+  departamento: string;
+  rev_bilio: string;
+  niv_act: string;
+  total_asient: string;
   bd_local?: boolean;
   cd_rom?: boolean;
   bd_internet?: boolean;
@@ -172,16 +172,22 @@ interface ResponseItem {
   biblio_personal?: boolean;
   otros?: boolean;
   no_biblio?: boolean;
-  tomo: '';
-  pag: '';
-  folio: '';
-  fecha: '';
+  tomo: string;
+  pag: string;
+  folio: string;
+  fecha: string;
 }
 
 const route = useRoute();
 const id = route.params.id;
 const $q = useQuasar();
 const response = ref<ResponseItem>({
+  nombre: '',
+  apellidos: '',
+  departamento: '',
+  rev_bilio: '',
+  niv_act: '',
+  total_asient: '',
   bd_local: false || true,
   cd_rom: false || true,
   bd_internet: false || true,
@@ -190,6 +196,10 @@ const response = ref<ResponseItem>({
   biblio_personal: false || true,
   otros: false || true,
   no_biblio: false || true,
+  tomo: '',
+  pag: '',
+  folio: '',
+  fecha: '',
 });
 const isBdLocalEnabled = computed(() => response.value.bd_local);
 const isCdromDvdEnabled = computed(() => response.value.cd_rom);
@@ -201,7 +211,17 @@ const isOtrosEnabled = computed(() => response.value.otros);
 const isNoBiblioEnabled = computed(() => response.value.no_biblio);
 const fetchData = async () => {
   try {
-    const result = await api.get<ResponseItem>(`/api/avales_biblio/${id}/`);
+    const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
+    const config = {
+      headers: {
+        Authorization: `Token ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    const result = await api.get<ResponseItem>(
+      `/api/avales_biblio/${id}/`,
+      config
+    );
     response.value = result.data;
   } catch (error) {
     console.error('Error al obtener los detalles:', error);

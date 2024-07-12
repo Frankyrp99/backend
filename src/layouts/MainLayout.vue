@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh LpR lfr" class="">
+  <q-layout view="hHh LpR f">
     <q-header elevated>
       <q-toolbar class="text-color">
         <q-btn
@@ -18,16 +18,20 @@
         <q-toolbar-title class="text-white text-gliker">SIGAV</q-toolbar-title>
 
         <q-btn
+          dense
+          flat
+          round
+          size="20px"
           icon="account_circle"
           color="white"
-          align="between"
           class="fondo-transparente"
         >
           <q-menu>
             <div class="row no-wrap q-pa-md">
               <div class="column">
-                <div class="text-h6 q-mb-md">{{ usuario.email }}</div>
+                <div class="text-h6 text-bold q-mb-md">{{ usuario.email }}</div>
                 <div>
+                  <q-separator inset class="q-mx-lg" />
                   <q-list>
                     <q-item
                       v-if="user.isAdmin"
@@ -51,10 +55,9 @@
               </div>
               <q-separator vertical inset class="q-mx-lg" />
 
-              <div class="column items-center" >
-                <q-avatar size="72px"   >
+              <div class="column items-center">
+                <q-avatar size="72px">
                   <q-icon name="account_circle" size="72px" />
-
                 </q-avatar>
 
                 <div class="text-subtitle1 q-mt-md q-mb-xs">
@@ -83,6 +86,7 @@
       class="text-black"
     >
       <drawer-component />
+      <q-footer class="row justify-center text-bold"> Versión 1.0 </q-footer>
     </q-drawer>
 
     <q-page-container>
@@ -127,7 +131,6 @@ const fetchUserData = async () => {
       user.value.role = response.data.role;
       user.value.isAdmin = response.data.role === 'admin';
       user.value.isViewerOnly = response.data.role === 'invitado';
-      console.log('Datos del usuario obtenidos correctamente.', user.value);
     } else {
       console.error(
         `Error al obtener los datos del usuario: Estado ${response.status}`

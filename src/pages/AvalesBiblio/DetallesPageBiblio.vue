@@ -451,6 +451,7 @@ const saveEdit = async () => {
         'Content-Type': 'application/json',
       },
     };
+    $q.loading.show();
     await api.put(
       `/api/avales_biblio/${selectedRow.value.id}/`,
       editForm,
@@ -463,11 +464,12 @@ const saveEdit = async () => {
     if (index !== -1) {
       Object.assign(rows.value[index], editForm);
     }
-
+    $q.loading.hide();
     console.log('Recurso actualizado con éxito');
 
     editDialogOpen.value = false;
   } catch (error) {
+    $q.loading.hide();
     console.error('Error al actualizar el recurso:', error);
   }
   $q.notify({
@@ -479,7 +481,7 @@ const saveEdit = async () => {
 
 //boton mostrar
 const showRow = (row: null) => {
-  console.log('Mostrando detalles del recurso:', row);
+  console.log('Mostrando detalles del recurso:');
   router.push({ name: 'ShowBiblio', params: { id: row.id } });
 };
 // boton eliminar

@@ -3,7 +3,7 @@
     <q-card
       v-for="(datos, fecha) in datos"
       :key="fecha"
-      class="row justify-evenly align-center fondo-card-fecha"
+      class="row justify-evenly align-center "
     >
       <div style="width: 500px">
         <q-card-section >
@@ -34,9 +34,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { api } from 'src/boot/axios';
+import { useQuasar } from 'quasar';
 
 const datos = ref({});
-
+const $q = useQuasar();
 onMounted(async () => {
   try {
     const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado
@@ -46,13 +47,16 @@ onMounted(async () => {
         'Content-Type': 'application/json',
       },
     };
+    $q.loading.show();
     const response = await api.get(
       '/api/reporte-total-avaless-por-fecha/',
       config
     );
     datos.value = response.data;
-    console.log('Datos cargados:', datos.value);
+    console.log('Datos cargados:');
+    $q.loading.hide();
   } catch (error) {
+    $q.loading.hide();
     console.error('Error al cargar los datos:', error);
   }
 });

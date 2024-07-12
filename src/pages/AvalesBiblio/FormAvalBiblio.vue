@@ -1,12 +1,12 @@
 <template>
   <q-page>
-    <div class="column justify-center items-center">
+    <div class=" column justify-center items-center">
       <q-form @submit="onSubmit" id="form">
         <div style="margin-top: 10px; margin-bottom: 10px">
           <h4 class="text-bold text-color">Nuevo Aval de Bibliografía</h4>
         </div>
         <div class="q-gutter-md row justify-center items-center">
-          <div class="column">
+          <div class=" q-gutter-xl row justify-center items-center">
             <q-input
               style="max-width: 300px"
               autogrow
@@ -43,7 +43,7 @@
               />
             </q-dialog>
           </div>
-          <div class="column">
+          <div class="q-gutter-xl row justify-center items-center">
             <q-input
               filled
               v-model="form.total_asient"
@@ -102,7 +102,7 @@
             </q-dialog>
           </div>
 
-          <div class="column">
+          <div class="q-gutter-xl row justify-center items-center">
             <q-input
               filled
               v-model="form.tomo"
@@ -159,8 +159,8 @@
           </q-input>
         </div>
         <div class="column items-center">
-          <h6 class="text-color">Tipo de Búsqueda Informativa</h6>
-          <div class="row">
+          <h6 >Tipo de Búsqueda Informativa</h6>
+          <div class="row q-gutter-xl">
             <div class="column">
               <q-checkbox
                 v-model="form.bd_local"
@@ -333,20 +333,23 @@ function onSubmit() {
     errorMessage.value = 'Por favor, completa todos los campos requeridos.';
     return;
   }
-
+  $q.loading.show();
   api
     .post('/api/avales_biblio/', form, config)
     .then((response) => {
       router.push({ name: 'ListaAvalesBiblio' });
+      $q.loading.hide();
     })
     .catch((error) => {
       if (error.response && error.response.status === 400) {
+        $q.loading.hide();
         $q.notify({
           type: 'negative',
           message: 'Hubo un error al enviar el formulario.',
           position: 'top-right',
         });
       } else {
+        $q.loading.hide();
         $q.notify({
           type: 'negative',
           message:

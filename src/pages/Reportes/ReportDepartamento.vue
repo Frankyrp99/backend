@@ -1,8 +1,10 @@
 <template>
   <div class="q-pa-lg">
-    <q-card class="column q-gutter-y-md">
-      <div class="column text-subtitle1 text-bold">
-        <p class="text-h6 text-bold text-color">Cantidad de avales en el Departamento:</p>
+    <q-card class="column q-gutter-y-md ">
+      <div class="column text-subtitle1 text-bold ">
+        <p class="text-h6 text-bold text-color">
+          Cantidad de avales en el Departamento:
+        </p>
         <q-input
           style="max-width: 250px"
           autogrow
@@ -63,6 +65,7 @@
 import { onMounted, ref, reactive, watch } from 'vue';
 import { api } from 'src/boot/axios';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
+import { useQuasar } from 'quasar';
 
 interface avalesPorFacultad {
   [facultad: string]: {
@@ -76,8 +79,8 @@ const showSelectorDepartamento = ref(false);
 const closeFirstDialogAndUpdateModel = () => {
   showSelectorDepartamento.value = false;
 };
-const reporte = ref(null);
-const loading = ref(true);
+const $q = useQuasar();
+
 interface Datos {
   total_avales: number;
   avales_por_tipo: Record<string, number>;
@@ -192,8 +195,6 @@ async function cargarDatos() {
     );
 
     datos.value = response.data;
-
-    console.log(datos.value);
   } catch (error) {
     console.error('Error al cargar los datos del endpoint:', error);
   }
@@ -208,20 +209,18 @@ onMounted(async () => {
         'Content-Type': 'application/json',
       },
     };
+    $q.loading.show();
     const response = await api.get(
       '/api/reporte-total-avaless-por-departamento/',
       config
     );
     const data = response.data;
 
-    // Procesar los datos obtenidos
     Object.keys(data).forEach((departamento) => {
       const facultad = obtenerFacultadPorDepartamento(departamento);
 
-      // Asignar avales por departamento
       avalesPorDepartamento[departamento] = data[departamento];
 
-      // Asignar avales por facultad, asegurándose de que la facultad exista
       if (!avalesPorFacultad[facultad]) {
         avalesPorFacultad[facultad] = {};
       }
@@ -239,7 +238,9 @@ onMounted(async () => {
       }
       avalesPorFacultad[facultad].total = sumaTotal;
     });
+    $q.loading.hide();
   } catch (error) {
+    $q.loading.hide();
     console.error('Error al cargar los datos del endpoint:', error);
   }
 });

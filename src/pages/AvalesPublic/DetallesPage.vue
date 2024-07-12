@@ -514,6 +514,7 @@ const saveEdit = async () => {
         'Content-Type': 'application/json',
       },
     };
+    $q.loading.show();
     await api.put(`/api/profesores/${selectedRow.value.id}/`, { ...editForm },config);
 
     const index = rows.value.findIndex(
@@ -522,11 +523,12 @@ const saveEdit = async () => {
     if (index !== -1) {
       Object.assign(rows.value[index], editForm);
     }
-
+    $q.loading.hide();
     console.log('Recurso actualizado con éxito');
 
     editDialogOpen.value = false;
   } catch (error) {
+    $q.loading.hide();
     console.error('Error al actualizar el recurso:', error);
   }
   $q.notify({
@@ -557,11 +559,13 @@ async function eliminar(row: { id: null }) {
         persistent: true,
       })
       .onOk(() => {
+        $q.loading.show();
         api
           .delete(`/api/profesores/${row.id}/`,config)
           .then(() => {
             console.log('Recurso eliminado con éxito');
             rows.value = rows.value.filter((item) => item.id !== row.id);
+            $q.loading.hide();
             $q.notify({
               type: 'positive', // Cambiado a positive para indicar éxito
               message: '¡Aval Eliminado Correctamente!',
@@ -569,6 +573,7 @@ async function eliminar(row: { id: null }) {
             });
           })
           .catch((error) => {
+            $q.loading.hide();
             console.error('Error al eliminar el recurso:', error);
             $q.notify({
               type: 'negative',
@@ -578,6 +583,7 @@ async function eliminar(row: { id: null }) {
           });
       });
   } catch (error) {
+    $q.loading.hide();
     console.error('Error al mostrar el diálogo:', error);
   }
 }

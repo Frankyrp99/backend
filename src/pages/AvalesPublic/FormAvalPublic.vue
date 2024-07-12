@@ -157,7 +157,7 @@
             <q-input
               autogrow
               filled
-              type="url"
+
               v-model="form.url"
               label="URL"
               :rules="urlRules"
@@ -345,21 +345,9 @@ const tipo_recursoRules: Rule[] = [
 const tipoPubRules: Rule[] = [
   (v) => !!v || 'El Tipo de Publicación es requerido',
 ];
-const issnRules: Rule[] = [
-  (v) => !!v || 'El ISSN es requerido',
-  (v) => v.length <= 8 || 'El ISSN excede el límite de 8 caracteres',
-  (v) => v.length >= 8 || 'El ISSN es requerido',
-];
-const eissnRules: Rule[] = [
-  (v) => !!v || 'El E-ISSN es requerido',
-  (v) => v.length <= 8 || 'El E-ISSN excede el límite de 8 caracteres',
-  (v) => v.length >= 8 || 'El E-ISSN es requerido',
-];
-const isbnRules: Rule[] = [
-  (v) => !!v || 'El ISBN es requerido',
-  (v) => v.length <= 13 || 'El ISBN excede el límite de 13 caracteres',
-  (v) => v.length >= 13 || 'El ISBN es requerido',
-];
+const issnRules: Rule[] = [(v) => !!v || 'El ISSN es requerido'];
+const eissnRules: Rule[] = [(v) => !!v || 'El E-ISSN es requerido'];
+const isbnRules: Rule[] = [(v) => !!v || 'El ISBN es requerido'];
 
 const urlRules: Rule[] = [
   (val) => {
@@ -390,9 +378,57 @@ watch(
   },
   { deep: true }
 );
+
+function formatWithInfiniteSeparators(value) {
+  // Convertir el valor a una cadena y eliminar caracteres no numéricos
+  let cleaned = ('' + value).replace(/\D/g, '');
+
+  // Dividir la cadena en grupos de tres dígitos
+  let groups = [];
+  for (let i = 0; i < cleaned.length; i += 4) {
+    groups.push(cleaned.substr(i, 4));
+  }
+
+  // Concatenar los grupos con guiones
+  let result = groups.join('-');
+
+  return result;
+}
+
+// Uso en los watchers para form.isbn, form.issn, y form.e_issn
+watch(
+  () => form.isbn,
+  (newValue) => {
+    form.isbn = formatWithInfiniteSeparators(newValue);
+  },
+  { immediate: true }
+);
+watch(
+  () => form.issn,
+  (newValue) => {
+    form.issn = formatWithInfiniteSeparators(newValue);
+  },
+  { immediate: true }
+);
+
+watch(
+  () => form.e_issn,
+  (newValue) => {
+    form.e_issn = formatWithInfiniteSeparators(newValue);
+  },
+  { immediate: true }
+);
+
+watchEffect(() => {
+  if (form.tipo_publicacion !== form.tipo_publicacion.value) {
+    form.isbn = '';
+    form.issn = '';
+    form.e_issn = '';
+  }
+});
 watchEffect(() => {
   if (form.url.trim() !== '') {
-    form.url = 'http://';
+    form.url = 'https://';
   }
 });
 
@@ -408,11 +444,13 @@ function onSubmit() {
       'Content-Type': 'application/json',
     },
   };
+  $q.loading.show();
   api
     .post('/api/profesores/', form, config)
     .then((response) => {
-      console.log('Formulario enviado con éxito:', response.data);
+      console.log('Formulario enviado con éxito:');
       router.push({ name: 'ListaAvalesPublic' });
+      $q.loading.hide();
     })
     .catch((error) => {
       if (error.response && error.response.status === 400) {
@@ -421,6 +459,7 @@ function onSubmit() {
           message: 'Hubo un error al enviar el formulario.',
           position: 'top-right',
         });
+        $q.loading.hide();
       } else {
         $q.notify({
           type: 'negative',
@@ -428,6 +467,7 @@ function onSubmit() {
             'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.',
           position: 'top-right',
         });
+        $q.loading.hide();
       }
       console.error('Error al enviar el formulario:', error);
     });

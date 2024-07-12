@@ -209,21 +209,24 @@ function onSubmit() {
       'Content-Type': 'application/json',
     },
   };
-
+  $q.loading.show();
   api
     .post('/api/avales_tuto/', form, config)
     .then((response) => {
-      console.log('Formulario enviado con éxito:', response.data);
+      console.log('Formulario enviado con éxito:', );
       router.push({ name: 'ListaAvalesTuto' });
+      $q.loading.hide();
     })
     .catch((error) => {
       if (error.response && error.response.status === 400) {
+        $q.loading.hide();
         $q.notify({
           type: 'negative',
           message: 'Hubo un error al enviar el formulario.',
           position: 'top-right',
         });
       } else {
+        $q.loading.hide();
         $q.notify({
           type: 'negative',
           message:

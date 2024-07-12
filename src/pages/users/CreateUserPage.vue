@@ -112,18 +112,21 @@ async function onSubmit() {
         'Content-Type': 'application/json',
       },
     };
+    $q.loading.show();
 
     const response = await api.post('/api/users/list/', form, config);
 
     if (response) {
-      console.log('Formulario enviado con éxito:', response.data.message);
+      console.log('Formulario enviado con éxito:');
       $q.notify({
         type: 'positive',
         message: '¡Usuario Registrado con Éxito !',
         position: 'top-right',
       });
+      $q.loading.hide();
       router.push({ name: 'usuarios' });
     } else {
+      $q.loading.hide();
       $q.notify({
         type: 'negative',
         message: 'Hubo un error al enviar el formulario. ',
@@ -131,6 +134,7 @@ async function onSubmit() {
       });
     }
   } catch (error) {
+    $q.loading.hide();
     let errorMessage =
       'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.';
     if (error) {

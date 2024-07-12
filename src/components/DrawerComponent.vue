@@ -1,8 +1,8 @@
 <template>
   <div>
-    <q-item to="/home" clickable v-close-popup>
+    <q-item to="/home" clickable v-close-popup >
       <q-item-section>
-        <q-item-label class="text-weight-bolder">Home</q-item-label>
+        <q-item-label class="text-weight-bolder">Inicio</q-item-label>
       </q-item-section>
     </q-item>
     <q-expansion-item
@@ -13,12 +13,11 @@
       :content-inset-level="0.5"
       class="text-weight-bolder"
     >
-      <q-list>
+      <q-list style="padding-bottom: 12px;">
         <q-item
           v-for="item in category.items"
           :key="item.label"
           :to="item.route"
-
           clickable
           v-close-popup
           class="text-weight-bolder"
@@ -30,10 +29,11 @@
       </q-list>
     </q-expansion-item>
   </div>
+
 </template>
 
 <script setup lang="ts">
-import {onMounted,ref,computed  } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { api } from 'src/boot/axios';
 
 const user = ref({ role: 'invitado', isAdmin: false, isViewerOnly: false });
@@ -117,7 +117,7 @@ const categories: Category[] = [
 const filteredItems = (categoryItems) => {
   if (user.value.role === 'invitado') {
     // Filtra los ítems excluyendo aquellos relacionados con "Crear Aval"
-    return categoryItems.filter(item => !item.label.includes('Crear Aval'));
+    return categoryItems.filter((item) => !item.label.includes('Crear Aval'));
   }
   // Devuelve todos los ítems si el usuario no es un invitado
   return categoryItems;
@@ -125,7 +125,7 @@ const filteredItems = (categoryItems) => {
 
 // Aplica la función de filtrado a cada categoría
 const categorizedItems = computed(() => {
-  return categories.map(category => ({
+  return categories.map((category) => ({
     ...category,
     items: filteredItems(category.items), // Ahora 'category.items' coincide con el parámetro esperado por filteredItems
   }));

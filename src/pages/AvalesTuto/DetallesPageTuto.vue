@@ -316,6 +316,7 @@ const saveEdit = async () => {
         'Content-Type': 'application/json',
       },
     };
+    $q.loading.show();
     await api.put(
       `/api/avales_tuto/${selectedRow.value.id}/`,
       editForm,
@@ -328,11 +329,17 @@ const saveEdit = async () => {
     if (index !== -1) {
       Object.assign(rows.value[index], editForm);
     }
-
+    $q.loading.hide();
     console.log('Recurso actualizado con éxito');
 
     editDialogOpen.value = false;
   } catch (error) {
+    $q.loading.hide();
+    $q.notify({
+    type: 'negative',
+    message: '¡Hubo un error al actualizar intentelo de nuevo!',
+    position: 'top-right',
+  });
     console.error('Error al actualizar el recurso:', error);
   }
   $q.notify({

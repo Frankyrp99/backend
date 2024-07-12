@@ -185,10 +185,12 @@ const fetchData = async () => {
         'Content-Type': 'application/json',
       },
     };
+    $q.loading.show();
     const result = await api.get<ResponseItem>(`/api/profesores/${id}/`,config);
     response.value = result.data;
-    console.log(result.data);
+    $q.loading.hide();
   } catch (error) {
+    $q.loading.hide();
     console.error('Error al obtener los detalles:', error);
   }
 };
@@ -196,6 +198,7 @@ const fetchData = async () => {
 onMounted(fetchData);
 
 const exportToPDF = () => {
+  $q.loading.show();
   const pdf = new jsPDF();
   const element = document.querySelector('.my-card');
   if (!element) {
@@ -212,6 +215,7 @@ const exportToPDF = () => {
       `Aval de Publicación Autor:${response.value.nombre} ${response.value.apellidos} Titulo:${response.value.titulo_recurso} ${response.value.fecha}.pdf`
     );
   });
+  $q.loading.hide();
   $q.notify({
     type: 'positive',
     message: '¡Aval Exportado Correctamente!',

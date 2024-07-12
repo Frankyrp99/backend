@@ -39,7 +39,7 @@ $background-color-end: #2a8cb9;
   background-color: #c0dcec;
 }
 .grisneutro {
-  background-color: #ffffff;
+  background-color: #efefef;
 }
 .bg-color {
   background-image: linear-gradient(
@@ -64,7 +64,7 @@ $background-color-end: #2a8cb9;
 
 .q-form {
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.26);
   padding: 20px;
 
   color: #050505;
@@ -80,7 +80,7 @@ $background-color-end: #2a8cb9;
 }
 .q-card {
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.26);
   padding: 20px;
   margin-top: 50px;
   margin-bottom: 50px;
@@ -138,4 +138,12 @@ $background-color-end: #2a8cb9;
   margin-bottom: 20px;
   box-sizing: border-box;
   padding: 10px;
+}
+.q-footer {
+  background-color: #ffffff;
+  color: #050505;
+  padding-top: 2px;
+}
+.q-page {
+  padding: 20px;
 }

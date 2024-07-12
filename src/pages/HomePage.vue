@@ -16,11 +16,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Ajusta la altura del contenedor al 100% de la altura de la ventana */
+  height: 100vh;
 }
 
 .centered-image {
-  max-width: 100%; /* Asegura que la imagen no exceda el ancho del contenedor */
-  height: auto; /* Mantiene la proporción de la imagen */
+  max-width: 100%;
+  height: auto;
 }
 </style>

@@ -108,9 +108,12 @@ const fetchData = async () => {
         'Content-Type': 'application/json',
       },
     };
+    $q.loading.show();
     const result = await api.get<ResponseItem>(`/api/avales_tuto/${id}/`,config);
     response.value = result.data;
+    $q.loading.hide();
   } catch (error) {
+    $q.loading.hide();
     console.error('Error al obtener los detalles:', error);
   }
 };

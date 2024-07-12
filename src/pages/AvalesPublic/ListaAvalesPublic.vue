@@ -23,7 +23,13 @@
             dense
             to="detalles"
           />
-          <q-input class="text-color" dense outlined v-model="search" placeholder="Buscar" />
+          <q-input
+            class="text-color"
+            dense
+            outlined
+            v-model="search"
+            placeholder="Buscar"
+          />
         </div>
       </template>
 
@@ -65,7 +71,7 @@
         </q-tr>
       </template>
     </q-table>
-    <q-dialog v-model="editDialogOpen">
+    <q-dialog v-model="editDialogOpen" >
       <q-card style="width: 400px">
         <q-card-section>
           <div class="text-h6 text-color">Editar Recurso</div>
@@ -181,6 +187,13 @@
               @dialogClosed="hideGrupoDialog"
             />
           </q-dialog>
+          <q-input
+            autogrow
+            filled
+            v-model="editForm.url"
+            label="URL"
+            :rules="urlRules"
+          />
           <q-checkbox v-model="editForm.cdrom_dvd" label="CDROM/DVD" />
           <q-checkbox v-model="editForm.base_de_datos" label="Base de Datos" />
           <q-input v-model="editForm.tomo" label="Tomo" />
@@ -188,14 +201,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn  rounded label="Cancelar" v-close-popup />
-          <q-btn
-
-            rounded
-            color="primary"
-            label="Guardar"
-            @click="saveEdit"
-          />
+          <q-btn rounded label="Cancelar" v-close-popup />
+          <q-btn rounded color="primary" label="Guardar" @click="saveEdit" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -203,7 +210,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive, watch, toRefs } from 'vue';
+import { ref, onMounted, reactive, watch, toRefs, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 import SelectorDepartamento from 'src/components/SelectorDepartamento.vue';
 import SelectorTipoRecurso from 'src/components/SelectorTipoRecurso.vue';
@@ -332,21 +339,20 @@ const tipo_recursoRules: Rule[] = [
 const tipoPubRules: Rule[] = [
   (v) => !!v || 'El Tipo de Publicación es requerido',
 ];
-const issnRules: Rule[] = [
-  (v) => !!v || 'El ISSN es requerido',
-  (v) =>
-    v.length <= 8 || 'El lugar de publicación excede el límite de 8 caracteres',
-];
-const eissnRules: Rule[] = [
-  (v) => !!v || 'El E-ISSN es requerido',
-  (v) =>
-    v.length <= 8 || 'El lugar de publicación excede el límite de 8 caracteres',
-];
-const isbnRules: Rule[] = [
-  (v) => !!v || 'El ISBN es requerido',
-  (v) =>
-    v.length <= 13 ||
-    'El lugar de publicación excede el límite de 13 caracteres',
+const issnRules: Rule[] = [(v) => !!v || 'El ISSN es requerido'];
+const eissnRules: Rule[] = [(v) => !!v || 'El E-ISSN es requerido'];
+const isbnRules: Rule[] = [(v) => !!v || 'El ISBN es requerido'];
+const urlRules: Rule[] = [
+  (val) => {
+    if (!val || val.trim() === '') {
+      return true;
+    }
+
+    return (
+      /\.(com|cu|ru)$/i.test(val.toLowerCase()) ||
+      'La URL debe terminar con una extensión de dominio válida (.com,.cu,.ru)'
+    );
+  },
 ];
 const fetchUserData = async () => {
   try {
@@ -385,7 +391,7 @@ onMounted(async () => {
       },
     };
     const response = await api.get('/api/profesores/', config);
-    console.log('Formulario enviado con éxito:', response.data.results);
+    console.log('Formulario enviado con éxito:');
     rows.value = response.data.results;
   } catch (error) {
     console.error('Error al obtener los datos de los profesores:', error);
@@ -457,6 +463,59 @@ watch(
   },
   { deep: true }
 );
+watch(() => editForm.url,
+  (newValue) => {
+  if (editForm.url.trim() !== '') {
+    editForm.url = 'https://'+newValue;
+  }
+});
+function formatWithInfiniteSeparators(value) {
+  // Convertir el valor a una cadena y eliminar caracteres no numéricos
+  let cleaned = ('' + value).replace(/\D/g, '');
+
+  // Dividir la cadena en grupos de tres dígitos
+  let groups = [];
+  for (let i = 0; i < cleaned.length; i += 4) {
+    groups.push(cleaned.substr(i, 4));
+  }
+
+  // Concatenar los grupos con guiones
+  let result = groups.join('-');
+
+  return result;
+}
+
+// Uso en los watchers para form.isbn, form.issn, y form.e_issn
+watch(
+  () => editForm.isbn,
+  (newValue) => {
+    editForm.isbn = formatWithInfiniteSeparators(newValue);
+  },
+  { immediate: true }
+);
+watch(
+  () => editForm.issn,
+  (newValue) => {
+    editForm.issn = formatWithInfiniteSeparators(newValue);
+  },
+  { immediate: true }
+);
+
+watch(
+  () => editForm.e_issn,
+  (newValue) => {
+    editForm.e_issn = formatWithInfiniteSeparators(newValue);
+  },
+  { immediate: true }
+);
+
+watchEffect(() => {
+  if (editForm.tipo_publicacion !== editForm.tipo_publicacion.value) {
+    editForm.isbn = '';
+    editForm.issn = '';
+    editForm.e_issn = '';
+  }
+});
 
 //boton editar
 const editRow = (row: RowType) => {
@@ -491,6 +550,7 @@ const saveEdit = async () => {
         'Content-Type': 'application/json',
       },
     };
+    $q.loading.show();
     await api.put(
       `/api/profesores/${selectedRow.value.id}/`,
       { ...editForm },
@@ -503,12 +563,13 @@ const saveEdit = async () => {
     if (index !== -1) {
       Object.assign(rows.value[index], editForm);
     }
-
+    $q.loading.hide();
     console.log('Recurso actualizado con éxito');
 
     editDialogOpen.value = false;
   } catch (error) {
     console.error('Error al actualizar el recurso:', error);
+    $q.loading.hide();
   }
   $q.notify({
     type: 'positive',
@@ -517,7 +578,7 @@ const saveEdit = async () => {
   });
 };
 const showRow = (row: null) => {
-  console.log('Mostrando detalles del recurso:', row);
+  console.log('Mostrando detalles del recurso:');
   router.push({ name: 'show', params: { id: row.id } });
 };
 //boton mostrar
@@ -538,11 +599,13 @@ async function eliminar(row: { id: null }) {
         persistent: true,
       })
       .onOk(() => {
+        $q.loading.show();
         api
           .delete(`/api/profesores/${row.id}/`, config)
           .then(() => {
             console.log('Recurso eliminado con éxito');
             rows.value = rows.value.filter((item) => item.id !== row.id);
+            $q.loading.hide();
             $q.notify({
               type: 'positive', // Cambiado a positive para indicar éxito
               message: '¡Aval Eliminado Correctamente!',
@@ -551,6 +614,7 @@ async function eliminar(row: { id: null }) {
           })
           .catch((error) => {
             console.error('Error al eliminar el recurso:', error);
+            $q.loading.hide();
             $q.notify({
               type: 'negative',
               message: 'Hubo un error al eliminar el Aval.',
@@ -560,6 +624,7 @@ async function eliminar(row: { id: null }) {
       });
   } catch (error) {
     console.error('Error al mostrar el diálogo:', error);
+    $q.loading.hide();
   }
 }
 </script>

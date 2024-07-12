@@ -7,6 +7,11 @@
       :columns="columns"
       row-key="nombre"
       :filter="search"
+      dense
+      no-data-label="No hay datos disponibles."
+      no-results-label="No se encontraron resultados para tu búsqueda."
+      :loading="isLoading"
+      loading-label="Cargando..."
     >
       <template v-slot:top-right>
         <div class="row q-gutter-md">
@@ -107,7 +112,7 @@ import SelectorRol from 'src/components/SelectorRol.vue';
 const $q = useQuasar();
 const search = ref('');
 const users = ref<UsersType[]>([]);
-const router = useRouter();
+const isLoading = ref(true);
 const showNivActDialog = ref(false);
 const hideNivActDialog = () => {
   showNivActDialog.value = false;
@@ -164,7 +169,8 @@ onMounted(async () => {
     const response = await api.get('/api/users/list', config);
 
     users.value = response.data.results;
-    console.log('Usuarios recuperados:', users.value);
+    isLoading.value = false;
+    console.log('Usuarios recuperados:');
   } catch (error) {
     console.error('Error fetching users:', error);
   }

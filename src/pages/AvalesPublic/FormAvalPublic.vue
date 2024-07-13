@@ -350,15 +350,12 @@ const eissnRules: Rule[] = [(v) => !!v || 'El E-ISSN es requerido'];
 const isbnRules: Rule[] = [(v) => !!v || 'El ISBN es requerido'];
 
 const urlRules: Rule[] = [
-  (val) => {
-    if (!val || val.trim() === '') {
-      return true;
+  (val: string): string | boolean => {
+    const domainExtensions = /\.(com|cu|ru)$/i;
+    if (!domainExtensions.test(val.toLowerCase())) {
+      return 'La URL debe terminar con una extensión de dominio válida (.com,.cu,.ru)';
     }
-
-    return (
-      /\.(com|cu|ru)$/i.test(val.toLowerCase()) ||
-      'La URL debe terminar con una extensión de dominio válida (.com,.cu,.ru)'
-    );
+    return true; // Retorna true si la URL es válida
   },
 ];
 

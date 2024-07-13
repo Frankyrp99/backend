@@ -4,7 +4,7 @@
       <img
         src="/src/assets/logo-bg.gif"
         alt="Descripción de la imagen"
-        class="centered-image "
+        class="centered-image"
         width="500"
       />
     </div>

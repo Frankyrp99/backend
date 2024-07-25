@@ -41,13 +41,13 @@
                     >
                       <q-item-section>
                         <q-item-label icon="account_circle" class="text-bold"
-                          >Administracion</q-item-label
+                          >Administración de Usuarios</q-item-label
                         >
                       </q-item-section>
                     </q-item>
                     <q-item to="/acerca_de" clickable v-close-popup>
                       <q-item-section>
-                        <q-item-label class="text-bold">Acerca De</q-item-label>
+                        <q-item-label class="text-bold">Acerca De SIGAV</q-item-label>
                       </q-item-section>
                     </q-item>
                   </q-list>

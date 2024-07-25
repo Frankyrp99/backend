@@ -12,6 +12,7 @@
       no-results-label="No se encontraron resultados para tu búsqueda."
       :loading="isLoading"
       loading-label="Cargando..."
+      rows-per-page-label="Avales por Página"
     >
       <template v-slot:top-right>
         <div class="row q-gutter-md">

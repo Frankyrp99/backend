@@ -12,6 +12,7 @@
       no-results-label="No se encontraron resultados para tu búsqueda."
       :loading="isLoading"
       loading-label="Cargando..."
+      rows-per-page-label="Avales por Página"
     >
       <template v-slot:top-right>
         <div class="row q-gutter-md">
@@ -71,7 +72,7 @@
         </q-tr>
       </template>
     </q-table>
-    <q-dialog v-model="editDialogOpen" >
+    <q-dialog v-model="editDialogOpen">
       <q-card style="width: 400px">
         <q-card-section>
           <div class="text-h6 text-color">Editar Recurso</div>
@@ -189,7 +190,6 @@
           </q-dialog>
           <q-input
             autogrow
-            filled
             v-model="editForm.url"
             label="URL"
             :rules="urlRules"
@@ -463,12 +463,7 @@ watch(
   },
   { deep: true }
 );
-watch(() => editForm.url,
-  (newValue) => {
-  if (editForm.url.trim() !== '') {
-    editForm.url = 'https://'+newValue;
-  }
-});
+
 function formatWithInfiniteSeparators(value) {
   // Convertir el valor a una cadena y eliminar caracteres no numéricos
   let cleaned = ('' + value).replace(/\D/g, '');
@@ -525,8 +520,8 @@ const editRow = (row: RowType) => {
   editForm.titulo_recurso = row.titulo_recurso;
   editForm.departamento = row.departamento;
   editForm.lugar_pub = row.lugar_pub;
-  editForm.grupo = row.grupo;
   editForm.tomo = row.tomo;
+  editForm.grupo = row.grupo;
   editForm.folio = row.folio;
   editForm.tipo_publicacion = row.tipo_publicacion || '';
   editForm.issn = row.issn || '';
@@ -540,7 +535,6 @@ const editRow = (row: RowType) => {
 
   editDialogOpen.value = true;
 };
-
 const saveEdit = async () => {
   try {
     const authToken = localStorage.getItem('authToken'); // Asume que tienes un authToken almacenado

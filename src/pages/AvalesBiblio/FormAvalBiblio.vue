@@ -1,14 +1,14 @@
 <template>
   <q-page>
-    <div class=" column justify-center items-center">
+    <div class="column justify-center items-center">
       <q-form @submit="onSubmit" id="form">
         <div style="margin-top: 10px; margin-bottom: 10px">
           <h4 class="text-bold text-color">Nuevo Aval de Bibliografía</h4>
         </div>
         <div class="q-gutter-md row justify-center items-center">
-          <div class=" q-gutter-xl row justify-center items-center">
+          <div class="q-gutter-xl row justify-center items-center">
             <q-input
-              style="max-width: 300px"
+              style="width: 200px"
               autogrow
               filled
               v-model="form.nombre"
@@ -17,7 +17,7 @@
               :rules="nombreRules"
             />
             <q-input
-              style="max-width: 300px"
+              style="width: 200px"
               autogrow
               filled
               v-model="form.apellidos"
@@ -27,6 +27,7 @@
             />
 
             <q-input
+              style="width: 200px"
               filled
               v-model="form.departamento"
               label="Departamento"
@@ -45,6 +46,7 @@
           </div>
           <div class="q-gutter-xl row justify-center items-center">
             <q-input
+              style="width: 200px"
               filled
               v-model="form.total_asient"
               label="Total de Asientos Bibliográficos"
@@ -57,6 +59,7 @@
               ]"
             />
             <q-input
+              style="width: 200px"
               filled
               v-model="form.rev_bilio"
               label="Tipo de Revisión Bibliográfica"
@@ -84,6 +87,7 @@
               />
             </q-dialog>
             <q-input
+              style="width: 200px"
               filled
               v-model="form.niv_act"
               label="Nivel de Actualización"
@@ -104,6 +108,7 @@
 
           <div class="q-gutter-xl row justify-center items-center">
             <q-input
+              style="width: 200px"
               filled
               v-model="form.tomo"
               label="Tomo"
@@ -113,6 +118,7 @@
               ]"
             />
             <q-input
+              style="width: 200px"
               filled
               v-model="form.folio"
               label="Folio"
@@ -123,6 +129,7 @@
               ]"
             />
             <q-input
+              style="width: 200px"
               filled
               v-model="form.pag"
               label="Página"
@@ -133,8 +140,8 @@
                 (val) => /^\d+$/.test(val) || 'Solo se permiten números',
               ]"
             />
-          </div>
-          <q-input
+            <q-input
+            style="width: 200px"
             filled
             readonly
             v-model="form.fecha"
@@ -157,9 +164,11 @@
               </q-icon>
             </template>
           </q-input>
+          </div>
+
         </div>
         <div class="column items-center">
-          <h6 >Tipo de Búsqueda Informativa</h6>
+          <h6>Tipo de Búsqueda Informativa</h6>
           <div class="row q-gutter-xl">
             <div class="column">
               <q-checkbox

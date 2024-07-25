@@ -7,9 +7,9 @@
   border-radius: 8px;
   margin: 0 auto;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  q-gutter-md
-.form-items {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  q-gutter-md .form-item {
+    max-width: 100px;
     margin-bottom: 15px;
   }
 }

@@ -6,9 +6,9 @@
           <h4 class="text-bold text-color">Nuevo Aval de Publicación</h4>
         </div>
         <div class="q-gutter-md flex flex-row flex-wrap justify-center">
-          <div class="q-gutter-xl q-gutter-y-md row justify-around">
+          <div class="q-gutter-xl q-gutter-y-md row justify-around" >
             <q-input
-              style="max-width: 300px"
+              style="width: 200px"
               autogrow
               filled
               v-model="form.nombre"
@@ -17,7 +17,7 @@
               :rules="nombreRules"
             />
             <q-input
-              style="max-width: 300px"
+              style="width: 200px"
               autogrow
               filled
               v-model="form.apellidos"
@@ -26,6 +26,7 @@
               :rules="apellidosRules"
             />
             <q-input
+              style="width: 200px"
               filled
               v-model="form.departamento"
               label="Departamento"
@@ -48,13 +49,13 @@
               filled
               v-model="form.titulo_recurso"
               label="Título del Recurso"
-              class="form-item"
+
               :rules="titulo_recursoRules"
             />
           </div>
           <div class="q-gutter-xl q-gutter-y-md row justify-around">
             <q-input
-              style="max-width: 300px"
+              style="width: 200px"
               autogrow
               filled
               v-model="form.lugar_pub"
@@ -64,6 +65,7 @@
             />
 
             <q-input
+              style="width: 200px"
               filled
               v-model="form.tipo_recurso"
               label="Tipo de Recurso"
@@ -81,6 +83,7 @@
               />
             </q-dialog>
             <q-input
+              style="width: 200px"
               filled
               v-model="form.tipo_publicacion"
               label="Tipo de Publicación"
@@ -105,6 +108,7 @@
           </div>
           <div class="q-gutter-xl q-gutter-y-md row items-center">
             <q-input
+              style="width: 200px"
               v-if="form.tipo_publicacion === 'Revista Impresa'"
               filled
               v-model="form.issn"
@@ -113,6 +117,7 @@
               :rules="issnRules"
             />
             <q-input
+              style="width: 200px"
               v-if="form.tipo_publicacion === 'Revista Digital'"
               filled
               v-model="form.e_issn"
@@ -121,6 +126,7 @@
               :rules="eissnRules"
             />
             <q-input
+              style="width: 200px"
               v-if="
                 form.tipo_publicacion === 'Libro Impreso' ||
                 form.tipo_publicacion === 'Libro Digital'
@@ -132,6 +138,7 @@
               :rules="isbnRules"
             />
             <q-input
+              style="width: 200px"
               filled
               v-model="form.grupo"
               label="Grupo"
@@ -155,16 +162,17 @@
               />
             </q-dialog>
             <q-input
+              style="width: 200px"
               autogrow
               filled
-
               v-model="form.url"
               label="URL"
               :rules="urlRules"
             />
           </div>
-          <div class="row q-gutter-md">
+          <div class="row q-gutter-xl q-gutter-y-md">
             <q-input
+              style="width: 200px"
               filled
               v-model="form.tomo"
               label="Tomo"
@@ -174,6 +182,7 @@
               ]"
             />
             <q-input
+              style="width: 200px"
               filled
               v-model="form.folio"
               label="Folio"
@@ -184,6 +193,7 @@
               ]"
             />
             <q-input
+              style="width: 200px"
               filled
               readonly
               v-model="form.fecha"
@@ -421,11 +431,6 @@ watchEffect(() => {
     form.isbn = '';
     form.issn = '';
     form.e_issn = '';
-  }
-});
-watchEffect(() => {
-  if (form.url.trim() !== '') {
-    form.url = 'https://';
   }
 });
 

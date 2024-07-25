@@ -13,6 +13,7 @@
       no-results-label="No se encontraron resultados para tu búsqueda."
       :loading="isLoading"
       loading-label="Cargando..."
+      rows-per-page-label="Profesor por Página"
     >
       <template v-slot:top-right>
         <q-input dense outlined v-model="search" placeholder="Buscar" />

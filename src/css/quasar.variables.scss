@@ -78,6 +78,7 @@ $background-color-end: #2a8cb9;
   max-width: 400px;
   margin: auto;
 }
+
 .q-card {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.26);
@@ -124,8 +125,8 @@ $background-color-end: #2a8cb9;
   width: calc(
     100% - 60px
   ); /* Restamos 60px porque queremos 30px en cada lado */
-  margin-left: 80px;
-  margin-right: 80px;
+  margin-left: 40px;
+  margin-right: 40px;
 }
 .flex-container {
   display: flex;

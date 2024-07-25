@@ -8,7 +8,7 @@
         <div class="q-gutter-md row justify-center items-center">
           <div class="q-gutter-xl q-gutter-y-md row justify-around">
             <q-input
-              style="max-width: 300px"
+              style="width: 200px"
               autogrow
               filled
               v-model="form.nombre"
@@ -17,7 +17,7 @@
               :rules="nombreRules"
             />
             <q-input
-              style="max-width: 300px"
+              style="width: 200px"
               autogrow
               filled
               v-model="form.apellidos"
@@ -26,6 +26,7 @@
               :rules="apellidosRules"
             />
             <q-input
+              style="width: 200px"
               filled
               v-model="form.departamento"
               label="Departamento"
@@ -53,8 +54,9 @@
             />
           </div>
 
-          <div class="row q-gutter-md">
+          <div class="q-gutter-xl q-gutter-y-md row justify-around">
             <q-input
+              style="width: 200px"
               filled
               v-model="form.tomo"
               label="Tomo"
@@ -64,6 +66,7 @@
               ]"
             />
             <q-input
+              style="width: 200px"
               filled
               v-model="form.folio"
               label="Folio"
@@ -74,6 +77,7 @@
               ]"
             />
             <q-input
+              style="width: 200px"
               filled
               readonly
               v-model="form.fecha"
@@ -213,7 +217,7 @@ function onSubmit() {
   api
     .post('/api/avales_tuto/', form, config)
     .then((response) => {
-      console.log('Formulario enviado con éxito:', );
+      console.log('Formulario enviado con éxito:');
       router.push({ name: 'ListaAvalesTuto' });
       $q.loading.hide();
     })

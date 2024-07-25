@@ -12,6 +12,7 @@
       no-results-label="No se encontraron resultados para tu búsqueda."
       :loading="isLoading"
       loading-label="Cargando..."
+      rows-per-page-label="Avales por Página"
     >
       <template v-slot:top-right>
         <div class="row q-gutter-md">
@@ -179,6 +180,12 @@
               @dialogClosed="hideGrupoDialog"
             />
           </q-dialog>
+          <q-input
+            autogrow
+            v-model="editForm.url"
+            label="URL"
+
+          />
           <q-checkbox v-model="editForm.cdrom_dvd" label="CDROM/DVD" />
           <q-checkbox v-model="editForm.base_de_datos" label="Base de Datos" />
           <q-input v-model="editForm.tomo" label="Tomo" />

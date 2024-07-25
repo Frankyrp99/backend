@@ -1,10 +1,8 @@
 <template>
   <div class="q-pa-lg">
-    <q-card class="column q-gutter-y-md ">
-      <div class="column text-subtitle1 text-bold ">
-        <p class="text-h6 text-bold text-color">
-          Cantidad de avales en el Departamento:
-        </p>
+    <q-card class="column q-gutter-y-md">
+      <div class="column text-subtitle1 text-bold">
+        <p class="text-h6 text-bold">Cantidad de avales en el Departamento:</p>
         <q-input
           style="max-width: 250px"
           autogrow
@@ -35,7 +33,7 @@
     </q-card>
     <q-card>
       <q-card-section>
-        <div class="text-h6 text-bold text-color">
+        <div class="text-h6 text-bold">
           Cantidad de Avales por Departamento y Facultad:
         </div>
         <q-separator />

@@ -22,8 +22,8 @@
         </div>
       </div>
       <div style="padding: 20px" class="q-gutter-md text-body1">
-        <div class="text-bold text-h5 text-color">
-          ¿Por qué se debería usar SIGAV
+        <div class="text-bold text-h5 ">
+          ¿Por qué se debería usar SIGAV?
         </div>
         <div class="text-subtitle1 text-bold">
           SIGAV ofrece una serie de ventajas clave que responden a las

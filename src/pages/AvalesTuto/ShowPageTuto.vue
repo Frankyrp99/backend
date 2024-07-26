@@ -34,7 +34,7 @@
           Del Departamento: {{ response.departamento }}
         </div>
         <div class="text-semibold datos-recurso text-h6">
-          Tuteló el: {{ response.titulo_recurso }}
+          Tuteló : {{ response.titulo_recurso }}
         </div>
         <div class="text-semibold datos-recurso text-h6">
           Para que así conste, firmo la presente en la fecha:

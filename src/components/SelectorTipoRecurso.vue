@@ -4,7 +4,7 @@
       <q-card style="width: 300px">
         <q-card-section class="text-bold">Selecciona el Tipo de Recurso:</q-card-section>
         <q-select
-          filled
+          dense
           v-model="selectedResourceType"
           :options="resourceTypes"
           label="Tipos de Recursos"

@@ -7,7 +7,7 @@
         >
         <q-select
           class="text-bold"
-          filled
+          dense
           v-model="selectedFaculty"
           :options="faculty"
           label="Facultades"
@@ -30,15 +30,16 @@
           >Selecciona un Departamento:</q-card-section
         >
         <q-select
-          filled
+          dense
           v-model="selectedDepartment"
           :options="selectedDepartmentOptions"
           label="Departamentos"
           @input="selectDepartment"
         />
         <q-card-actions align="right">
-          <q-btn flat label="Cancel" @click="closeSecondDialog" />
+          <q-btn flat label="Cancel"  @click="closeSecondDialog" />
           <q-btn
+
             flat
             label="OK"
             @click="() => selectDepartment(selectedDepartment)"

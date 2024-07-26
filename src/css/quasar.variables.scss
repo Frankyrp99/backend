@@ -17,6 +17,7 @@ $positive: #21ba45;
 $negative: #c10015;
 $info: #31ccec;
 $warning: #f2c037;
+$color-gris: #b6b6b6;
 @font-face {
   font-family: 'Gliker';
   src: url('/src/assets/Gliker.ttf') format('truetype');
@@ -70,10 +71,7 @@ $background-color-end: #2a8cb9;
   color: #050505;
   background-color: #808080;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  
 
   max-width: 400px;
   margin: auto;

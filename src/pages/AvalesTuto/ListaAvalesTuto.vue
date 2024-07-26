@@ -17,9 +17,9 @@
       <template v-slot:top-right>
         <div class="row q-gutter-md">
           <q-btn
-            label="Más Detalles"
+            label="Más Datos"
             color="primary"
-            size="md"
+            size="sm"
             align="left"
             dense
             to="/detallestuto"

@@ -4,7 +4,7 @@
       <q-card style="width: 300px">
         <q-card-section class="text-bold">Selecciona el Tipo de Publicación:</q-card-section>
         <q-select
-          filled
+          dense
           v-model="selectedPublicType"
           :options="publicTypes"
           label="Tipos de Publicación"

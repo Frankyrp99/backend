@@ -17,9 +17,9 @@
       <template v-slot:top-right>
         <div class="row q-gutter-md">
           <q-btn
-            label="Menos Detalles"
+            label="Menos Datos"
             color="primary"
-            size="md"
+            size="sm"
             align="left"
             dense
             to="/lista_avales_tuto"

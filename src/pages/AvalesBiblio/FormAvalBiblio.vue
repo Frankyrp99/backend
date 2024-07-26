@@ -1,171 +1,238 @@
 <template>
   <q-page>
-    <div class="column justify-center items-center">
+    <div
+      class="row justify-around"
+      style="margin-top: 30px; margin-bottom: 30px"
+    >
+      <div>
+        <p class="text-bold text-body1">Aval de Bibliografía</p>
+        <p class="text-bold text-body2" style="color: grey">
+          Introduce los datos del aval
+        </p>
+      </div>
       <q-form @submit="onSubmit" id="form">
-        <div style="margin-top: 10px; margin-bottom: 10px">
-          <h4 class="text-bold text-color">Nuevo Aval de Bibliografía</h4>
-        </div>
         <div class="q-gutter-md row justify-center items-center">
-          <div class="q-gutter-xl row justify-center items-center">
-            <q-input
-              style="width: 200px"
-              autogrow
-              filled
-              v-model="form.nombre"
-              label="Nombre"
-              class="form-item"
-              :rules="nombreRules"
-            />
-            <q-input
-              style="width: 200px"
-              autogrow
-              filled
-              v-model="form.apellidos"
-              label="Apellidos"
-              class="form-item"
-              :rules="apellidosRules"
-            />
-
-            <q-input
-              style="width: 200px"
-              filled
-              v-model="form.departamento"
-              label="Departamento"
-              class="form-item"
-              @click="showSelectorDepartamento = true"
-              :rules="departamentoRules"
-            />
-            <q-dialog v-model="showSelectorDepartamento" persistent>
-              <SelectorDepartamento
+          <div class="q-gutter-xl q-gutter-y-md row justify-around">
+            <div class="column q-gutter-md-y-sm">
+              <div><p class="text-bold text-body2">Nombre</p></div>
+              <q-input
+                style="width: 200px"
+                autogrow
+                outlined
+                dense
+                v-model="form.nombre"
+                label="Ej: Pedro"
+                class="form-item"
+                :rules="nombreRules"
+              />
+            </div>
+            <div class="column q-gutter-md-y-sm">
+              <div><p class="text-bold text-body2">Apellidos</p></div>
+              <q-input
+                style="width: 200px"
+                autogrow
+                outlined
+                dense
+                v-model="form.apellidos"
+                label="Ej: Rodriguez"
+                class="form-item"
+                :rules="apellidosRules"
+              />
+            </div>
+            <div class="column q-gutter-md-y-sm">
+              <div>
+                <p class="text-bold text-body2">Departamento de Trabajo</p>
+              </div>
+              <q-input
+                style="width: 200px"
+                outlined
+                dense
                 v-model="form.departamento"
-                :departamento-rules="departamentoRules"
-                :open-first-dialog-automatically="true"
-                @close-first-dialog="closeFirstDialogAndUpdateModel"
+                label="Selecciona un Departamento"
+                class="form-item"
+                @click="showSelectorDepartamento = true"
+                :rules="departamentoRules"
               />
-            </q-dialog>
+              <q-dialog v-model="showSelectorDepartamento" persistent>
+                <SelectorDepartamento
+                  v-model="form.departamento"
+                  :departamento-rules="departamentoRules"
+                  :open-first-dialog-automatically="true"
+                  @close-first-dialog="closeFirstDialogAndUpdateModel"
+                />
+              </q-dialog>
+            </div>
           </div>
           <div class="q-gutter-xl row justify-center items-center">
-            <q-input
-              style="width: 200px"
-              filled
-              v-model="form.total_asient"
-              label="Total de Asientos Bibliográficos"
-              class="form-item"
-              :rules="[
-                (val) =>
-                  (val && val.trim().length > 0) ||
-                  'Total de Asientos es requerido',
-                (val) => /^\d+$/.test(val) || 'Solo se permiten números',
-              ]"
-            />
-            <q-input
-              style="width: 200px"
-              filled
-              v-model="form.rev_bilio"
-              label="Tipo de Revisión Bibliográfica"
-              class="form-item"
-              @click="showRevBiblioDialog = true"
-              :rules="revRules"
-            />
-            <q-dialog v-model="showRevBiblioDialog" persistent>
-              <selector-rev-biblio
-                v-model="form.rev_bilio"
-                :public-types="[
-                  'Maestría',
-                  'Doctorado',
-                  'Trabajo de Diploma',
-                  'Proyecto',
-                  'Curso de Posgrado',
-                  'Proyecto de Curso',
-                  'Disciplina',
-                  'Asignatura',
-                  'Evaluación Ind. Prof',
+            <div>
+              <div>
+                <p class="text-bold text-body2">
+                  Total de Asientos Bibliográficos
+                </p>
+              </div>
+              <q-input
+                style="width: 200px"
+                outlined
+                dense
+                v-model="form.total_asient"
+                label="Introduce el Total de Asientos "
+                class="form-item"
+                :rules="[
+                  (val) =>
+                    (val && val.trim().length > 0) ||
+                    'Total de Asientos es requerido',
+                  (val) => /^\d+$/.test(val) || 'Solo se permiten números',
                 ]"
-                :open-dialog-automatically="showRevBiblioDialog"
-                @update:modelValue="form.rev_bilio = $event"
-                @dialogClosed="hideRevBiblioDialog"
               />
-            </q-dialog>
-            <q-input
-              style="width: 200px"
-              filled
-              v-model="form.niv_act"
-              label="Nivel de Actualización"
-              class="form-item"
-              @click="showNivActDialog = true"
-              :rules="revRules"
-            />
-            <q-dialog v-model="showNivActDialog" persistent>
-              <selector-niv-act
+            </div>
+            <div>
+              <div>
+                <p class="text-bold text-body2">
+                  Tipo de Revisión Bibliográfica
+                </p>
+              </div>
+              <q-input
+                style="width: 200px"
+                outlined
+                dense
+                v-model="form.rev_bilio"
+                label="Selecciona el Tipo de Revisión  "
+                class="form-item"
+                @click="showRevBiblioDialog = true"
+                :rules="revRules"
+              />
+              <q-dialog v-model="showRevBiblioDialog" persistent>
+                <selector-rev-biblio
+                  v-model="form.rev_bilio"
+                  :public-types="[
+                    'Maestría',
+                    'Doctorado',
+                    'Trabajo de Diploma',
+                    'Proyecto',
+                    'Curso de Posgrado',
+                    'Proyecto de Curso',
+                    'Disciplina',
+                    'Asignatura',
+                    'Evaluación Ind. Prof',
+                  ]"
+                  :open-dialog-automatically="showRevBiblioDialog"
+                  @update:modelValue="form.rev_bilio = $event"
+                  @dialogClosed="hideRevBiblioDialog"
+                />
+              </q-dialog>
+            </div>
+            <div>
+              <div>
+                <p class="text-bold text-body2">Nivel de Actualización</p>
+              </div>
+              <q-input
+                style="width: 200px"
+                outlined
+                dense
                 v-model="form.niv_act"
-                :public-types="['Alto', 'Medio', 'Bajo']"
-                :open-dialog-automatically="showNivActDialog"
-                @update:modelValue="form.niv_act = $event"
-                @dialogClosed="hideNivActDialog"
+                label="Selecciona el Nivel de Actualización"
+                class="form-item"
+                @click="showNivActDialog = true"
+                :rules="revRules"
               />
-            </q-dialog>
+              <q-dialog v-model="showNivActDialog" persistent>
+                <selector-niv-act
+                  v-model="form.niv_act"
+                  :public-types="['Alto', 'Medio', 'Bajo']"
+                  :open-dialog-automatically="showNivActDialog"
+                  @update:modelValue="form.niv_act = $event"
+                  @dialogClosed="hideNivActDialog"
+                />
+              </q-dialog>
+            </div>
           </div>
 
           <div class="q-gutter-xl row justify-center items-center">
-            <q-input
-              style="width: 200px"
-              filled
-              v-model="form.tomo"
-              label="Tomo"
-              :rules="[
-                (val) => (val && val.trim().length > 0) || 'Tomo es requerido',
-                (val) => /^\d+$/.test(val) || 'Solo se permiten números',
-              ]"
-            />
-            <q-input
-              style="width: 200px"
-              filled
-              v-model="form.folio"
-              label="Folio"
-              class="form-item"
-              :rules="[
-                (val) => (val && val.trim().length > 0) || 'Folio es requerido',
-                (val) => /^\d+$/.test(val) || 'Solo se permiten números',
-              ]"
-            />
-            <q-input
-              style="width: 200px"
-              filled
-              v-model="form.pag"
-              label="Página"
-              class="form-item"
-              :rules="[
-                (val) =>
-                  (val && val.trim().length > 0) || 'Página es requerida',
-                (val) => /^\d+$/.test(val) || 'Solo se permiten números',
-              ]"
-            />
-            <q-input
-            style="width: 200px"
-            filled
-            readonly
-            v-model="form.fecha"
-            label="Fecha"
-            :rules="fechaRules"
-          >
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy
-                  cover
-                  transition-show="scale"
-                  transition-hide="scale"
-                >
-                  <q-date v-model="form.fecha" mask="YYYY-MM-DD">
-                    <div class="row items-center justify-end">
-                      <q-btn v-close-popup label="Cerrar" color="primary" />
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
-          </div>
+            <div>
+              <div>
+                <p class="text-bold text-body2" style="width: 200px">Tomo</p>
+              </div>
+              <q-input
+                style="width: 200px"
+                outlined
+                dense
+                v-model="form.tomo"
+                label="Introduce el Tomo"
+                :rules="[
+                  (val) =>
+                    (val && val.trim().length > 0) || 'Tomo es requerido',
+                  (val) => /^\d+$/.test(val) || 'Solo se permiten números',
+                ]"
+              />
+            </div>
+            <div>
+              <div>
+                <p class="text-bold text-body2" style="width: 200px">Folio</p>
+              </div>
+              <q-input
+                style="width: 200px"
+                outlined
+                dense
+                v-model="form.folio"
+                label="Introduce el Folio"
+                class="form-item"
+                :rules="[
+                  (val) =>
+                    (val && val.trim().length > 0) || 'Folio es requerido',
+                  (val) => /^\d+$/.test(val) || 'Solo se permiten números',
+                ]"
+              />
+            </div>
+            <div>
+              <div>
+                <p class="text-bold text-body2" style="width: 200px">Página</p>
+              </div>
 
+              <q-input
+                style="width: 200px"
+                outlined
+                dense
+                v-model="form.pag"
+                label="Introduce la Página"
+                class="form-item"
+                :rules="[
+                  (val) =>
+                    (val && val.trim().length > 0) || 'Página es requerida',
+                  (val) => /^\d+$/.test(val) || 'Solo se permiten números',
+                ]"
+              />
+            </div>
+            <div>
+              <div>
+                <p class="text-bold text-body2" style="width: 200px">Fecha</p>
+              </div>
+              <q-input
+                style="width: 200px"
+                outlined
+                dense
+                readonly
+                v-model="form.fecha"
+                label="Selecciona una Fecha "
+                :rules="fechaRules"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="form.fecha" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Cerrar" color="primary" />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
+          </div>
         </div>
         <div class="column items-center">
           <h6>Tipo de Búsqueda Informativa</h6>
@@ -202,9 +269,20 @@
             </div>
           </div>
         </div>
-        <div class="row justify-center items-center">
+        <q-separator inset class="container" />
+        <div class="row justify-end items-center">
           <q-btn
             rounded
+            size="sm"
+            label="Volver"
+            class="form-item text-weight-bolder"
+            color="primary"
+            style="margin-top: 20px; margin-bottom: 20px; margin-right: 10px"
+            @click="goBack"
+          />
+          <q-btn
+            rounded
+            size="sm"
             label="Guardar"
             type="submit"
             class="form-item text-weight-bolder"
@@ -287,7 +365,9 @@ const showSelectorDepartamento = ref(false);
 const closeFirstDialogAndUpdateModel = () => {
   showSelectorDepartamento.value = false;
 };
-
+const goBack = () => {
+  router.back();
+};
 //metodos
 function capitalizeWords(text: string): string {
   return text

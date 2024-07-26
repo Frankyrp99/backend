@@ -4,7 +4,7 @@
       <q-card style="width: 300px">
         <q-card-section class="text-bold">Selecciona el Grupo correspondiente:</q-card-section>
         <q-select
-          filled
+          dense
           v-model="selectedPublicType"
           :options="publicTypes"
           label="Grupo"
